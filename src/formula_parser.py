@@ -1,6 +1,6 @@
 from re import findall, match
 from collections import Counter
-from .periodic_table import  periodic_table
+from .periodic_table import periodic_table
 
 class ChemicalFormulaParser():
     '''
@@ -12,11 +12,11 @@ class ChemicalFormulaParser():
     Atoms in the output dict are in the random order due to the nature of dicts in Python
     '''
     def __init__(self, formula:str) -> None:
-        self.atom_regex = '([A-Z][a-z]*)((\d+(\.\d+)?)*)'
-        self.opener_brackets = '({['
-        self.closer_brackets = ')}]'
-        self.formula = formula
-        self.list_of_atoms = [x[0] for x in periodic_table]
+        self.atom_regex:str = '([A-Z][a-z]*)((\d+(\.\d+)?)*)'
+        self.opener_brackets:str = '({['
+        self.closer_brackets:str = ')}]'
+        self.formula:str = formula
+        self.list_of_atoms:list = [x[0] for x in periodic_table]
     
     def __dictify(self, tuples:tuple) -> dict:
         '''
@@ -42,7 +42,7 @@ class ChemicalFormulaParser():
         Recurse on opening brackets to parse the subpart and
         return on closing ones because it is the end of said subpart.
         Formula is the argument of this method due to the complications 
-        of self. constructions in recursive functions.
+        of self. Constructions in recursive functions.
         '''
         q = []
         mol = {}
@@ -83,13 +83,12 @@ class ChemicalFormulaParser():
         c = Counter(self.formula)
         return c['['] == c[']'] and c['{'] == c['}'] and c['('] == c[')']
     
-    def are_atoms_legal(self, parsed) -> bool:
+    def are_atoms_legal(self, parsed) -> None:
         for atom in list(parsed.keys()):
             if atom not in self.list_of_atoms:
                 raise ValueError("No atom %s in the periodic table!" % atom)
         return
             
-
     def parse_formula(self) -> dict:
         '''
         Parse the formula and return a dict with occurences of each atom.

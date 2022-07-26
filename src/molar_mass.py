@@ -1,7 +1,7 @@
 from .periodic_table import periodic_table
 from .formula_parser import ChemicalFormulaParser
 
-class MolarMassCalculation(object):
+class MolarMassCalculation():
     '''
     Class for calculation of molar masses of compounds. 
     Compounds should be parsed by FormulaParser first.
@@ -14,6 +14,7 @@ class MolarMassCalculation(object):
     def calculate_molar_mass(self) -> float:
         '''
         Calculation of molar mass of compound from atomic masses of atoms in parsed formula.
+        Atomic masses are taken from periodic_table file. 
         '''
         atomic_masses_list = []
         for atom, n in self.parsed_formula.items():
@@ -44,12 +45,22 @@ class MolarMassCalculation(object):
 
     def calculate_oxide_percent(self) -> dict:
         '''
-        Calculation of oxide percents in parsed formula from types of oxides declared in periodic table file
+        Calculation of oxide percents in parsed formula from types 
+        of oxides declared in periodic table file. This type of data
+        is mostly used in XRF spectrometry and mineralogy. The oxide
+        percents are calculated by finding the convertion factor between elenent
+        and its respective oxide (https://www.geol.umd.edu/~piccoli/probe/molweight.html) 
+        and normalizing the total sum to 100%. One can change the oxide type
+        for certain element in periodic_table file. Theoretically, this function
+        should work for other types of binary compound (sulfides, fluorides etc.)
+        or even salts, however, modification of this function is required 
+        (for instance, in case of binary compound, removing X atom
+        from list of future compounds should have X as an argument of this function)
         '''
         oxide_types = [i[3] for i in periodic_table]
         old_atoms = list(self.parsed_formula.keys())
         old_weights = list(MolarMassCalculation(self.parsed_formula).calculate_mass_percent().values())
-        '''Remove O from list of future oxides'''
+        #Remove O from list of future oxides
         atoms = []
         weights = []
         if 'O' in old_atoms:
@@ -64,7 +75,6 @@ class MolarMassCalculation(object):
         else:
             atoms = old_atoms
             weights = [old_weights]
-    
         molar_weights = [elements[1] for atom in atoms for elements in periodic_table if atom == elements[0]]
         indxs = [periodic_table.index(elements) for atom in atoms for elements in periodic_table if atom == elements[0]]
         oxides = [oxide_types[indx] for indx in indxs]

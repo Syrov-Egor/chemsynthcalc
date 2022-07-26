@@ -4,6 +4,14 @@ from fractions import Fraction
 from .chemutils import find_lcm, find_gcd
 
 class Balancer():
+    '''
+    A class for automatically balancing chemical equations by different matrix methods.
+    Currently implemented Thorne algorithm (see calculate_coefficients_Thorne method for details),
+    Risteski pseudo-inverse algorithm (see calculate_coefficients_Risteski method for details),
+    and naive combinational search algorithm (see calculate_coefficients_combinatorial for details).
+    Class takes two matrices: matrix of reactants and matrix of products of chemical reaction, derived
+    from general reaction matrix. Matrices are in the form of NumPy 2D array.
+    '''
     def __init__(self, reactant_matrix:np.array, product_matrix:np.array, rounding_order:int = 5) -> None:
         self.reactant_matrix = reactant_matrix
         self.product_matrix = product_matrix

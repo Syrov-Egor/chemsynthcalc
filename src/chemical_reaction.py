@@ -126,7 +126,7 @@ class ChemicalReaction():
     
     @property
     def masses(self) -> list:
-        return MassCalculation(self.coefficients, self.molar_masses, self.target, self.target_mass).calculate_masses()
+        return MassCalculation(self.coefficients, self.molar_masses, self.target, self.target_mass, self.rounding_order).calculate_masses()
         
     def _is_reaction_string_valid(self) -> bool:
         for separator in self.possible_reaction_separators:
