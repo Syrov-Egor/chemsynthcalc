@@ -13,12 +13,16 @@ class Balancer():
     from general reaction matrix. Matrices are in the form of NumPy 2D array.
     '''
     def __init__(self, reactant_matrix:np.array, product_matrix:np.array, rounding_order:int = 5) -> None:
-        self.reactant_matrix = reactant_matrix
-        self.product_matrix = product_matrix
-        self.reaction_matrix = np.hstack((self.reactant_matrix, self.product_matrix))
-        self.rounding_order = rounding_order
+        self.reactant_matrix:np.array = reactant_matrix
+        self.product_matrix:np.array = product_matrix
+        self.reaction_matrix:np.array = np.hstack((self.reactant_matrix, self.product_matrix))
+        self.rounding_order:int = rounding_order
 
     def auto_balance_reaction(self) -> list:
+        '''
+        A method that tries to automatically balance the chemical reaction
+        by 
+        '''
         try:
             coefficients = self.calculate_coefficients_Thorne()
             coefficients = self.roundUpCoefficients(coefficients, self.rounding_order)
@@ -44,6 +48,9 @@ class Balancer():
 
     @staticmethod
     def is_reaction_balanced(reactant_matrix:np.array, product_matrix:np.array, coefficients:list, tolerance:float = 1e-03) -> bool:
+        '''
+
+        '''
         reactants = np.multiply(reactant_matrix.T, np.array(coefficients)[:reactant_matrix.shape[1], None])
         products = np.multiply(product_matrix.T, np.array(coefficients)[reactant_matrix.shape[1]:, None])
         if np.allclose(reactants.sum(axis=0), products.sum(axis=0), rtol=tolerance):

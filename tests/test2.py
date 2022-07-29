@@ -1,4 +1,5 @@
 from chemsynthcalc import ChemicalFormula
+from chemsynthcalc import ChemicalReaction
 
-formula = ChemicalFormula("K2SO4")
-print(formula.molar_mass)
+reaction = ChemicalFormula("H2O")
+print(reaction.molar_mass)
