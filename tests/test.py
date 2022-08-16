@@ -24,6 +24,7 @@ for i, reaction in enumerate(test_data):
     print(Balancer.is_reaction_balanced(chemical_reaction.reactant_matrix, chemical_reaction.product_matrix, reaction[1]))
     coefficients = chemical_reaction.coefficients
     print(coefficients)
+    print(chemical_reaction.algorithm)
     try:
         assert coefficients == reaction[1]
         print('done')
