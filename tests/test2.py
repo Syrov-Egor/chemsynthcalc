@@ -1,5 +1,7 @@
-from chemsynthcalc import ChemicalFormula
-from chemsynthcalc import ChemicalReaction
+import sys
+sys.path.append('./src')
 
-reaction = ChemicalReaction("KMnO4+MnSO4+H2O=MnO2+K2SO4+H2SO4")
-print(reaction)
+from chemsynthcalc import ChemicalFormula
+
+formula = ChemicalFormula("H2O")
+print(formula)

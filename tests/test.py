@@ -1,10 +1,10 @@
 import csv
 import ast
-
+import sys
+sys.path.append('./src')
 from chemsynthcalc import ChemicalFormula
 from chemsynthcalc import ChemicalReaction
 from chemsynthcalc.reaction_balance import Balancer
-import sys
 
 orig_stdout = sys.stdout
 #f = open('out.txt', 'w')

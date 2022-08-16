@@ -60,4 +60,4 @@ reaction_string = "KMnO4+MnSO4+H2O=MnO2+K2SO4+H2SO4"
 reaction = ChemicalReaction(reaction_string)
 ```
 ## License
-The code is provided under the MIT license
+The code is provided under the MIT license.

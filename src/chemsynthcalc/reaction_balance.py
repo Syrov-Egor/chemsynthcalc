@@ -21,7 +21,8 @@ class Balancer():
     def auto_balance_reaction(self) -> list:
         '''
         A method that tries to automatically balance the chemical reaction
-        by 
+        by sequentially applying the three calculation methods to the reaction matrix:
+        a Thorne algorithm, a Risteski algorithm and combinatorial search algorithm.
         '''
         try:
             coefficients = self.calculate_coefficients_Thorne()
@@ -41,11 +42,11 @@ class Balancer():
                 try:
                     coefficients = self.calculate_coefficients_combinatorial()
                     if self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, coefficients):
-                        return coefficients, "combinational search"
+                        return coefficients, "Combinational search"
                 except:
                     print("Cannot equalize this reaction...")
                     return []
-
+    
     @staticmethod
     def is_reaction_balanced(reactant_matrix:np.array, product_matrix:np.array, coefficients:list, tolerance:float = 1e-03) -> bool:
         '''
