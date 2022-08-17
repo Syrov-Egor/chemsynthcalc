@@ -2,6 +2,7 @@ import sys
 import time
 import numpy as np
 from warnings import warn
+from functools import cached_property
 from .chemical_formula import ChemicalFormula
 from .calculate_mass import MassCalculation
 from .reaction_matrix import ChemicalReactionMatrix
@@ -14,13 +15,21 @@ class ChemicalReaction():
     Takes a reaction string as an input, an index of target compound (for calculation of masses), 
     mode string (for calculating coefficients), target compound mass and rounding order.
     '''
-    def __init__(self, reaction:str, target:int = 0, mode:str = "balance", target_mass:float = 1.0, rounding_order:int = 5) -> None:
+    def __init__(self, 
+    reaction:str, 
+    target:int = 0, 
+    mode:str = "balance",
+    target_mass:float = 1.0, 
+    rounding_order:int = 8,
+    max_comb_coefficient:int = 10
+     ) -> None:
         self.rounding_order:int = rounding_order
         self.possible_reaction_separators:list[str] = ['=', '<->', '->', '<>', '>']
         self.reactant_separator:str = '+'
-        self.types_of_modes:list[str] = ["force", "check", "balance"]
+        self.types_of_modes:list[str] = ["force", "check", "balance", "combinatorial"]
         self.temp_reaction:str = reaction.replace(" ", "")
-        self.algorithm = None
+        self.algorithm:str = ""
+        self.max_comb_coefficient:int = max_comb_coefficient
         if mode in self.types_of_modes:
             self.mode:str = mode
         else:
@@ -40,7 +49,7 @@ class ChemicalReaction():
     def __str__(self):
         return str(self.reaction)
 
-    @property
+    @cached_property
     def reaction(self) -> str:
         '''
         Initial reaction string with validity check.
@@ -50,7 +59,7 @@ class ChemicalReaction():
         else:
             raise ValueError("Incorrect reaction")
 
-    @property
+    @cached_property
     def separator(self) -> str:
         '''
         Separator between reactants and products of chemical reaction.
@@ -60,7 +69,7 @@ class ChemicalReaction():
         else:
             raise ValueError("Incorrect reaction")
 
-    @property
+    @cached_property
     def reactants(self) -> list:
         '''
         List of initially sptlitted reactants (left side of the reaction string).
@@ -69,7 +78,7 @@ class ChemicalReaction():
         '''
         return self.reaction.split(self.separator)[0].split(self.reactant_separator)
 
-    @property
+    @cached_property
     def products(self) -> list:
         '''
         List of initially sptlitted products (right side of the reaction string).
@@ -78,14 +87,14 @@ class ChemicalReaction():
         '''
         return self.reaction.split(self.separator)[1].split(self.reactant_separator)
 
-    @property
+    @cached_property
     def compounds(self) -> list:
         '''
         List of all initially sptlitted products (left side and right side).
         '''
         return self.reactants+self.products
 
-    @property
+    @cached_property
     def initial_coefficients(self) -> list:
         '''
         List of initial coefficients striped from the compounds 
@@ -94,7 +103,7 @@ class ChemicalReaction():
         '''
         return [stripe_formula_from_coefficients(compound)[0] for compound in self.compounds]
     
-    @property
+    @cached_property
     def formulas(self) -> list:
         '''
         Decomposition of list of formulas from the reaction string:
@@ -104,14 +113,14 @@ class ChemicalReaction():
         striped = [stripe_formula_from_coefficients(compound)[1] for compound in self.compounds]
         return [ChemicalFormula(formula) for formula in striped]
 
-    @property
+    @cached_property
     def parsed_formulas(self) -> list:
         '''
         List of parsed formulas of ChemicalFormula objects list.
         '''
         return [compound.parsed_formula for compound in self.formulas]
 
-    @property
+    @cached_property
     def matrix(self) -> np.array:
         '''
         The first implementation of reaction matrix method is probably
@@ -130,7 +139,7 @@ class ChemicalReaction():
         '''
         return ChemicalReactionMatrix(self.parsed_formulas).create_reaction_matrix()
 
-    @property
+    @cached_property
     def reactant_matrix(self) ->  np.array:
         '''
         Left half of the reaction matrix that consists only of
@@ -144,7 +153,7 @@ class ChemicalReaction():
         '''
         return self.matrix[:, :len(self.reactants)]
 
-    @property
+    @cached_property
     def product_matrix(self) ->  np.array:
         '''
         Right half of the reaction matrix that consists only of
@@ -158,7 +167,7 @@ class ChemicalReaction():
         '''
         return self.matrix[:, len(self.reactants):]
     
-    @property
+    @cached_property
     def molar_masses(self) -> list:
         '''
         List of molar masses (in g/mol) calculated from parsed 
@@ -166,7 +175,7 @@ class ChemicalReaction():
         '''
         return [compound.molar_mass for compound in self.formulas]
 
-    @property
+    @cached_property
     def coefficients(self) -> list:
         '''
         Returns coefficients of the chemical reaction. There are 3 possible
@@ -196,14 +205,22 @@ class ChemicalReaction():
 
         elif self.mode == "balance":
             try:
-                balance = Balancer(self.reactant_matrix, self.product_matrix).auto_balance_reaction()
+                balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order).auto_balance_reaction()
                 self.algorithm = balance[1]
                 return balance[0]
-            except:
-                print("Can't equalize this reaction")
-                return []
+            except Exception:
+                return
         
-    @property
+        elif self.mode == "combinatorial":
+            try:
+                balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order).calculate_coefficients_combinatorial(number_of_iterations=self.max_comb_coefficient)
+                self.algorithm = balance[1]
+                return balance[0]
+            except Exception:
+                print("Can't balance this reaction")
+                return
+        
+    @cached_property
     def final_reaction(self) -> str:
         '''
         Final reaction string with connotated formulas and 
@@ -220,7 +237,7 @@ class ChemicalReaction():
         final_reaction = final_reaction.replace(self.reactants[-1]+self.reactant_separator, self.reactants[-1]+self.separator)
         return final_reaction
     
-    @property
+    @cached_property
     def masses(self) -> list:
         '''
         List of masses (in grams) of the of formulas in reaction
@@ -254,7 +271,7 @@ class ChemicalReaction():
             print(self.matrix)
             print("mode:", self.mode)
             print("coefficients:", self.coefficients)
-            if self.mode == "balance":
+            if self.mode == "balance" or self.mode == "combinatorial":
                 print("balanced by", self.algorithm)
             if self.mode == "check":
                 print("reaction is balanced")
