@@ -5,7 +5,7 @@ sys.path.append('./src')
 from chemsynthcalc import ChemicalFormula
 from chemsynthcalc import ChemicalReaction
 from chemsynthcalc.reaction_balance import Balancer
-
+import chemsynthcalc
 orig_stdout = sys.stdout
 #f = open('out.txt', 'w')
 #sys.stdout = f

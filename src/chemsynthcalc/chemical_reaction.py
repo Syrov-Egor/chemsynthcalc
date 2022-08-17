@@ -21,8 +21,8 @@ class ChemicalReaction():
     mode:str = "balance",
     target_mass:float = 1.0, 
     rounding_order:int = 8,
-    max_comb_coefficient:int = 10
-     ) -> None:
+    max_comb_coefficient:int = 10) -> None:
+
         self.rounding_order:int = rounding_order
         self.possible_reaction_separators:list[str] = ['=', '<->', '->', '<>', '>']
         self.reactant_separator:str = '+'
@@ -258,7 +258,7 @@ class ChemicalReaction():
                     return separator
         return False
     
-    def print_results(self, to_file:bool=False) -> None:
+    def print_results(self, to_file:bool=False, print_rounding_order:int = 4) -> None:
         '''
         Method to print a final result of calculations.
         By default prints into terminal; if tofile flag
@@ -278,8 +278,11 @@ class ChemicalReaction():
             print("final_reaction:", self.final_reaction)
             print("target:", self.formulas[self.target])
             for i, formula in enumerate(self.formulas):
-                print("%s: M = %s g/mol, m = %s g" %(formula, self.molar_masses[i], self.masses[i]))
-       
+                print("%s: M = %s g/mol, m = %s g" % (
+                    formula,
+                    '%.{0}f'.format(print_rounding_order) % round(self.molar_masses[i], print_rounding_order),
+                    '%.{0}f'.format(print_rounding_order) % round(self.masses[i], print_rounding_order)))
+                    
         filename:str = "chemsynthcalc_output_%s.txt" % time.time_ns()
         orig_stdout = sys.stdout
         if to_file:

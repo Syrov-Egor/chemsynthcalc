@@ -6,12 +6,8 @@ sys.path.append('./src')
 from chemsynthcalc import ChemicalFormula, ChemicalReaction
 from chemsynthcalc.reaction_balance import Balancer
 
-formula = ChemicalFormula("H2O")
-print(formula.molar_mass)
-reaction = ChemicalReaction("AsH3+KMnO4+H2SO4=H3AsO4+K2SO4+MnSO4+H2O", mode="combinatorial", max_comb_coefficient=12)
-reaction.print_results()
+reaction = ChemicalReaction("RbNO3+La2O3+Nb2O5+NaNO3=RbLaNaNb3O10+NO2+O2")
 
+reaction.print_results(print_rounding_order = 4)
 
-#balancer = Balancer(reaction.reactant_matrix, reaction.product_matrix)
-#print(Balancer.is_reaction_balanced(reaction.reactant_matrix, reaction.product_matrix, [5,2,3,5,2,1,8]))
-#print(balancer.auto_balance_reaction())
+#print(round(1.255, 1))
