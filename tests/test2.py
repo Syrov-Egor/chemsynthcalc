@@ -6,8 +6,14 @@ sys.path.append('./src')
 from chemsynthcalc import ChemicalFormula, ChemicalReaction
 from chemsynthcalc.reaction_balance import Balancer
 
-reaction = ChemicalReaction("RbNO3+La2O3+Nb2O5+NaNO3=RbLaNaNb3O10+NO2+O2")
+reaction_string = "BaCO3 + Y2(CO3)3 + CuCO3 + O2 → YBa2Cu3O7 + CO2"
+reaction = ChemicalReaction(
+    reaction = reaction_string,
+    target = 0,
+    target_mass = 3,
+    mode = "balance",
+)
 
-reaction.print_results(print_rounding_order = 4)
+reaction.print_results(print_rounding_order=4)
 
 #print(round(1.255, 1))

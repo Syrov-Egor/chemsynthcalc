@@ -3,4 +3,4 @@
 - [ ] Rewrite a comb search algorithm
 - [ ] Add docs for balancing
 - [ ] Add hydrate notation support
-- [ ] Add normalization flag for coefficients
+- [x] Add normalization flag for coefficients

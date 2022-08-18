@@ -4,7 +4,6 @@ import numpy as np
 from warnings import warn
 from functools import cached_property
 from .chemical_formula import ChemicalFormula
-from .calculate_mass import MassCalculation
 from .reaction_matrix import ChemicalReactionMatrix
 from .reaction_balance import Balancer
 from .chemutils import stripe_formula_from_coefficients
@@ -16,7 +15,7 @@ class ChemicalReaction():
     mode string (for calculating coefficients), target compound mass and rounding order.
     '''
     def __init__(self, 
-    reaction:str, 
+    reaction:str = "", 
     target:int = 0, 
     mode:str = "balance",
     target_mass:float = 1.0, 
@@ -24,7 +23,7 @@ class ChemicalReaction():
     max_comb_coefficient:int = 10) -> None:
 
         self.rounding_order:int = rounding_order
-        self.possible_reaction_separators:list[str] = ['=', '<->', '->', '<>', '>']
+        self.possible_reaction_separators:list[str] = ['=', '<->', '->', '<>', '>', '→', '⇄']
         self.reactant_separator:str = '+'
         self.types_of_modes:list[str] = ["force", "check", "balance", "combinatorial"]
         self.temp_reaction:str = reaction.replace(" ", "")
@@ -54,6 +53,9 @@ class ChemicalReaction():
         '''
         Initial reaction string with validity check.
         '''
+        if self.temp_reaction == "":
+            raise ValueError("No reaction!")
+
         if self._is_reaction_string_valid():
             return self.temp_reaction
         else:
@@ -124,7 +126,7 @@ class ChemicalReaction():
     def matrix(self) -> np.array:
         '''
         The first implementation of reaction matrix method is probably
-        belongs to Blakley (https://doi.org/10.1021/ed059p728). In general,
+        belongs to [Blakley](https://doi.org/10.1021/ed059p728). In general,
         a matrix of chemical reaction is composed of coefficients of each
         atom in each compound, giving a 2D array. For example, a matrix of
         reaction KMnO4+HCl=MnCl2+Cl2+H2O+KCl is 
@@ -178,15 +180,17 @@ class ChemicalReaction():
     @cached_property
     def coefficients(self) -> list:
         '''
-        Returns coefficients of the chemical reaction. There are 3 possible
-        modes that class can run: 
+        Returns coefficients of the chemical reaction. There are 4 possible
+        modes that method can run: 
         1) force mode is when coefficients are entered by user in reaction 
         string and the calculation and the calculation takes place regardless 
         of reaction balance (it gives warning if reaction is not balanced); 
         2) check mode is basically the force mode but it will raise a
         error if reaction is not balanced and will not calculate masses); 
         3) balance mode uses one of three auto-balancing aglorithms described
-        in detail in Balancer class.
+        in detail in `Balancer` class.
+        4) combinatorial mode which solves the Diophantine equation
+        by enumerating vectors of coefficients.
 
         In the fist two cases, the coefficients are just stripped from original
         formulas entered by user. In case of balance mode, coefficients are
@@ -219,15 +223,23 @@ class ChemicalReaction():
             except Exception:
                 print("Can't balance this reaction")
                 return
-        
+    
     @cached_property
-    def final_reaction(self) -> str:
+    def normalized_coefficients(self) -> list:
+        '''
+        List of coefficients normalized on target compound
+        (target coefficient = 1)
+        '''
+        if self.coefficients[self.target] != 1.0:
+            normalized_coefficients = [coef/self.coefficients[self.target] for coef in self.coefficients]
+        return [int(i) if i.is_integer() else round(i, self.rounding_order) for i in normalized_coefficients]
+
+    def generate_final_reaction(self, coefs) -> str:
         '''
         Final reaction string with connotated formulas and 
         calculated coefficients.
         '''
         final_reaction = []
-        coefs = self.coefficients
         for i, compound in enumerate(self.formulas):
             if coefs[i] != 1 or coefs[i] != 1.0:
                 final_reaction.append(str(coefs[i])+str(compound))
@@ -236,14 +248,29 @@ class ChemicalReaction():
         final_reaction = (self.reactant_separator).join(final_reaction)
         final_reaction = final_reaction.replace(self.reactants[-1]+self.reactant_separator, self.reactants[-1]+self.separator)
         return final_reaction
+
+    @cached_property
+    def final_reaction(self) -> str:
+        return self.generate_final_reaction(self.coefficients)
+
+    @cached_property
+    def final_reaction_normalized(self) -> str:
+        return self.generate_final_reaction(self.normalized_coefficients)
     
     @cached_property
     def masses(self) -> list:
         '''
         List of masses (in grams) of the of formulas in reaction
-        calculated with coefficients obtained by any of 3 methods.
+        calculated with coefficients obtained by any of 4 methods.
+        Calculates masses by calculating amount of substance nu (nu=mass/molar mass).
+        Coefficients of reaction are normalized to the target. After nu of target compound is
+        calculated, it broadcasted to other compound (with respect to its coefficients).
         '''
-        return MassCalculation(self.coefficients, self.molar_masses, self.target, self.target_mass, self.rounding_order).calculate_masses()
+        nu = self.target_mass/self.molar_masses[self.target]
+        masses = [round(molar*nu*self.normalized_coefficients[i], self.rounding_order) 
+        for i, molar in enumerate(self.molar_masses)]
+
+        return masses
         
     def _is_reaction_string_valid(self) -> bool:
         '''
@@ -271,12 +298,14 @@ class ChemicalReaction():
             print(self.matrix)
             print("mode:", self.mode)
             print("coefficients:", self.coefficients)
+            print("normalized coefficients:", self.normalized_coefficients)
             if self.mode == "balance" or self.mode == "combinatorial":
                 print("balanced by", self.algorithm)
             if self.mode == "check":
                 print("reaction is balanced")
-            print("final_reaction:", self.final_reaction)
             print("target:", self.formulas[self.target])
+            print("final reaction:", self.final_reaction)
+            print("final reaction normalized:", self.final_reaction_normalized)
             for i, formula in enumerate(self.formulas):
                 print("%s: M = %s g/mol, m = %s g" % (
                     formula,
