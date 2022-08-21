@@ -67,5 +67,5 @@ def intify_coefficients(coefficients:list) -> list:
     maximum_lenght = max([len(str(i).split('.')[1]) for i in floats])
     coefficients = [int(i*maximum_lenght*10) for i in coefficients]
     divider = reduce(gcd, coefficients)
-    coefficients = [i/divider for i in coefficients]
+    coefficients = [int(i/divider) for i in coefficients]
     return coefficients

@@ -4,7 +4,6 @@ A Python package for the calculation of the necessary masses of substances for c
 ## Prerequisites
 * [Python](https://www.python.org/downloads/) 3.8+
 * [NumPy](https://numpy.org/)
-* [SciPy](https://scipy.org/)
 
 ## Installation
 Install from [pypi](https://pypi.org/):
@@ -30,7 +29,7 @@ reaction = ChemicalReaction(
 )
 ```
 
-Now, to perform automatic calculation, all we need to do is put:
+Now, to perform automatic calculation, all we need to do is to put:
 ```Python
 reaction.print_results(print_rounding_order=4) # assuming we use analytical balances with 4 digits presicion
 ```
