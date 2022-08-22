@@ -30,7 +30,8 @@ class ChemicalFormula():
         Order of atoms in dictionary is random due to the nature 
         of dictionaries in Python.
         '''
-        return ChemicalFormulaParser(self.formula).parse_formula()
+        parsed = ChemicalFormulaParser(self.formula).parse_formula()
+        return {k: round(v, self.rounding_order+3) for k, v in parsed.items()}
 
     @cached_property
     def molar_mass(self) -> float:

@@ -12,11 +12,30 @@ class ChemicalFormulaParser():
     Atoms in the output dict are in the random order due to the nature of dicts in Python
     '''
     def __init__(self, formula:str) -> None:
-        self.atom_regex:str = '([A-Z][a-z]*)((\d+(\.\d+)?)*)'
+        self.atom_regex:str = '([A-Z][a-z]*)'
+        self.coefficient_regex:str = '((\d+(\.\d+)?)*)'
+        self.atom_and_coefficient_regex:str = self.atom_regex + self.coefficient_regex
         self.opener_brackets:str = '({['
         self.closer_brackets:str = ')}]'
+        self.adduct_symbols:str = '*·•'
         self.formula:str = formula
         self.list_of_atoms:list = [x[0] for x in periodic_table]
+
+    def __transform_adduct(self, formula:str) -> str:
+        '''
+        Transform adduct notation in formula to general
+        brackets notation.
+        '''
+        transformed_formula = formula
+        for i, token in enumerate(formula):
+            if token in self.adduct_symbols:
+                m = match(self.coefficient_regex, formula[i+1:]).group(0)
+                if m:
+                    coef = str(m)
+                else:
+                    coef = ''
+                transformed_formula = formula[:i]+"("+formula[i+1+len(coef):]+")"+str(coef)
+        return transformed_formula
     
     def __dictify(self, tuples:tuple) -> dict:
         '''
@@ -54,13 +73,13 @@ class ChemicalFormulaParser():
 
             if token in self.closer_brackets:
                 # Check for an index for this part
-                m = match('(\d+(\.\d+)?)*', formula[i+1:])
-                if m:
-                    weight = float(m.group(0))
-                    i += len(m.group(0))
+                m = match(self.coefficient_regex, formula[i+1:]).group(0)
+                if m != '':
+                    weight = float(m)
+                    i += len(m)
                 else:
                     weight = 1
-                submol = self.__dictify(findall(self.atom_regex, ''.join(q)))
+                submol = self.__dictify(findall(self.atom_and_coefficient_regex, ''.join(q)))
                 return self.__fuse(mol, submol, weight), i
 
             elif token in self.opener_brackets:
@@ -74,14 +93,30 @@ class ChemicalFormulaParser():
             i+=1
 
         # Fuse in all that's left at base level
-        return self.__fuse(mol, self.__dictify(findall(self.atom_regex, ''.join(q)))), i
+        return self.__fuse(mol, self.__dictify(findall(self.atom_and_coefficient_regex, ''.join(q)))), i
 
     def is_brackets_balanced(self) -> bool:
         '''
         Check if all sort of brackets come in pairs
         '''
         c = Counter(self.formula)
-        return c['['] == c[']'] and c['{'] == c['}'] and c['('] == c[')']
+        bracket_counter = c['['] == c[']'] and c['{'] == c['}'] and c['('] == c[')']
+
+        return bracket_counter
+
+    def is_adduct_one(self) -> bool:
+        '''
+        Check if there is only one adduct in formula
+        '''
+        c = Counter(self.formula)
+        i = 0
+        for adduct in self.adduct_symbols:
+            if c[adduct] > 0:
+                i+=c[adduct]
+        if i <= 1:
+            return True
+        else:
+            return False
     
     def are_atoms_legal(self, parsed) -> None:
         for atom in list(parsed.keys()):
@@ -95,6 +130,17 @@ class ChemicalFormulaParser():
         '''
         if not self.is_brackets_balanced():
             raise ValueError("The brackers are not balanced ![{]$[&?)]}!]")
-        parsed = self.__parse(self.formula)[0]
+        
+        if not self.is_adduct_one():
+           raise ValueError("More than one adduct in formula")
+
+        transformed = self.__transform_adduct(self.formula)
+        parsed = self.__parse(transformed)[0]
         self.are_atoms_legal(parsed)
-        return parsed
+        # make an ordered atoms dict
+        atoms_list = findall("([A-Z][a-z]*)", self.formula)
+        atoms_dict = dict.fromkeys(atoms_list)
+        output = {}
+        for atom in atoms_dict.keys():
+            output[atom] = parsed.get(atom)
+        return output
