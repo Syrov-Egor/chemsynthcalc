@@ -1,5 +1,6 @@
 import sys
 import time
+import re
 import numpy as np
 from warnings import warn
 from functools import cached_property
@@ -20,15 +21,17 @@ class ChemicalReaction():
     mode:str = "balance",
     target_mass:float = 1.0, 
     rounding_order:int = 8,
-    max_comb_coefficient:int = 10) -> None:
+    max_comb:int = 1e8) -> None:
 
         self.rounding_order:int = rounding_order
-        self.possible_reaction_separators:list[str] = ['=', '<->', '->', '<>', '>', '→', '⇄']
+        #separator order is important
+        self.allowed_characters = '[^a-zA-Z0-9.({[)}]*·•=<->→⇄]'
+        self.possible_reaction_separators:list[str] = ['==', '=', '<->', '->', '<>', '>', '→', '⇄']
         self.reactant_separator:str = '+'
         self.types_of_modes:list[str] = ["force", "check", "balance", "combinatorial"]
         self.temp_reaction:str = reaction.replace(" ", "")
         self.algorithm:str = ""
-        self.max_comb_coefficient:int = max_comb_coefficient
+        self.max_comb:int = max_comb
         if mode in self.types_of_modes:
             self.mode:str = mode
         else:
@@ -216,13 +219,13 @@ class ChemicalReaction():
                 return
         
         elif self.mode == "combinatorial":
-            try:
-                balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order).calculate_coefficients_combinatorial(number_of_iterations=self.max_comb_coefficient)
+            #try:
+                balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order).calculate_coefficients_combinatorial(max_number_of_iterations=self.max_comb)
                 self.algorithm = balance[1]
                 return balance[0]
-            except Exception:
-                print("Can't balance this reaction")
-                return
+            #except Exception:
+                #print("Can't balance this reaction")
+                #return
     
     @cached_property
     def normalized_coefficients(self) -> list:
@@ -279,6 +282,7 @@ class ChemicalReaction():
         in possible_reaction_separators attribute) AND a 
         reactant_separator (+).
         '''
+
         for separator in self.possible_reaction_separators:
             if self.temp_reaction.find(separator) != -1 and self.temp_reaction.find(self.reactant_separator) != -1:
                 if self.temp_reaction.split(separator)[1] != '':

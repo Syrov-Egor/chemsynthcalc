@@ -1,4 +1,6 @@
+from math import prod
 import numpy as np
+import gc
 from fractions import Fraction
 from .chemutils import find_lcm, find_gcd
 
@@ -182,8 +184,8 @@ class Balancer():
         the MP pseudoinverse of A and B is the product matrix.
         3) Then, vector y (coefficients of products) is equal to
         (I-G^-G)u. 
-        4) Vector x (coefficients of reactants) is equal
-        to A^-By + (I-A^-A)v, where u and v are columns of ones.
+        4) Vector x (coefficients of reactants) is equal to 
+        A^-By + (I-A^-A)v, where u and v are columns of ones.
 
         Note:
         This method is more general than Thorne method, although it has some
@@ -204,7 +206,87 @@ class Balancer():
         coefs = np.squeeze(np.asarray(np.hstack((x_vector, y_vector)))).tolist()
         return coefs
 
-    def calculate_coefficients_combinatorial(self, number_of_iterations:int = 10) -> list:
+    def calculate_coefficients_combinatorial(self, max_number_of_iterations:int = 1e8) -> list:
+        '''
+        Finds a solution solution of a Diophantine matrix equation
+        by simply enumerating of all possible solutions of number_of_iterations
+        coefficients. The solution space is created by Cartesian product
+        (in this case, np.meshgrid function), therefore it is very 
+        limited by memory. There must a better, clever and fast solution 
+        to this.
+
+        Note:
+        All possible variations of coefficients vectors are
+        `combinations = max_coefficients**number_of_compounds`
+        therefore this method is most effective for reaction with
+        small numbers of compounds.
+        '''
+        ubyte = 127
+        number_of_compounds = self.reaction_matrix.shape[1]
+        number_of_iterations = int(max_number_of_iterations**(1/number_of_compounds))
+
+        if number_of_iterations > ubyte:
+            number_of_iterations = ubyte
+    
+        trans_reaction_matrix = (self.reaction_matrix).T
+        lenght = self.reactant_matrix.shape[1]
+        old_reactants = trans_reaction_matrix[:lenght]
+        old_products = trans_reaction_matrix[lenght:]
+        cart_array = (np.arange(1, number_of_iterations+1, dtype='ubyte'), )*number_of_compounds
+        permuted = np.array(np.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
+        reactants_vectors = permuted[:, :lenght]
+        products_vectors = permuted[:, lenght:]
+        del permuted
+        gc.collect()
+        print("product calculated")
+        broadcasted = np.broadcast_to(old_reactants, reactants_vectors.shape[1])
+        print(broadcasted)
+        print("")
+        print("No solution found")
+        return None, "Combinatorial algorithm"
+
+    def calculate_coefficients_combinatorial2(self, max_number_of_iterations:int = 1e8) -> list:
+        '''
+        Finds a solution solution of a Diophantine matrix equation
+        by simply enumerating of all possible solutions of number_of_iterations
+        coefficients. The solution space is created by Cartesian product
+        (in this case, np.meshgrid function), therefore it is very 
+        limited by memory. There must a better, clever and fast solution 
+        to this.
+
+        Note:
+        All possible variations of coefficients vectors are
+        `combinations = max_coefficients**number_of_compounds`
+        therefore this method is most effective for reaction with
+        small numbers of compounds.
+        '''
+        number_of_compounds = self.reaction_matrix.shape[1]
+        number_of_iterations = int(max_number_of_iterations**(1/number_of_compounds))
+        trans_reaction_matrix = (self.reaction_matrix).T.astype('ubyte')
+        lenght = self.reactant_matrix.shape[1]
+        old_reactants = trans_reaction_matrix[:lenght]
+        old_products = trans_reaction_matrix[lenght:]
+        for i in range(2, number_of_iterations+2):
+            cart_array = (np.arange(1, i, dtype='ubyte'), )*number_of_compounds
+            permuted = np.array(np.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
+            filter = np.asarray([i-1], dtype='ubyte')
+            permuted = permuted[np.in1d(permuted[:, 1], filter)]
+            print("calculating %s of %s row" % (i-1, number_of_iterations), end='\r', flush=True)
+            reactants_vectors = permuted[:, :lenght]
+            products_vectors = permuted[:, lenght:]
+            del permuted
+            gc.collect()
+            for i in range(len(reactants_vectors)):
+                reactants = (old_reactants * reactants_vectors[i][:, None]).sum(axis=0)
+                products = (old_products * products_vectors[i][:, None]).sum(axis=0)
+                if np.array_equal(reactants, products):
+                    print("")
+                    return np.array(np.concatenate([reactants_vectors[i], products_vectors[i]])).tolist(), "Combinatorial algorithm"
+        print("")
+        print("No solution found")
+        return None, "Combinatorial algorithm"
+
+    def calculate_coefficients_combinatorial3(self, number_of_iterations:int = 10) -> list:
         '''
         Finds a solution solution of a Diophantine matrix equation
         by simply enumerating of all possible solutions of number_of_iterations
@@ -227,12 +309,14 @@ class Balancer():
         for i in range(2, number_of_iterations+2):
             cart_array = (np.arange(1, i),)*number_of_compounds
             permuted = np.array(np.meshgrid(*cart_array)).T.reshape(-1,number_of_compounds)
+            #print(permuted.nbytes)
             print("calculating %s of %s row" % (i-1, number_of_iterations), end='\r', flush=True)
             for item in permuted:
                 if i-1 in item:
                     reactants = np.multiply(old_reactants, np.array(item)[:lenght, None])
                     products = np.multiply(old_products, np.array(item)[lenght:, None])
                     if np.array_equal(reactants.sum(axis=0), products.sum(axis=0)):
+                        print("")
                         return np.array(item).tolist(), "Combinatorial algorithm"
         print("No solution found")
         return None
