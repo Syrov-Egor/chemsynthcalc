@@ -1,4 +1,3 @@
-from math import prod
 import numpy as np
 import gc
 from fractions import Fraction
@@ -223,6 +222,9 @@ class Balancer():
         '''
         ubyte = 127
         number_of_compounds = self.reaction_matrix.shape[1]
+        if number_of_compounds>10:
+            raise ValueError("Sorry, this method is for n of compound <=10")
+
         number_of_iterations = int(max_number_of_iterations**(1/number_of_compounds))
 
         if number_of_iterations > ubyte:
@@ -230,42 +232,8 @@ class Balancer():
     
         trans_reaction_matrix = (self.reaction_matrix).T
         lenght = self.reactant_matrix.shape[1]
-        old_reactants = trans_reaction_matrix[:lenght]
-        old_products = trans_reaction_matrix[lenght:]
-        cart_array = (np.arange(1, number_of_iterations+1, dtype='ubyte'), )*number_of_compounds
-        permuted = np.array(np.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
-        reactants_vectors = permuted[:, :lenght]
-        products_vectors = permuted[:, lenght:]
-        del permuted
-        gc.collect()
-        print("product calculated")
-        broadcasted = np.broadcast_to(old_reactants, reactants_vectors.shape[1])
-        print(broadcasted)
-        print("")
-        print("No solution found")
-        return None, "Combinatorial algorithm"
-
-    def calculate_coefficients_combinatorial2(self, max_number_of_iterations:int = 1e8) -> list:
-        '''
-        Finds a solution solution of a Diophantine matrix equation
-        by simply enumerating of all possible solutions of number_of_iterations
-        coefficients. The solution space is created by Cartesian product
-        (in this case, np.meshgrid function), therefore it is very 
-        limited by memory. There must a better, clever and fast solution 
-        to this.
-
-        Note:
-        All possible variations of coefficients vectors are
-        `combinations = max_coefficients**number_of_compounds`
-        therefore this method is most effective for reaction with
-        small numbers of compounds.
-        '''
-        number_of_compounds = self.reaction_matrix.shape[1]
-        number_of_iterations = int(max_number_of_iterations**(1/number_of_compounds))
-        trans_reaction_matrix = (self.reaction_matrix).T.astype('ubyte')
-        lenght = self.reactant_matrix.shape[1]
-        old_reactants = trans_reaction_matrix[:lenght]
-        old_products = trans_reaction_matrix[lenght:]
+        old_reactants = trans_reaction_matrix[:lenght].astype('ushort')
+        old_products = trans_reaction_matrix[lenght:].astype('ushort')
         for i in range(2, number_of_iterations+2):
             cart_array = (np.arange(1, i, dtype='ubyte'), )*number_of_compounds
             permuted = np.array(np.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
@@ -275,18 +243,26 @@ class Balancer():
             reactants_vectors = permuted[:, :lenght]
             products_vectors = permuted[:, lenght:]
             del permuted
+            reactants = (old_reactants[None, :, :] * reactants_vectors[:,:, None]).sum(axis=1)
+            products = (old_products[None, :, :] * products_vectors[:,:, None]).sum(axis=1)
+            diff = np.subtract(reactants, products)
+            print(diff.dtype)
+            del reactants
+            del products
+            where = np.where(~diff.any(axis=1))[0]
+            if np.any(where):
+                if where.shape[0] == 1:
+                    idx = where
+                else:
+                    idx = where[0]
+                print("")
+                return np.array(np.concatenate((reactants_vectors[idx].flatten(), products_vectors[idx].flatten()))).tolist(), "Combinatorial algorithm"
             gc.collect()
-            for i in range(len(reactants_vectors)):
-                reactants = (old_reactants * reactants_vectors[i][:, None]).sum(axis=0)
-                products = (old_products * products_vectors[i][:, None]).sum(axis=0)
-                if np.array_equal(reactants, products):
-                    print("")
-                    return np.array(np.concatenate([reactants_vectors[i], products_vectors[i]])).tolist(), "Combinatorial algorithm"
         print("")
         print("No solution found")
         return None, "Combinatorial algorithm"
 
-    def calculate_coefficients_combinatorial3(self, number_of_iterations:int = 10) -> list:
+    def calculate_coefficients_combinatorial_old(self, max_number_of_iterations:int = 1e8) -> list:
         '''
         Finds a solution solution of a Diophantine matrix equation
         by simply enumerating of all possible solutions of number_of_iterations
@@ -301,22 +277,30 @@ class Balancer():
         therefore this method is most effective for reaction with
         small numbers of compounds.
         '''
-        trans_reaction_matrix = (self.reaction_matrix).T
-        lenght = self.reactant_matrix.shape[1]
+
+        ubyte = 127
         number_of_compounds = self.reaction_matrix.shape[1]
-        old_reactants = trans_reaction_matrix[:lenght]
-        old_products = trans_reaction_matrix[lenght:]
+        if number_of_compounds>10:
+            raise ValueError("Sorry, this method is for n of compounds <= 10")
+
+        number_of_iterations = int(max_number_of_iterations**(1/number_of_compounds))
+
+        if number_of_iterations > ubyte:
+            number_of_iterations = ubyte
+    
+        trans_reaction_matrix = (self.reaction_matrix).T.astype('short')
+        lenght = self.reactant_matrix.shape[1]
         for i in range(2, number_of_iterations+2):
-            cart_array = (np.arange(1, i),)*number_of_compounds
-            permuted = np.array(np.meshgrid(*cart_array)).T.reshape(-1,number_of_compounds)
-            #print(permuted.nbytes)
-            print("calculating %s of %s row" % (i-1, number_of_iterations), end='\r', flush=True)
-            for item in permuted:
-                if i-1 in item:
-                    reactants = np.multiply(old_reactants, np.array(item)[:lenght, None])
-                    products = np.multiply(old_products, np.array(item)[lenght:, None])
-                    if np.array_equal(reactants.sum(axis=0), products.sum(axis=0)):
-                        print("")
-                        return np.array(item).tolist(), "Combinatorial algorithm"
+            cart_array = (np.arange(1, i, dtype='ubyte'), )*number_of_compounds
+            permuted = np.array(np.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
+            filter = np.asarray([i-1], dtype='ubyte')
+            vectors = permuted[np.in1d(permuted[:, 1], filter)]
+            print("calculating %s of %s max coef" % (i-1, number_of_iterations), end='\r', flush=True)
+            for i in range(vectors.shape[0]):
+                summ = trans_reaction_matrix * vectors[i][:, None]
+                if np.array_equal(summ[:lenght].sum(axis=0), summ[lenght:].sum(axis=0)):
+                    print("")
+                    return vectors[i].tolist(), "Combinatorial algorithm"
+        print("")
         print("No solution found")
-        return None
+        return None, "Combinatorial algorithm"

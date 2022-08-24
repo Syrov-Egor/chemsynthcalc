@@ -1,6 +1,9 @@
 # TODO
 - [ ] Add docs to \_\_init__.py
-- [ ] Rewrite a comb search algorithm
+- [x] Rewrite a comb search algorithm
+  - Dot product instead of sum?
+  - get rid of for loops
+  - check equality in one array
 - [x] Add docs for balancing
 - [x] Add hydrate notation support
 - [x] Add normalization flag for coefficients
