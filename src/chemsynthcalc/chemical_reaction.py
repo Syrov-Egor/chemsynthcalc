@@ -219,13 +219,13 @@ class ChemicalReaction():
                 return
         
         elif self.mode == "combinatorial":
-            #try:
+            try:
                 balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order).calculate_coefficients_combinatorial(max_number_of_iterations=self.max_comb)
                 self.algorithm = balance[1]
                 return balance[0]
-            #except Exception:
-                #print("Can't balance this reaction")
-                #return
+            except Exception:
+                print("Can't balance this reaction")
+                return
     
     @cached_property
     def normalized_coefficients(self) -> list:

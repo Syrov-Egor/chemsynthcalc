@@ -246,7 +246,6 @@ class Balancer():
             reactants = (old_reactants[None, :, :] * reactants_vectors[:,:, None]).sum(axis=1)
             products = (old_products[None, :, :] * products_vectors[:,:, None]).sum(axis=1)
             diff = np.subtract(reactants, products)
-            print(diff.dtype)
             del reactants
             del products
             where = np.where(~diff.any(axis=1))[0]
@@ -261,6 +260,69 @@ class Balancer():
         print("")
         print("No solution found")
         return None, "Combinatorial algorithm"
+
+    """
+    import cupy as cp
+    def calculate_coefficients_combinatorial(self, max_number_of_iterations:int = 1e8) -> list:
+        '''
+        A CuPy GPU-accelerated version of the same combinatorial
+        algorithm. Requires CUDA toolkid to work. GPU gives around
+        10x acceleration.
+
+        Finds a solution solution of a Diophantine matrix equation
+        by simply enumerating of all possible solutions of number_of_iterations
+        coefficients. The solution space is created by Cartesian product
+        (in this case, cp.meshgrid function), therefore it is very 
+        limited by memory. There must a better, clever and fast solution 
+        to this.
+
+        Note:
+        All possible variations of coefficients vectors are
+        `combinations = max_coefficients**number_of_compounds`
+        therefore this method is most effective for reaction with
+        small numbers of compounds.
+        '''
+        ubyte = 127
+        number_of_compounds = self.reaction_matrix.shape[1]
+        if number_of_compounds>10:
+            raise ValueError("Sorry, this method is for n of compound <=10")
+
+        number_of_iterations = int(max_number_of_iterations**(1/number_of_compounds))
+
+        if number_of_iterations > ubyte:
+            number_of_iterations = ubyte
+    
+        trans_reaction_matrix = (self.reaction_matrix).T
+        lenght = self.reactant_matrix.shape[1]
+        old_reactants = cp.asarray(trans_reaction_matrix[:lenght].astype('ushort'))
+        old_products = cp.asarray(trans_reaction_matrix[lenght:].astype('ushort'))
+        for i in range(2, number_of_iterations+2):
+            cart_array = (cp.arange(1, i, dtype='ubyte'), )*number_of_compounds
+            permuted = cp.array(cp.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
+            filter = cp.asarray([i-1], dtype='ubyte')
+            permuted = permuted[cp.in1d(permuted[:, 1], filter)]
+            print("calculating %s of %s row" % (i-1, number_of_iterations), end='\r', flush=True)
+            reactants_vectors = cp.asarray(permuted[:, :lenght])
+            products_vectors = cp.asarray(permuted[:, lenght:])
+            del permuted
+            reactants = (old_reactants[None, :, :] * reactants_vectors[:,:, None]).sum(axis=1)
+            products = (old_products[None, :, :] * products_vectors[:,:, None]).sum(axis=1)
+            diff = cp.subtract(reactants, products)
+            del reactants
+            del products
+            where = cp.where(~diff.any(axis=1))[0]
+            if cp.any(where):
+                if where.shape[0] == 1:
+                    idx = where
+                else:
+                    idx = where[0]
+                print("")
+                return cp.array(cp.concatenate((reactants_vectors[idx].flatten(), products_vectors[idx].flatten()))).tolist(), "Combinatorial algorithm"
+            gc.collect()
+        print("")
+        print("No solution found")
+        return None, "Combinatorial algorithm"
+        """
 
     def calculate_coefficients_combinatorial_old(self, max_number_of_iterations:int = 1e8) -> list:
         '''

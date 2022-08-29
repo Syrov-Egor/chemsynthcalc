@@ -9,6 +9,10 @@ class ChemicalFormula():
     parsed_formula, molar_mass, mass_percent, atomic_percent,
     oxide_percent from this string using ChemicalFormulaParser and
     MolarMassCalculation classes.
+
+    Parameters:
+    * `formula:srt` - string of chemical formula
+    * `rounding_order:int` - value of rounding order (5 by default)
     '''
 
     def __init__(self, formula:str, rounding_order:int=5) -> None:
@@ -26,9 +30,7 @@ class ChemicalFormula():
         '''
         Returns parsed dictionary representation of formula string
         created by ChemicalFormulaParser. For example, if formula is
-        "K2SO4", then the parsed formula is {'S': 1.0, 'O': 4.0, 'K': 2.0}. 
-        Order of atoms in dictionary is random due to the nature 
-        of dictionaries in Python.
+        "K2SO4", then the parsed formula is {'K': 2.0, 'S': 1.0, 'O': 4.0}. 
         '''
         parsed = ChemicalFormulaParser(self.formula).parse_formula()
         return {k: round(v, self.rounding_order+3) for k, v in parsed.items()}
@@ -38,7 +40,7 @@ class ChemicalFormula():
         '''
         Molar mass of the formula, calculated from parsed formula
         using MolarMassCalculation. For example, molar mass of "K2SO4" 
-        parsed into {'S': 1.0, 'O': 4.0, 'K': 2.0} is 174.2592 g/mol.
+        parsed into {'K': 2.0, 'S': 1.0, 'O': 4.0} is 174.2592 g/mol.
         '''
         return round(MolarMassCalculation(self.parsed_formula).calculate_molar_mass(), self.rounding_order)
     
@@ -47,7 +49,7 @@ class ChemicalFormula():
         '''
         Calculates a mass percent (relative mass fraction)
         of atoms in parsed chemical formula. Return dictionary, for example
-        output for "K2SO4" is {'K': 44.87373, 'O': 36.72552, 'S': 18.40075}.
+        output for "K2SO4" is {'K': 44.87373, 'S': 18.40075, 'O': 36.72552}.
         The values of mass content are in % (with 100% sum), not fraction
         '''
         output = MolarMassCalculation(self.parsed_formula).calculate_mass_percent()
@@ -58,7 +60,7 @@ class ChemicalFormula():
         '''
         Calculates an atomic percent (relative molar fraction) 
         dictionary of atoms in parsed chemical formula. For example, 
-        output for "K2SO4" is {'S': 14.28571, 'K': 28.57143, 'O': 57.14286}.
+        output for "K2SO4" is {'K': 28.57143, 'S': 14.28571, 'O': 57.14286}.
         The values of mole content are in % (with 100% sum), not fraction
         '''
         output = MolarMassCalculation(self.parsed_formula).calculate_atomic_percent()

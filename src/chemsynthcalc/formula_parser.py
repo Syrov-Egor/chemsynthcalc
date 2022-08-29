@@ -1,4 +1,4 @@
-from re import findall, match
+from re import findall, match, compile
 from collections import Counter
 from .periodic_table import periodic_table
 
@@ -18,6 +18,7 @@ class ChemicalFormulaParser():
         self.opener_brackets:str = '({['
         self.closer_brackets:str = ')}]'
         self.adduct_symbols:str = '*·•'
+        self.allowed_symbols = r'[^A-Za-z0-9.({[)}\]*·•]'
         self.formula:str = formula
         self.list_of_atoms:list = [x[0] for x in periodic_table]
 
@@ -95,7 +96,11 @@ class ChemicalFormulaParser():
         # Fuse in all that's left at base level
         return self.__fuse(mol, self.__dictify(findall(self.atom_and_coefficient_regex, ''.join(q)))), i
 
-    def is_brackets_balanced(self) -> bool:
+    def character_check(self, strg):
+        search=compile(self.allowed_symbols).search
+        return not bool(search(strg))
+    
+    def are_brackets_balanced(self) -> bool:
         '''
         Check if all sort of brackets come in pairs
         '''
@@ -128,17 +133,23 @@ class ChemicalFormulaParser():
         '''
         Parse the formula and return a dict with occurences of each atom.
         '''
-        if not self.is_brackets_balanced():
+        if not self.character_check(self.formula):
+            raise ValueError("Invalid character(s) in the formula %s" % self.formula)
+
+        if not self.is_adduct_one():
+           raise ValueError("More than one adduct in the formula")
+
+        if not self.are_brackets_balanced():
             raise ValueError("The brackers are not balanced ![{]$[&?)]}!]")
         
-        if not self.is_adduct_one():
-           raise ValueError("More than one adduct in formula")
 
         transformed = self.__transform_adduct(self.formula)
         parsed = self.__parse(transformed)[0]
+        
         self.are_atoms_legal(parsed)
+
         # make an ordered atoms dict
-        atoms_list = findall("([A-Z][a-z]*)", self.formula)
+        atoms_list = findall(self.atom_regex, self.formula)
         atoms_dict = dict.fromkeys(atoms_list)
         output = {}
         for atom in atoms_dict.keys():
