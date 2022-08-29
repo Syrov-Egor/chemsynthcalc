@@ -9,3 +9,11 @@ different matrix methods.
 """
 from .chemical_formula import ChemicalFormula
 from .chemical_reaction import ChemicalReaction
+
+def run_test():
+    import unittest
+    loader = unittest.TestLoader()
+    start_dir = './test'
+    suite = loader.discover(start_dir)
+    runner = unittest.TextTestRunner()
+    runner.run(suite)

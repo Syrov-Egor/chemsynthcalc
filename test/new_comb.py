@@ -15,7 +15,7 @@ def convert_size(size_bytes):
    s = round(size_bytes / p, 2)
    return "%s %s" % (s, size_name[i])
 
-reaction_obj = ChemicalReaction('H2O2+KNO3+H2SO4=K2SO4+NO+Ho2O+O2', mode='combinatorial')
+reaction_obj = ChemicalReaction('H2O2+KNO3+H2SO4=K2SO4+NO+H2O+O2', mode='combinatorial', max_comb=1e8)
 #print(reaction_obj.coefficients)
 
 print(timeit.timeit(lambda: reaction_obj.coefficients))
