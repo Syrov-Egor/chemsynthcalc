@@ -8,5 +8,6 @@
 - [x] Add hydrate notation support
 - [x] Add normalization flag for coefficients
 - [ ] Add proper testing
-- [ ] Add advanced string checking both for `ChemicalFormula` and `Chemical Reaction`
+- [ ] Add advanced string checking both for `ChemicalFormula` and `ChemicalReaction`
 - [ ] Add JSON output
+- [x] Add balancing functonality to the  `ChemicalReaction` class

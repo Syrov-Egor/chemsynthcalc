@@ -1,6 +1,6 @@
 from .formula_parser import ChemicalFormulaParser
 from .molar_mass import MolarMassCalculation
-from functools import cached_property
+from functools import lru_cache
 
 class ChemicalFormula():
     '''
@@ -15,7 +15,10 @@ class ChemicalFormula():
     * `rounding_order:int` - value of rounding order (5 by default)
     '''
 
-    def __init__(self, formula:str, rounding_order:int=5) -> None:
+    def __init__(self, 
+    formula:str, 
+    rounding_order:int=5) -> None:
+    
         self.formula:str = formula
         self.rounding_order:int = rounding_order
 
@@ -25,7 +28,8 @@ class ChemicalFormula():
     def __str__(self) -> str:
         return str(self.formula)
 
-    @cached_property
+    @property
+    @lru_cache
     def parsed_formula(self) -> dict:
         '''
         Returns parsed dictionary representation of formula string
@@ -34,8 +38,9 @@ class ChemicalFormula():
         '''
         parsed = ChemicalFormulaParser(self.formula).parse_formula()
         return {k: round(v, self.rounding_order+3) for k, v in parsed.items()}
-
-    @cached_property
+    
+    @property
+    @lru_cache
     def molar_mass(self) -> float:
         '''
         Molar mass of the formula, calculated from parsed formula
@@ -44,7 +49,8 @@ class ChemicalFormula():
         '''
         return round(MolarMassCalculation(self.parsed_formula).calculate_molar_mass(), self.rounding_order)
     
-    @cached_property
+    @property
+    @lru_cache
     def mass_percent(self) -> dict:
         '''
         Calculates a mass percent (relative mass fraction)
@@ -55,7 +61,8 @@ class ChemicalFormula():
         output = MolarMassCalculation(self.parsed_formula).calculate_mass_percent()
         return {k: round(v, self.rounding_order) for k, v in output.items()}
 
-    @cached_property
+    @property
+    @lru_cache
     def atomic_percent(self) -> dict:
         '''
         Calculates an atomic percent (relative molar fraction) 
@@ -66,7 +73,8 @@ class ChemicalFormula():
         output = MolarMassCalculation(self.parsed_formula).calculate_atomic_percent()
         return {k: round(v, self.rounding_order) for k, v in output.items()}
 
-    @cached_property
+    @property
+    @lru_cache
     def oxide_percent(self)  -> dict:
         '''
         Calculates an oxide percent (relative fraction of elements oxides) 

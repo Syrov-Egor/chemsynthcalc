@@ -3,7 +3,7 @@ import time
 import re
 import numpy as np
 from warnings import warn
-from functools import cached_property
+from functools import cached_property, lru_cache
 from .chemical_formula import ChemicalFormula
 from .reaction_matrix import ChemicalReactionMatrix
 from .reaction_balance import Balancer
@@ -19,19 +19,20 @@ class ChemicalReaction():
     reaction:str = "", 
     target:int = 0, 
     mode:str = "balance",
-    target_mass:float = 1.0, 
+    target_mass:float = 1.0,
     rounding_order:int = 8,
-    max_comb:int = 1e8) -> None:
+    try_comb:bool = False
+    ) -> None:
 
         self.rounding_order:int = rounding_order
+        self.allowed_characters = r'[^a-zA-Z0-9.({[)}\]*·•=<->→⇄ ]'
         #separator order is important
-        self.allowed_characters = '[^a-zA-Z0-9.({[)}]*·•=<->→⇄]'
         self.possible_reaction_separators:list[str] = ['==', '=', '<->', '->', '<>', '>', '→', '⇄']
         self.reactant_separator:str = '+'
-        self.types_of_modes:list[str] = ["force", "check", "balance", "combinatorial"]
+        self.types_of_modes:list[str] = ["force", "check", "balance"]
         self.temp_reaction:str = reaction.replace(" ", "")
         self.algorithm:str = ""
-        self.max_comb:int = max_comb
+        self.try_comb:bool = try_comb
         if mode in self.types_of_modes:
             self.mode:str = mode
         else:
@@ -51,7 +52,8 @@ class ChemicalReaction():
     def __str__(self):
         return str(self.reaction)
 
-    @cached_property
+    @property
+    @lru_cache
     def reaction(self) -> str:
         '''
         Initial reaction string with validity check.
@@ -64,7 +66,8 @@ class ChemicalReaction():
         else:
             raise ValueError("Incorrect reaction")
 
-    @cached_property
+    @property
+    @lru_cache
     def separator(self) -> str:
         '''
         Separator between reactants and products of chemical reaction.
@@ -74,7 +77,8 @@ class ChemicalReaction():
         else:
             raise ValueError("Incorrect reaction")
 
-    @cached_property
+    @property
+    @lru_cache
     def reactants(self) -> list:
         '''
         List of initially sptlitted reactants (left side of the reaction string).
@@ -83,7 +87,8 @@ class ChemicalReaction():
         '''
         return self.reaction.split(self.separator)[0].split(self.reactant_separator)
 
-    @cached_property
+    @property
+    @lru_cache
     def products(self) -> list:
         '''
         List of initially sptlitted products (right side of the reaction string).
@@ -92,14 +97,16 @@ class ChemicalReaction():
         '''
         return self.reaction.split(self.separator)[1].split(self.reactant_separator)
 
-    @cached_property
+    @property
+    @lru_cache
     def compounds(self) -> list:
         '''
         List of all initially sptlitted products (left side and right side).
         '''
         return self.reactants+self.products
 
-    @cached_property
+    @property
+    @lru_cache
     def initial_coefficients(self) -> list:
         '''
         List of initial coefficients striped from the compounds 
@@ -108,7 +115,8 @@ class ChemicalReaction():
         '''
         return [stripe_formula_from_coefficients(compound)[0] for compound in self.compounds]
     
-    @cached_property
+    @property
+    @lru_cache
     def formulas(self) -> list:
         '''
         Decomposition of list of formulas from the reaction string:
@@ -118,14 +126,16 @@ class ChemicalReaction():
         striped = [stripe_formula_from_coefficients(compound)[1] for compound in self.compounds]
         return [ChemicalFormula(formula) for formula in striped]
 
-    @cached_property
+    @property
+    @lru_cache
     def parsed_formulas(self) -> list:
         '''
         List of parsed formulas of ChemicalFormula objects list.
         '''
         return [compound.parsed_formula for compound in self.formulas]
 
-    @cached_property
+    @property
+    @lru_cache
     def matrix(self) -> np.array:
         '''
         The first implementation of reaction matrix method is probably
@@ -144,8 +154,9 @@ class ChemicalReaction():
         '''
         return ChemicalReactionMatrix(self.parsed_formulas).create_reaction_matrix()
 
-    @cached_property
-    def reactant_matrix(self) ->  np.array:
+    @property
+    @lru_cache
+    def reactant_matrix(self) -> np.array:
         '''
         Left half of the reaction matrix that consists only of
         reactnats. For example, for reaction 
@@ -158,8 +169,9 @@ class ChemicalReaction():
         '''
         return self.matrix[:, :len(self.reactants)]
 
-    @cached_property
-    def product_matrix(self) ->  np.array:
+    @property
+    @lru_cache
+    def product_matrix(self) -> np.array:
         '''
         Right half of the reaction matrix that consists only of
         products. For example, for reaction 
@@ -172,7 +184,8 @@ class ChemicalReaction():
         '''
         return self.matrix[:, len(self.reactants):]
     
-    @cached_property
+    @property
+    @lru_cache
     def molar_masses(self) -> list:
         '''
         List of molar masses (in g/mol) calculated from parsed 
@@ -180,6 +193,52 @@ class ChemicalReaction():
         '''
         return [compound.molar_mass for compound in self.formulas]
 
+    def to_integer(self, coefficients:list) -> list:
+        '''
+        
+        '''
+        return [int(i) if i.is_integer() else i for i in coefficients]
+
+    def balance_reaction(self, algorithm:str = "Thorne", intify:bool = True, try_comb:bool = False, max_comb:int = 1e8) -> list:
+        '''
+        High-level function call for all balancing algorithms.
+        '''
+        if self.mode != "balance":
+            raise ValueError("Reaction balancing is only available in balance mode")
+
+        avaliable_algorithms:list[str] = ["Thorne", "Risteski", "Combinatorial"]
+        if algorithm not in avaliable_algorithms:
+            raise ValueError("There is no algorithm %s! Please choose between Thorne, Risteski and Combinatorial algorithms" % algorithm)
+        
+        balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order, intify, try_comb, max_comb)
+
+        if algorithm == "Thorne":
+            coefficients = balance.calculate_coefficients_Thorne()
+            if coefficients != None:
+                self.algorithm = "Thorne"
+                return coefficients
+            else:
+                print("Can't equalize this reaction by Thorne algorithm")
+                return None
+
+        elif algorithm == "Risteski":
+            coefficients = balance.calculate_coefficients_Risteski()
+            if coefficients != None:
+                self.algorithm = "Risteski"
+                return coefficients
+            else:
+                print("Can't equalize this reaction by Risteski algorithm")
+                return None
+
+        elif algorithm == "Combinatorial":
+            coefficients = balance.calculate_coefficients_Combinatorial()
+            if coefficients != None:
+                self.algorithm = "Combinatorial"
+                return coefficients
+            else:
+                print("Can't equalize this reaction by Combinatorial algorithm")
+                return None
+        
     @cached_property
     def coefficients(self) -> list:
         '''
@@ -202,42 +261,33 @@ class ChemicalReaction():
         if self.mode == "force":
             if not Balancer.is_reaction_balanced(self.reactant_matrix, self.product_matrix, self.initial_coefficients):
                 warn("This reaction is not balanced. Use the output at your own risk")
-            return [int(i) if i.is_integer() else i for i in self.initial_coefficients]
+            return self.to_integer(self.initial_coefficients)
 
         elif self.mode == "check":
             if Balancer.is_reaction_balanced(self.reactant_matrix, self.product_matrix, self.initial_coefficients):
-                return [int(i) if i.is_integer() else i for i in self.initial_coefficients]
+                return self.to_integer(self.initial_coefficients)
             else:
                 raise ValueError("This reaction is not balanced!")
 
         elif self.mode == "balance":
             try:
-                balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order).auto_balance_reaction()
+                balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order, True, self.try_comb).calculate_coefficients_auto()
                 self.algorithm = balance[1]
                 return balance[0]
             except Exception:
-                return
-        
-        elif self.mode == "combinatorial":
-            try:
-                balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order).calculate_coefficients_combinatorial(max_number_of_iterations=self.max_comb)
-                self.algorithm = balance[1]
-                return balance[0]
-            except Exception:
-                print("Can't balance this reaction")
-                return
-    
-    @cached_property
+                return None
+
+    @property
+    @lru_cache
     def normalized_coefficients(self) -> list:
         '''
         List of coefficients normalized on target compound
-        (target coefficient = 1)
+        (target coefficient = 1).
         '''
-        if self.coefficients[self.target] != 1.0:
-            normalized_coefficients = [coef/self.coefficients[self.target] for coef in self.coefficients]
+        normalized_coefficients = [coef/self.coefficients[self.target] for coef in self.coefficients]
         return [int(i) if i.is_integer() else round(i, self.rounding_order) for i in normalized_coefficients]
 
-    def generate_final_reaction(self, coefs) -> str:
+    def generate_final_reaction(self, coefs:list) -> str:
         '''
         Final reaction string with connotated formulas and 
         calculated coefficients.
@@ -252,19 +302,28 @@ class ChemicalReaction():
         final_reaction = final_reaction.replace(self.reactants[-1]+self.reactant_separator, self.reactants[-1]+self.separator)
         return final_reaction
 
-    @cached_property
+    @property
+    @lru_cache
     def final_reaction(self) -> str:
+        '''
+        Final representasion of reaction with coefficients.
+        '''
         return self.generate_final_reaction(self.coefficients)
 
-    @cached_property
+    @property
+    @lru_cache
     def final_reaction_normalized(self) -> str:
+        '''
+        Final representasion of reaction with normalized coefficients.
+        '''
         return self.generate_final_reaction(self.normalized_coefficients)
     
-    @cached_property
+    @property
+    @lru_cache
     def masses(self) -> list:
         '''
         List of masses (in grams) of the of formulas in reaction
-        calculated with coefficients obtained by any of 4 methods.
+        calculated with coefficients obtained by any of 3 methods.
         Calculates masses by calculating amount of substance nu (nu=mass/molar mass).
         Coefficients of reaction are normalized to the target. After nu of target compound is
         calculated, it broadcasted to other compound (with respect to its coefficients).
@@ -303,10 +362,12 @@ class ChemicalReaction():
             print("mode:", self.mode)
             print("coefficients:", self.coefficients)
             print("normalized coefficients:", self.normalized_coefficients)
-            if self.mode == "balance" or self.mode == "combinatorial":
-                print("balanced by", self.algorithm)
-            if self.mode == "check":
-                print("reaction is balanced")
+            if self.mode == "force":
+                print("balanced by user")
+            elif self.mode == "check":
+                print("balanced by user")
+            elif self.mode == "balance":
+                print("balanced by %s algorithm" % self.algorithm)
             print("target:", self.formulas[self.target])
             print("final reaction:", self.final_reaction)
             print("final reaction normalized:", self.final_reaction_normalized)

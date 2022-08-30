@@ -1,14 +1,16 @@
+
 import numpy as np
 import gc
+#import cupy as cp # in case of CuPy combinatorial function
+from .chemutils import find_gcd, find_lcm
 from fractions import Fraction
-from .chemutils import find_lcm, find_gcd
 
 class Balancer():
     '''
     A class for  balancing chemical equations automatically by different matrix methods.
-    Currently implemented: Thorne algorithm (see `calculate_coefficients_Thorne` method for details),
-    Risteski pseudo-inverse algorithm (see `calculate_coefficients_Risteski` method for details),
-    and naive combinational search algorithm (see `calculate_coefficients_combinatorial` for details).
+    Currently implemented: Thorne algorithm (see `Thorne_algorithm` method for details),
+    Risteski pseudo-inverse algorithm (see `Risteski_algorithm` method for details),
+    and naive combinational search algorithm (see `Combinatorial_algorithm` for details).
     Class takes two matrices: matrix of reactants and matrix of products of chemical reaction, derived
     from general reaction matrix. Matrices are in the form of NumPy 2D array.
 
@@ -20,50 +22,105 @@ class Balancer():
     def __init__(self, 
     reactant_matrix:np.array, 
     product_matrix:np.array, 
-    rounding_order:int) -> None:
+    rounding_order:int,
+    intify:bool,
+    try_comb:bool,
+    max_comb:int = 1e8) -> None:
         self.reactant_matrix:np.array = reactant_matrix
         self.product_matrix:np.array = product_matrix
         self.reaction_matrix:np.array = np.hstack((self.reactant_matrix, self.product_matrix))
         self.rounding_order:int = rounding_order
-        self.coefficient_limit:int = 100000
+        self.try_comb:bool = try_comb
+        self.max_comb:int = max_comb
+        self.intify:bool = intify
+        self.coef_limit:int = 100000
 
-    def auto_balance_reaction(self) -> list:
+    def calculate_coefficients_Thorne(self) -> list | None:
+        '''
+        High-level function call to calculate coefficients
+        using Thorne algorithm.
+        '''
+        try:
+            coefficients = self.Thorne_algorithm()
+            if self.intify:
+
+                intified_coefficients = self.intify_coefficients(coefficients, self.coef_limit)
+                if self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, intified_coefficients):
+                    return intified_coefficients
+                elif self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, coefficients):
+                    return [int(i) if i.is_integer() else i for i in coefficients]
+
+            else:
+                if self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, coefficients):
+                    return [int(i) if i.is_integer() else i for i in coefficients]
+                else:
+                    return None
+        except Exception:
+            return None
+    
+    def calculate_coefficients_Risteski(self) -> list | None:
+        '''
+        High-level function call to calculate coefficients
+        using Risteski algorithm.
+        '''
+        try:
+            coefficients = self.Risteski_algorithm()
+            
+            if self.intify:
+                intified_coefficients = self.intify_coefficients(coefficients, self.coef_limit)
+                if self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, intified_coefficients):
+                    return intified_coefficients
+                elif self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, coefficients):
+                    return coefficients
+    
+            else:
+                if self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, coefficients):
+                    return coefficients
+                else:
+                    return None
+        except Exception:
+            return None
+    
+    def calculate_coefficients_Combinatorial(self) -> list | None:
+        '''
+        High-level function call to calculate coefficients
+        using Combinatorial algorithm.
+        '''
+        try:
+            coefficients = self.Combinatorial_algorithm(max_number_of_iterations=self.max_comb)
+            return coefficients
+        except Exception:
+            return None
+
+    def calculate_coefficients_auto(self) -> list:
         '''
         A method that tries to automatically balance the chemical reaction
         by sequentially applying the three calculation methods to the reaction matrix:
-        a Thorne algorithm `calculate_coefficients_Thorne` and
-        Risteski algorithm `calculate_coefficients_Risteski`.
+        a Thorne algorithm `Thorne_algorithm`, 
+        Risteski algorithm `Risteski_algorithm`, and, if try_comb flag == True, 
+        a Combinatorial algorithm.
         '''
         # try Thorne
-        try:
-            initial_coefficients = self.calculate_coefficients_Thorne()
-            initial_coefficients = self.round_up_coefficients(initial_coefficients, self.rounding_order)
-            coefficients = self.intify_coefficients(initial_coefficients, self.coefficient_limit)
-            if self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, coefficients):
-                return coefficients, "Thorne algorithm"
-            elif self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, initial_coefficients):
-                return initial_coefficients, "Thorne algorithm"
-        except Exception:
-            pass
-        # if failed, try Risteski
-        try:
-            initial_coefficients = self.calculate_coefficients_Risteski()
-            coefficients = self.intify_coefficients(initial_coefficients, self.coefficient_limit)
-            if self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, coefficients):
-                return coefficients, "Risteski algorithm"
-            elif self.is_reaction_balanced(self.reactant_matrix, self.product_matrix, initial_coefficients):
-                return initial_coefficients, "Risteski algorithm"
-        except Exception:
-            pass
-        # if both failed, exit
-        print("Can't balance this reaction")
+        coefficients = self.calculate_coefficients_Thorne()
+        if coefficients:
+            return coefficients, "Thorne"
+        coefficients = self.calculate_coefficients_Risteski()
+        if coefficients:
+            return coefficients, "Risteski"
+        if self.try_comb:
+            coefficients = self.calculate_coefficients_Combinatorial()
+            if coefficients:
+                return coefficients, "Combinatorial"
+        
+        print("Cannot automatically balance this reaction")
         return
+
 
     @staticmethod
     def is_reaction_balanced(reactant_matrix:np.array, product_matrix:np.array, coefficients:list, tolerance:float = 1e-03) -> bool:
         '''
         Checks if reaction is balanced by multiplying reactant matrix and product matrix 
-        by respective coefficient vector and. Method is static to call it outside of balancer
+        by respective coefficient vector. Method is static to call it outside of balancer
         instance.
         '''
         try:
@@ -107,7 +164,7 @@ class Balancer():
             return initial_coefficients
         return coefficients
     
-    def calculate_coefficients_Thorne(self) -> list:
+    def Thorne_algorithm(self) -> list:
         '''
         A reaction matrix inverse algorithm proposed by [Thorne](https://arxiv.org/abs/1110.4321).
         The calculation is based on nullity, or dimensionality, of the matrix.
@@ -129,6 +186,7 @@ class Balancer():
         5) Inverse the augumented matrix
         6) Exctract and transpose rightmost column
         7) Normalize this value with absolute min value of vector
+        8) Round up float operations errors
 
         Absolute values of this vector are coefficients for the
         reaction.
@@ -164,9 +222,9 @@ class Balancer():
         vector = np.absolute(np.squeeze(np.asarray(vector)))
         vector = vector[vector != 0]
         coefficients = np.divide(vector, vector.min())
-        return coefficients.tolist()
+        return self.round_up_coefficients(coefficients.tolist(), self.rounding_order)
 
-    def calculate_coefficients_Risteski(self) -> list:
+    def Risteski_algorithm(self) -> list:
         '''
         A reaction matrix pseudoinverse algorithm proposed by [Risteski](https://www.koreascience.or.kr/article/JAKO200802727293429.page).
         There are others articles and methods of chemical
@@ -205,7 +263,7 @@ class Balancer():
         coefs = np.squeeze(np.asarray(np.hstack((x_vector, y_vector)))).tolist()
         return coefs
 
-    def calculate_coefficients_combinatorial(self, max_number_of_iterations:int = 1e8) -> list:
+    def Combinatorial_algorithm(self, max_number_of_iterations:int = 1e8) -> list:
         '''
         Finds a solution solution of a Diophantine matrix equation
         by simply enumerating of all possible solutions of number_of_iterations
@@ -223,7 +281,7 @@ class Balancer():
         ubyte = 127
         number_of_compounds = self.reaction_matrix.shape[1]
         if number_of_compounds>10:
-            raise ValueError("Sorry, this method is for n of compound <=10")
+            raise ValueError("Sorry, this method is only for n of compound <=10")
 
         number_of_iterations = int(max_number_of_iterations**(1/number_of_compounds))
 
@@ -238,8 +296,8 @@ class Balancer():
             cart_array = (np.arange(1, i, dtype='ubyte'), )*number_of_compounds
             permuted = np.array(np.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
             filter = np.asarray([i-1], dtype='ubyte')
-            permuted = permuted[np.in1d(permuted[:, 1], filter)]
-            print("calculating %s of %s row" % (i-1, number_of_iterations), end='\r', flush=True)
+            permuted = permuted[np.any(permuted==filter, axis=1)]
+            print("calculating max coef %s of %s" % (i-1, number_of_iterations), end='\r', flush=True)
             reactants_vectors = permuted[:, :lenght]
             products_vectors = permuted[:, lenght:]
             del permuted
@@ -255,19 +313,17 @@ class Balancer():
                 else:
                     idx = where[0]
                 print("")
-                return np.array(np.concatenate((reactants_vectors[idx].flatten(), products_vectors[idx].flatten()))).tolist(), "Combinatorial algorithm"
+                return np.array(np.concatenate((reactants_vectors[idx].flatten(), products_vectors[idx].flatten()))).tolist()
             gc.collect()
         print("")
-        print("No solution found")
-        return None, "Combinatorial algorithm"
+        return None
 
     """
-    import cupy as cp
-    def calculate_coefficients_combinatorial(self, max_number_of_iterations:int = 1e8) -> list:
+    def Combinatorial_algorithm(self, max_number_of_iterations:int = 1e8) -> list:
         '''
         A CuPy GPU-accelerated version of the same combinatorial
-        algorithm. Requires CUDA toolkid to work. GPU gives around
-        10x acceleration.
+        algorithm. Requires [CUDA toolkit] (https://developer.nvidia.com/cuda-toolkit)
+        to work. GPU gives around 10x acceleration.
 
         Finds a solution solution of a Diophantine matrix equation
         by simply enumerating of all possible solutions of number_of_iterations
@@ -300,8 +356,8 @@ class Balancer():
             cart_array = (cp.arange(1, i, dtype='ubyte'), )*number_of_compounds
             permuted = cp.array(cp.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
             filter = cp.asarray([i-1], dtype='ubyte')
-            permuted = permuted[cp.in1d(permuted[:, 1], filter)]
-            print("calculating %s of %s row" % (i-1, number_of_iterations), end='\r', flush=True)
+            permuted = permuted[np.any(permuted==filter, axis=1)]
+            print("calculating max coef %s of %s" % (i-1, number_of_iterations), end='\r', flush=True)
             reactants_vectors = cp.asarray(permuted[:, :lenght])
             products_vectors = cp.asarray(permuted[:, lenght:])
             del permuted
@@ -317,14 +373,15 @@ class Balancer():
                 else:
                     idx = where[0]
                 print("")
-                return cp.array(cp.concatenate((reactants_vectors[idx].flatten(), products_vectors[idx].flatten()))).tolist(), "Combinatorial algorithm"
+                return cp.array(cp.concatenate((reactants_vectors[idx].flatten(), products_vectors[idx].flatten()))).tolist()
             gc.collect()
         print("")
         print("No solution found")
-        return None, "Combinatorial algorithm"
-        """
+        return None
+        
+    """
 
-    def calculate_coefficients_combinatorial_old(self, max_number_of_iterations:int = 1e8) -> list:
+    def Combinatorial_algorithm_old(self, max_number_of_iterations:int = 1e8) -> list:
         '''
         Finds a solution solution of a Diophantine matrix equation
         by simply enumerating of all possible solutions of number_of_iterations
@@ -356,13 +413,12 @@ class Balancer():
             cart_array = (np.arange(1, i, dtype='ubyte'), )*number_of_compounds
             permuted = np.array(np.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
             filter = np.asarray([i-1], dtype='ubyte')
-            vectors = permuted[np.in1d(permuted[:, 1], filter)]
-            print("calculating %s of %s max coef" % (i-1, number_of_iterations), end='\r', flush=True)
+            vectors = permuted[np.any(permuted==filter, axis=1)]
+            print("calculating max coef %s of %s" % (i-1, number_of_iterations), end='\r', flush=True)
             for i in range(vectors.shape[0]):
                 summ = trans_reaction_matrix * vectors[i][:, None]
                 if np.array_equal(summ[:lenght].sum(axis=0), summ[lenght:].sum(axis=0)):
                     print("")
-                    return vectors[i].tolist(), "Combinatorial algorithm"
+                    return vectors[i].tolist()
         print("")
-        print("No solution found")
-        return None, "Combinatorial algorithm"
+        return None

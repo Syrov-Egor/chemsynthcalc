@@ -10,7 +10,7 @@ orig_stdout = sys.stdout
 #f = open('out.txt', 'w')
 #sys.stdout = f
 
-with open('./tests/testing_reactions.csv') as csvfile:
+with open('./test/testing_reactions.csv') as csvfile:
     test_data = list(csv.reader(csvfile))[1:]
 
 test_data = [(i[0], ast.literal_eval(i[1])) for i in test_data]
@@ -20,7 +20,7 @@ for i, reaction in enumerate(test_data):
     print("%s of %s"% (i+1, len(test_data)))
     print(reaction[0])
     print(reaction[1])
-    chemical_reaction = ChemicalReaction(reaction[0])
+    chemical_reaction = ChemicalReaction(reaction[0], try_comb=True)
     print(Balancer.is_reaction_balanced(chemical_reaction.reactant_matrix, chemical_reaction.product_matrix, reaction[1]))
     coefficients = chemical_reaction.coefficients
     print(coefficients)
