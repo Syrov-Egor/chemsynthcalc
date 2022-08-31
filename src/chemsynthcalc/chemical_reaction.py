@@ -26,7 +26,7 @@ class ChemicalReaction():
 
         self.rounding_order:int = rounding_order
         self.allowed_characters = r'[^a-zA-Z0-9.({[)}\]*·•=<->→⇄ ]'
-        #separator order is important
+        #separators order is important
         self.possible_reaction_separators:list[str] = ['==', '=', '<->', '->', '<>', '>', '→', '⇄']
         self.reactant_separator:str = '+'
         self.types_of_modes:list[str] = ["force", "check", "balance"]
@@ -195,7 +195,7 @@ class ChemicalReaction():
 
     def to_integer(self, coefficients:list) -> list:
         '''
-        
+        Cast a float to integer in a list if it is integer. 
         '''
         return [int(i) if i.is_integer() else i for i in coefficients]
 
@@ -214,7 +214,7 @@ class ChemicalReaction():
 
         if algorithm == "Thorne":
             coefficients = balance.calculate_coefficients_Thorne()
-            if coefficients != None:
+            if coefficients:
                 self.algorithm = "Thorne"
                 return coefficients
             else:
@@ -223,7 +223,7 @@ class ChemicalReaction():
 
         elif algorithm == "Risteski":
             coefficients = balance.calculate_coefficients_Risteski()
-            if coefficients != None:
+            if coefficients:
                 self.algorithm = "Risteski"
                 return coefficients
             else:
@@ -232,7 +232,7 @@ class ChemicalReaction():
 
         elif algorithm == "Combinatorial":
             coefficients = balance.calculate_coefficients_Combinatorial()
-            if coefficients != None:
+            if coefficients:
                 self.algorithm = "Combinatorial"
                 return coefficients
             else:
@@ -242,7 +242,7 @@ class ChemicalReaction():
     @cached_property
     def coefficients(self) -> list:
         '''
-        Returns coefficients of the chemical reaction. There are 4 possible
+        Returns coefficients of the chemical reaction. There are 3 possible
         modes that method can run: 
         1) force mode is when coefficients are entered by user in reaction 
         string and the calculation and the calculation takes place regardless 
@@ -251,8 +251,6 @@ class ChemicalReaction():
         error if reaction is not balanced and will not calculate masses); 
         3) balance mode uses one of three auto-balancing aglorithms described
         in detail in `Balancer` class.
-        4) combinatorial mode which solves the Diophantine equation
-        by enumerating vectors of coefficients.
 
         In the fist two cases, the coefficients are just stripped from original
         formulas entered by user. In case of balance mode, coefficients are
@@ -261,10 +259,12 @@ class ChemicalReaction():
         if self.mode == "force":
             if not Balancer.is_reaction_balanced(self.reactant_matrix, self.product_matrix, self.initial_coefficients):
                 warn("This reaction is not balanced. Use the output at your own risk")
+                self.algorithm = "user"
             return self.to_integer(self.initial_coefficients)
 
         elif self.mode == "check":
             if Balancer.is_reaction_balanced(self.reactant_matrix, self.product_matrix, self.initial_coefficients):
+                self.algorithm = "user"
                 return self.to_integer(self.initial_coefficients)
             else:
                 raise ValueError("This reaction is not balanced!")
@@ -333,7 +333,7 @@ class ChemicalReaction():
         for i, molar in enumerate(self.molar_masses)]
 
         return masses
-        
+
     def _is_reaction_string_valid(self) -> bool:
         '''
         Naively checks if the reaction string is valid for parsing:
@@ -341,12 +341,34 @@ class ChemicalReaction():
         in possible_reaction_separators attribute) AND a 
         reactant_separator (+).
         '''
-
         for separator in self.possible_reaction_separators:
             if self.temp_reaction.find(separator) != -1 and self.temp_reaction.find(self.reactant_separator) != -1:
                 if self.temp_reaction.split(separator)[1] != '':
                     return separator
         return False
+    
+    @property
+    @lru_cache 
+    def output_results(self) -> dict:
+        '''
+        Collection of every output of calculated
+        chemical reaction properties.
+        '''
+        output = {
+            "initial reaction:" : self.reaction,
+            "reaction matrix:" : self.matrix,
+            "mode:" : self.mode,
+            "formulas:" : self.formulas,
+            "coefficients:" : self.coefficients,
+            "normalized coefficients:" : self.normalized_coefficients,
+            "algorithm" : self.algorithm,
+            "molar masses" : self.molar_masses,
+            "target" : self.formulas[self.target],
+            "masses" : self.masses,
+            "final reaction:" : self.final_reaction,
+            "final reaction normalized:" : self.final_reaction_normalized
+        } 
+        return output
     
     def print_results(self, to_file:bool=False, print_rounding_order:int = 4) -> None:
         '''

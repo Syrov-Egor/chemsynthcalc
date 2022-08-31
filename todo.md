@@ -9,5 +9,7 @@
 - [x] Add normalization flag for coefficients
 - [ ] Add proper testing
 - [ ] Add advanced string checking both for `ChemicalFormula` and `ChemicalReaction`
+- [ ] Add coefficients lenght checking
 - [ ] Add JSON output
+- [ ] Create separate class for output
 - [x] Add balancing functonality to the  `ChemicalReaction` class
