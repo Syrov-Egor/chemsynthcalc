@@ -1,12 +1,10 @@
-import sys
-import time
-import re
 import numpy as np
 from warnings import warn
 from functools import cached_property, lru_cache
 from .chemical_formula import ChemicalFormula
 from .reaction_matrix import ChemicalReactionMatrix
 from .reaction_balance import Balancer
+from .reaction_output import ReactionOutput
 from .chemutils import stripe_formula_from_coefficients
 
 class ChemicalReaction():
@@ -361,52 +359,35 @@ class ChemicalReaction():
             "formulas:" : self.formulas,
             "coefficients:" : self.coefficients,
             "normalized coefficients:" : self.normalized_coefficients,
-            "algorithm" : self.algorithm,
-            "molar masses" : self.molar_masses,
-            "target" : self.formulas[self.target],
-            "masses" : self.masses,
+            "algorithm:" : self.algorithm,
             "final reaction:" : self.final_reaction,
-            "final reaction normalized:" : self.final_reaction_normalized
+            "final reaction normalized:" : self.final_reaction_normalized,
+            "molar masses:" : self.molar_masses,
+            "target:" : self.formulas[self.target],
+            "masses:" : self.masses
         } 
         return output
     
-    def print_results(self, to_file:bool=False, print_rounding_order:int = 4) -> None:
+    def print_results(self, print_rounding_order:int = 4) -> None:
         '''
-        Method to print a final result of calculations.
-        By default prints into terminal; if tofile flag
-        is set to True, prints into file with int 
-        timestamp in the filename.
+        Method to print a final result of calculations
+        in terminal.
         '''
-        def print_result():
-            print("initial reaction:", self.reaction)
-            print("reaction matrix:")
-            print(self.matrix)
-            print("mode:", self.mode)
-            print("coefficients:", self.coefficients)
-            print("normalized coefficients:", self.normalized_coefficients)
-            if self.mode == "force":
-                print("balanced by user")
-            elif self.mode == "check":
-                print("balanced by user")
-            elif self.mode == "balance":
-                print("balanced by %s algorithm" % self.algorithm)
-            print("target:", self.formulas[self.target])
-            print("final reaction:", self.final_reaction)
-            print("final reaction normalized:", self.final_reaction_normalized)
-            for i, formula in enumerate(self.formulas):
-                print("%s: M = %s g/mol, m = %s g" % (
-                    formula,
-                    '%.{0}f'.format(print_rounding_order) % round(self.molar_masses[i], print_rounding_order),
-                    '%.{0}f'.format(print_rounding_order) % round(self.masses[i], print_rounding_order)))
-                    
-        filename:str = "chemsynthcalc_output_%s.txt" % time.time_ns()
-        orig_stdout = sys.stdout
-        if to_file:
-            file = open(filename, 'w')
-            sys.stdout = file
-            print_result()
-            file.close()
-            sys.stdout = orig_stdout
-        else:
-            print_result()
+        printing = ReactionOutput(self.output_results).print_results(print_rounding_order)
+        return
+        
+    def export_to_txt(self, print_rounding_order:int = 4)  -> None:
+        '''
+        Method to print a final result of calculations
+        in txt file.
+        '''
+        printing = ReactionOutput(self.output_results).export_to_txt(print_rounding_order)
+        return
+        
+    def export_to_json(self, print_rounding_order:int = 4)  -> None:
+        '''
+        Method to print a final result of calculations
+        in JSON file.
+        '''
+        printing = ReactionOutput(self.output_results).export_to_json(print_rounding_order)
         return
