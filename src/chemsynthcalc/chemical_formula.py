@@ -1,5 +1,6 @@
 from .formula_parser import ChemicalFormulaParser
 from .molar_mass import MolarMassCalculation
+from .chem_output import FormulaOutput
 from functools import lru_cache
 
 class ChemicalFormula():
@@ -16,10 +17,11 @@ class ChemicalFormula():
     '''
 
     def __init__(self, 
-    formula:str, 
-    rounding_order:int=5) -> None:
-    
-        self.formula:str = formula
+    formula:str = "", 
+    rounding_order:int=8) -> None:
+        if formula == "":
+            raise ValueError("No formula!")
+        self.formula:str = formula.replace(" ", "")
         self.rounding_order:int = rounding_order
 
     def __repr__(self) -> str:
@@ -85,3 +87,44 @@ class ChemicalFormula():
         '''
         output = MolarMassCalculation(self.parsed_formula).calculate_oxide_percent()
         return {k: round(v, self.rounding_order) for k, v in output.items()}
+    
+    @property
+    @lru_cache
+    def output_results(self) -> dict:
+        '''
+        Dictionary of calculation resulst output for
+        `ChemicalFormula`.
+        '''
+        output:dict = {
+            "formula:" : self.formula,
+            "parsed formula:" : self.parsed_formula,
+            "molar mass:" : self.molar_mass,
+            "mass percent:" : self.mass_percent,
+            "atomic percent:" : self.atomic_percent,
+            "oxide percent:" : self.oxide_percent
+        }
+        return output
+
+    def print_results(self, print_rounding_order:int = 4) -> None:
+        '''
+        Method to print a final result of calculations
+        in terminal.
+        '''
+        printing = FormulaOutput(self.output_results).print_results(print_rounding_order)
+        return
+        
+    def export_to_txt(self, filename:str='default', print_rounding_order:int = 4)  -> None:
+        '''
+        Method to print a final result of calculations
+        in txt file.
+        '''
+        printing = FormulaOutput(self.output_results).export_to_txt(filename, print_rounding_order)
+        return
+        
+    def export_to_json(self, filename:str='default', print_rounding_order:int = 4)  -> None:
+        '''
+        Method to print a final result of calculations
+        in JSON file.
+        '''
+        printing = FormulaOutput(self.output_results).export_to_json(filename, print_rounding_order)
+        return

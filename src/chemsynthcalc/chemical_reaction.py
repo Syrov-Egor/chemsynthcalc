@@ -1,10 +1,11 @@
 import numpy as np
 from warnings import warn
+from re import compile
 from functools import cached_property, lru_cache
 from .chemical_formula import ChemicalFormula
 from .reaction_matrix import ChemicalReactionMatrix
 from .reaction_balance import Balancer
-from .reaction_output import ReactionOutput
+from .chem_output import ReactionOutput
 from .chemutils import stripe_formula_from_coefficients
 
 class ChemicalReaction():
@@ -23,7 +24,7 @@ class ChemicalReaction():
     ) -> None:
 
         self.rounding_order:int = rounding_order
-        self.allowed_characters = r'[^a-zA-Z0-9.({[)}\]*·•=<->→⇄ ]'
+        self.allowed_symbols:str = r'[^a-zA-Z0-9.({[)}\]*·•=<->→⇄+ ]'
         #separators order is important
         self.possible_reaction_separators:list[str] = ['==', '=', '<->', '->', '<>', '>', '→', '⇄']
         self.reactant_separator:str = '+'
@@ -275,6 +276,19 @@ class ChemicalReaction():
             except Exception:
                 return None
 
+    def coefficients_check(self, coefficients:list) -> bool:
+        '''
+        Checking the coefficients.
+        '''
+        if coefficients == None:
+            raise TypeError("Coefficients are None")
+        elif any(x <= 0 for x in coefficients):
+            raise ValueError("0 or -x in coefficients")
+        elif len(coefficients) != self.matrix.shape[1]:
+            raise ValueError("number of coefficients should be equal to %s" % self.matrix.shape[1])
+        
+        return True
+
     @property
     @lru_cache
     def normalized_coefficients(self) -> list:
@@ -282,8 +296,9 @@ class ChemicalReaction():
         List of coefficients normalized on target compound
         (target coefficient = 1).
         '''
-        normalized_coefficients = [coef/self.coefficients[self.target] for coef in self.coefficients]
-        return [int(i) if i.is_integer() else round(i, self.rounding_order) for i in normalized_coefficients]
+        if self.coefficients_check(self.coefficients):
+            normalized_coefficients = [coef/self.coefficients[self.target] for coef in self.coefficients]
+            return [int(i) if i.is_integer() else round(i, self.rounding_order) for i in normalized_coefficients]
 
     def generate_final_reaction(self, coefs:list) -> str:
         '''
@@ -326,11 +341,11 @@ class ChemicalReaction():
         Coefficients of reaction are normalized to the target. After nu of target compound is
         calculated, it broadcasted to other compound (with respect to its coefficients).
         '''
-        nu = self.target_mass/self.molar_masses[self.target]
-        masses = [round(molar*nu*self.normalized_coefficients[i], self.rounding_order) 
-        for i, molar in enumerate(self.molar_masses)]
-
-        return masses
+        if self.coefficients_check(self.coefficients):
+            nu = self.target_mass/self.molar_masses[self.target]
+            masses = [round(molar*nu*self.normalized_coefficients[i], self.rounding_order) 
+            for i, molar in enumerate(self.molar_masses)]
+            return masses
 
     def _is_reaction_string_valid(self) -> bool:
         '''
@@ -339,6 +354,9 @@ class ChemicalReaction():
         in possible_reaction_separators attribute) AND a 
         reactant_separator (+).
         '''
+        search=compile(self.allowed_symbols).search
+        if bool(search(self.temp_reaction)):
+            return False 
         for separator in self.possible_reaction_separators:
             if self.temp_reaction.find(separator) != -1 and self.temp_reaction.find(self.reactant_separator) != -1:
                 if self.temp_reaction.split(separator)[1] != '':
@@ -376,18 +394,18 @@ class ChemicalReaction():
         printing = ReactionOutput(self.output_results).print_results(print_rounding_order)
         return
         
-    def export_to_txt(self, print_rounding_order:int = 4)  -> None:
+    def export_to_txt(self, filename:str='default', print_rounding_order:int = 4)  -> None:
         '''
         Method to print a final result of calculations
         in txt file.
         '''
-        printing = ReactionOutput(self.output_results).export_to_txt(print_rounding_order)
+        printing = ReactionOutput(self.output_results).export_to_txt(filename, print_rounding_order)
         return
         
-    def export_to_json(self, print_rounding_order:int = 4)  -> None:
+    def export_to_json(self, filename:str='default', print_rounding_order:int = 4)  -> None:
         '''
         Method to print a final result of calculations
         in JSON file.
         '''
-        printing = ReactionOutput(self.output_results).export_to_json(print_rounding_order)
+        printing = ReactionOutput(self.output_results).export_to_json(filename, print_rounding_order)
         return
