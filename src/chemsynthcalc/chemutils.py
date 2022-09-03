@@ -59,7 +59,8 @@ def merge_list_of_dicts(list_of_dicts) -> dict:
     return final_dict
 
 
-def intify_coefficients(self, coefficients:list) -> list:
+"""
+    def intify_coefficients_pinv(self, coefficients:list) -> list:
         '''
         A function to reduce the coefficients to integers by finding 
         greatset common divider.
@@ -71,17 +72,4 @@ def intify_coefficients(self, coefficients:list) -> list:
         coefficients = [int(i/divider) for i in coefficients]
         return coefficients
 
-"""
-def intify_coefficients(self, coefficients:list, limit:int) -> list:
-        '''
-        A function to reduce the coefficients to integers by finding 
-        greatset common divider.
-        '''
-        initial_coefficients = coefficients
-        frac = [Fraction(x).limit_denominator() for x in coefficients]
-        vals = [int(fr.numerator*find_lcm([fr.denominator for fr in frac])/fr.denominator) for fr in frac]
-        coefficients = [int(val/find_gcd(vals)) for val in vals]
-        if any(x > limit for x in coefficients):
-            return initial_coefficients
-        return coefficients
 """

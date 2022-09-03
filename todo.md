@@ -13,5 +13,6 @@
 - [x] Add JSON output
 - [x] Create separate class for output
 - [x] Add balancing functonality to the  `ChemicalReaction` class
-- [ ] Add output for `ChemicalFormula`
-- [ ] Modify tests with dicts
+- [x] Add output for `ChemicalFormula`
+- [x] Modify tests with dicts
+- [ ] Add output as JSON object along with the file

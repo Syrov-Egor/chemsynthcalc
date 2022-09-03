@@ -81,5 +81,9 @@ class TestChemicalFormula(unittest.TestCase):
         self.formula = ChemicalFormula(string)
         self.formula.export_to_json(filename='CSC_formula_test.json')
 
+    def tearDown(self) -> None:
+        self.cleanup_files()
+        return super().tearDown()
+
 if __name__ == '__main__':
     unittest.main()

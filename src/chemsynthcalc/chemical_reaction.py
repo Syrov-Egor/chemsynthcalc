@@ -198,44 +198,54 @@ class ChemicalReaction():
         '''
         return [int(i) if i.is_integer() else i for i in coefficients]
 
-    def balance_reaction(self, algorithm:str = "Thorne", intify:bool = True, try_comb:bool = False, max_comb:int = 1e8) -> list:
+    def balance_reaction(self, algorithm:str = "inv", intify:bool = True, try_comb:bool = False, max_comb:int = 1e8) -> list:
         '''
         High-level function call for all balancing algorithms.
         '''
         if self.mode != "balance":
             raise ValueError("Reaction balancing is only available in balance mode")
 
-        avaliable_algorithms:list[str] = ["Thorne", "Risteski", "Combinatorial"]
+        avaliable_algorithms:list[str] = ["inv", "gpinv", "ppinv", "comb"]
         if algorithm not in avaliable_algorithms:
-            raise ValueError("There is no algorithm %s! Please choose between Thorne, Risteski and Combinatorial algorithms" % algorithm)
+            raise ValueError("There is no algorithm %s! Please choose between inv, gpinv, ppinv and comb algorithms" % algorithm)
         
         balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order, intify, try_comb, max_comb)
 
-        if algorithm == "Thorne":
-            coefficients = balance.calculate_coefficients_Thorne()
+        if algorithm == "inv":
+            coefficients = balance.calculate_coefficients_inv()
             if coefficients:
-                self.algorithm = "Thorne"
+                self.algorithm = "inverse"
                 return coefficients
             else:
-                print("Can't equalize this reaction by Thorne algorithm")
+                print("Can't equalize this reaction by inverse algorithm")
                 return None
 
-        elif algorithm == "Risteski":
-            coefficients = balance.calculate_coefficients_Risteski()
+        elif algorithm == "gpinv":
+            coefficients = balance.calculate_coefficients_gpinv()
+            print(coefficients)
             if coefficients:
-                self.algorithm = "Risteski"
+                self.algorithm = "general pseudoinverse"
                 return coefficients
             else:
-                print("Can't equalize this reaction by Risteski algorithm")
+                print("Can't equalize this reaction by general pseudoinverse algorithm")
                 return None
 
-        elif algorithm == "Combinatorial":
-            coefficients = balance.calculate_coefficients_Combinatorial()
+        elif algorithm == "ppinv":
+            coefficients = balance.calculate_coefficients_ppinv()
             if coefficients:
-                self.algorithm = "Combinatorial"
+                self.algorithm = "partial pseudoinverse"
                 return coefficients
             else:
-                print("Can't equalize this reaction by Combinatorial algorithm")
+                print("Can't equalize this reaction by partial pseudoinverse algorithm")
+                return None
+
+        elif algorithm == "comb":
+            coefficients = balance.calculate_coefficients_comb()
+            if coefficients:
+                self.algorithm = "combinatorial"
+                return coefficients
+            else:
+                print("Can't equalize this reaction by combinatorial algorithm")
                 return None
         
     @cached_property
@@ -299,6 +309,14 @@ class ChemicalReaction():
         if self.coefficients_check(self.coefficients):
             normalized_coefficients = [coef/self.coefficients[self.target] for coef in self.coefficients]
             return [int(i) if i.is_integer() else round(i, self.rounding_order) for i in normalized_coefficients]
+    
+    @property
+    def is_balanced(self) -> bool:
+        '''
+        Returns if the reaction is balanced with current coefficients.
+        '''
+        balance = Balancer.is_reaction_balanced(self.reactant_matrix, self.product_matrix, self.coefficients)
+        return balance
 
     def generate_final_reaction(self, coefs:list) -> str:
         '''
@@ -378,6 +396,7 @@ class ChemicalReaction():
             "coefficients:" : self.coefficients,
             "normalized coefficients:" : self.normalized_coefficients,
             "algorithm:" : self.algorithm,
+            "is balanced:" : self.is_balanced,
             "final reaction:" : self.final_reaction,
             "final reaction normalized:" : self.final_reaction_normalized,
             "molar masses:" : self.molar_masses,

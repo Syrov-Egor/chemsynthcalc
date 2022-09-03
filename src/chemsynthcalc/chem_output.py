@@ -80,6 +80,7 @@ class ReactionOutput():
         print("coefficients:", self.output.get("coefficients:"))
         print("normalized coefficients:", self.output.get("normalized coefficients:"))
         print("balanced by algorithm: %s " % self.output.get("algorithm:"))
+        print("is balanced:", self.output.get("is balanced:"))
         print("final reaction:", self.output.get("final reaction:"))
         print("final reaction normalized:", self.output.get("final reaction normalized:"))
         print("target:", self.output.get("target:"))
