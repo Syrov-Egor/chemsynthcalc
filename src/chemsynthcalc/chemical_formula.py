@@ -1,6 +1,7 @@
 from .formula_parser import ChemicalFormulaParser
 from .molar_mass import MolarMassCalculation
 from .chem_output import FormulaOutput
+from .chemutils import arguments_type_checking
 from functools import lru_cache
 
 class ChemicalFormula():
@@ -19,10 +20,15 @@ class ChemicalFormula():
     def __init__(self, 
     formula:str = "", 
     rounding_order:int=8) -> None:
+        arguments_type_checking(formula, str)
+        arguments_type_checking(rounding_order, int)
         if formula == "":
             raise ValueError("No formula!")
         self.formula:str = formula.replace(" ", "")
-        self.rounding_order:int = rounding_order
+        if rounding_order > 0:
+            self.rounding_order:int = rounding_order
+        else:
+            raise ValueError("rounding order <= 0")
 
     def __repr__(self) -> str:
         return str(self.formula)

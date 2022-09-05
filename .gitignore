@@ -6,6 +6,7 @@ __pycache__/
 *.pyc
 
 
+new.py
 solid-state_dataset_2019-06-27_upd.json
 # C extensions
 *.so

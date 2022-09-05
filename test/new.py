@@ -1,3 +1,4 @@
+from re import A
 import sys
 
 sys.path.append('./src')
@@ -12,7 +13,4 @@ from functools import reduce
 
 from chemsynthcalc import ChemicalFormula, ChemicalReaction
 
-formula = ChemicalFormula("H2O")
-obj = formula.as_json()
-obj = json.loads(obj)
-print(obj)
+chemsynthcalc.run_test()

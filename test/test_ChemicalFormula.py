@@ -38,6 +38,18 @@ class TestChemicalFormula(unittest.TestCase):
         string = "Ca3(JO4)2"
         self.assertRaises(ValueError, lambda: ChemicalFormula(string).parsed_formula)
 
+    def test_formula_wrong_type(self) -> None:
+        string = 3
+        self.assertRaises(TypeError, lambda: ChemicalFormula(string))
+    
+    def test_rounding_wrong_type(self) -> None:
+        string = "H2O"
+        self.assertRaises(TypeError, lambda: ChemicalFormula(string, '3'))
+    
+    def test_rounding_order_less_than_zero(self) -> None:
+        string = 'H2O'
+        self.assertRaises(ValueError, lambda: ChemicalFormula(string, rounding_order=-1))
+
     # set of tests to check ChemicalFormula properties
     def test_parser(self) -> None:
         for item in self.test_data:

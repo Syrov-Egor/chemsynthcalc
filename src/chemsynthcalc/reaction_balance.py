@@ -1,4 +1,4 @@
-
+import sys
 import numpy as np
 import gc
 #import cupy as cp # in case of CuPy combinatorial function
@@ -247,7 +247,7 @@ class Balancer():
         nullity = number_of_cols - rank
         augument = np.flip(np.identity(reaction_matrix.shape[1])[:nullity], axis = 1)
         augumented_matrix = np.vstack((reaction_matrix, augument))
-        if np.where(~augumented_matrix.any(axis=1))[0]:
+        if np.where(~augumented_matrix.any(axis=1))[0].size > 0:
             augumented_matrix = augumented_matrix[~np.all(augumented_matrix == 0, axis=1)]
         inversed_matrix = np.linalg.inv(augumented_matrix)
         vector = inversed_matrix[:, -1].T
@@ -341,7 +341,7 @@ class Balancer():
             permuted = np.array(np.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
             filter = np.asarray([i-1], dtype='ubyte')
             permuted = permuted[np.any(permuted==filter, axis=1)]
-            print("calculating max coef %s of %s" % (i-1, number_of_iterations), end='\r', flush=True)
+            #print("calculating max coef %s of %s" % (i-1, number_of_iterations), end='\r', flush=False)
             reactants_vectors = permuted[:, :lenght]
             products_vectors = permuted[:, lenght:]
             del permuted
@@ -356,10 +356,10 @@ class Balancer():
                     idx = where
                 else:
                     idx = where[0]
-                print("")
+                #print("")
                 return np.array(np.concatenate((reactants_vectors[idx].flatten(), products_vectors[idx].flatten()))).tolist()
             gc.collect()
-        print("")
+        #print("")
         return None
 
     """

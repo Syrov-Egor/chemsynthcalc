@@ -7,7 +7,7 @@
 - [x] Add docs for balancing
 - [x] Add hydrate notation support
 - [x] Add normalization flag for coefficients
-- [ ] Add proper testing
+- [x] Add proper testing
 - [x] Add advanced string checking both for `ChemicalFormula` and `ChemicalReaction`
 - [x] Add coefficients lenght checking
 - [x] Add JSON output
@@ -15,4 +15,4 @@
 - [x] Add balancing functonality to the  `ChemicalReaction` class
 - [x] Add output for `ChemicalFormula`
 - [x] Modify tests with dicts
-- [ ] Add output as JSON object along with the file
+- [x] Add output as JSON object along with the file

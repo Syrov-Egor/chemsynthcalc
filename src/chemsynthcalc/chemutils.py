@@ -6,6 +6,13 @@ A module with different utility functions,
 which are not belong to main classes
 '''
 
+def arguments_type_checking(argument, *args) -> None:
+    '''
+    Checks for type of function argument.
+    '''
+    if not isinstance(argument, args):
+        raise TypeError("The %s parameter is wrong type %s. Should be %s" % (argument, type(argument), args)) 
+
 def find_lcm(int_list:list) -> int:
     '''
     Finds least common multiple of the list of integers.

@@ -6,7 +6,7 @@ from .chemical_formula import ChemicalFormula
 from .reaction_matrix import ChemicalReactionMatrix
 from .reaction_balance import Balancer
 from .chem_output import ReactionOutput
-from .chemutils import stripe_formula_from_coefficients
+from .chemutils import stripe_formula_from_coefficients, arguments_type_checking
 
 class ChemicalReaction():
     '''
@@ -22,9 +22,19 @@ class ChemicalReaction():
     rounding_order:int = 8,
     try_comb:bool = False
     ) -> None:
+        arguments_type_checking(reaction, str)
+        arguments_type_checking(target, int)
+        arguments_type_checking(mode, str)
+        arguments_type_checking(target_mass, int, float)
+        arguments_type_checking(rounding_order, int)
+        arguments_type_checking(try_comb, bool)
 
-        self.rounding_order:int = rounding_order
-        self.allowed_symbols:str = r'[^a-zA-Z0-9.({[)}\]*·•=<->→⇄+ ]'
+        if rounding_order > 0:
+            self.rounding_order:int = rounding_order
+        else:
+            raise ValueError("rounding order <= 0")
+
+        self.allowed_symbols:str = r'[^a-zA-Z0-9.({[)}\]*·•=<\->→⇄+ ]'
         #separators order is important
         self.possible_reaction_separators:list[str] = ['==', '=', '<->', '->', '<>', '>', '→', '⇄']
         self.reactant_separator:str = '+'
@@ -36,10 +46,14 @@ class ChemicalReaction():
             self.mode:str = mode
         else:
              raise ValueError("There is no mode %s! Please choose between force, check or balance modes" % mode)
-        if target<len(self.products):
-            self.target:int = target + len(self.reactants)
+        if target >= 0:
+            if target<len(self.products):
+                self.target:int = target + len(self.reactants)
+            else:
+                raise ValueError("Target should be in range of products number")
         else:
-            raise ValueError("Target should be in range of products number")
+            raise ValueError("Target < 0")
+
         if target_mass>0:
             self.target_mass:float = target_mass
         else:
@@ -198,10 +212,14 @@ class ChemicalReaction():
         '''
         return [int(i) if i.is_integer() else i for i in coefficients]
 
-    def balance_reaction(self, algorithm:str = "inv", intify:bool = True, try_comb:bool = False, max_comb:int = 1e8) -> list:
+    def balance_reaction(self, algorithm:str = "inv", intify:bool = True, max_comb:int = 1e8) -> list:
         '''
         High-level function call for all balancing algorithms.
         '''
+        arguments_type_checking(algorithm, str)
+        arguments_type_checking(intify, bool)
+        arguments_type_checking(max_comb, int, float)
+
         if self.mode != "balance":
             raise ValueError("Reaction balancing is only available in balance mode")
 
@@ -209,7 +227,10 @@ class ChemicalReaction():
         if algorithm not in avaliable_algorithms:
             raise ValueError("There is no algorithm %s! Please choose between inv, gpinv, ppinv and comb algorithms" % algorithm)
         
-        balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order, intify, try_comb, max_comb)
+        if max_comb <= 0:
+            raise ValueError("Max combinations <= 0")
+
+        balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order, intify, self.try_comb, max_comb)
 
         if algorithm == "inv":
             coefficients = balance.calculate_coefficients_inv()
@@ -222,7 +243,6 @@ class ChemicalReaction():
 
         elif algorithm == "gpinv":
             coefficients = balance.calculate_coefficients_gpinv()
-            print(coefficients)
             if coefficients:
                 self.algorithm = "general pseudoinverse"
                 return coefficients
@@ -367,7 +387,7 @@ class ChemicalReaction():
 
     def _is_reaction_string_valid(self) -> bool:
         '''
-        Naively checks if the reaction string is valid for parsing:
+        Checks if the reaction string is valid for parsing:
         if it contains one of reactants-products separators (listed
         in possible_reaction_separators attribute) AND a 
         reactant_separator (+).
