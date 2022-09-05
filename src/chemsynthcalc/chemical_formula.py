@@ -120,6 +120,12 @@ class ChemicalFormula():
         '''
         printing = FormulaOutput(self.output_results).export_to_txt(filename, print_rounding_order)
         return
+
+    def as_json(self, print_rounding_order:int = 4) -> str:
+        '''
+        Serialization of output into JSON object
+        '''
+        return FormulaOutput(self.output_results).dump_to_json(print_rounding_order)
         
     def export_to_json(self, filename:str='default', print_rounding_order:int = 4)  -> None:
         '''

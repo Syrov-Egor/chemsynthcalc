@@ -12,6 +12,7 @@ r4 = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
 r5 = "H2O2+KMnO4+H2SO4=O2+MnSO4+K2SO4+H2O"
 r6 = "H2O2+KNO3+H2SO4=K2SO4+NO+H2O+O2"
 r7 = "KMnO4+H2S+H2SO4=S+MnSO4+K2SO4+H2O"
+r8 = "NH4ClO4+HNO3+HCl=HClO4+NOCl+N2O+N2O3+H2O+Cl2"
 
 reaction = ChemicalReaction(r6)
 print(reaction.matrix)

@@ -44,20 +44,27 @@ class FormulaOutput():
             self.__print_stream(print_rounding_order)
         sys.stdout = self.original_stdout
         return
+
+    def dump_to_json(self, print_rounding_order:int) -> str:
+        '''
+        JSON serialization.
+        '''
+        mod_output = self.output.copy()
+        mod_output.update({"mass percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('mass percent:').items()}})
+        mod_output.update({"atomic percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('atomic percent:').items()}})
+        mod_output.update({"oxide percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('oxide percent:').items()}})
+        return json.dumps(mod_output, ensure_ascii=False)
     
-    def export_to_json(self, filename:str, print_rounding_order:int)  -> None:
+    def export_to_json(self, filename:str, print_rounding_order:int) -> None:
         '''
         Dump output dict into JSON flie.
         '''
         if filename == 'default':
             filename = "CSC_formula_%s_%s.json" % (self.output.get("formula:"), time.time_ns())
-    
-        mod_output = self.output.copy()
-        mod_output.update({"mass percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('mass percent:').items()}})
-        mod_output.update({"atomic percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('atomic percent:').items()}})
-        mod_output.update({"oxide percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('oxide percent:').items()}})
+
         with open(filename, 'w', encoding='utf-8') as file:
-            json.dump(mod_output, file, ensure_ascii=False)
+            json_obj = json.loads(self.dump_to_json(print_rounding_order))
+            json.dump(json_obj, file, ensure_ascii=False)
         return
 
 class ReactionOutput():
@@ -113,13 +120,11 @@ class ReactionOutput():
             self.__print_stream(print_rounding_order)
         sys.stdout = self.original_stdout
         return
-    
-    def export_to_json(self, filename:str, print_rounding_order:int)  -> None:
+
+    def dump_to_json(self, print_rounding_order:int) -> str:
         '''
-        Dump output dict into JSON flie.
+        JSON serialization.
         '''
-        if filename == 'default':
-            filename = "CSC_reaction_%s_%s.json" % (self.output.get("target:"), time.time_ns())
         mod_output = self.output.copy()
         mod_output.update({"reaction matrix:": np.array2string(self.output.get("reaction matrix:"))})
         str_formulas = [str(formula) for formula in self.output.get("formulas:")]
@@ -127,6 +132,16 @@ class ReactionOutput():
         mod_output.update({"target:": str(self.output.get("target:"))})
         mod_output.update({"molar masses:": [round(mass, print_rounding_order) for mass in self.output.get("molar masses:")]})
         mod_output.update({"masses:": [round(mass, print_rounding_order) for mass in self.output.get("masses:")]})
+        return json.dumps(mod_output, ensure_ascii=False)
+    
+    def export_to_json(self, filename:str, print_rounding_order:int)  -> None:
+        '''
+        Dump output dict into JSON flie.
+        '''
+        if filename == 'default':
+            filename = "CSC_reaction_%s_%s.json" % (self.output.get("target:"), time.time_ns())
+
         with open(filename, 'w', encoding='utf-8') as file:
-            json.dump(mod_output, file, ensure_ascii=False)
+            json_obj = json.loads(self.dump_to_json(print_rounding_order))
+            json.dump(json_obj, file, ensure_ascii=False)
         return

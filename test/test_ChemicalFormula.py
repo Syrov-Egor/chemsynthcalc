@@ -1,6 +1,7 @@
 import unittest
 import os
 import sys
+import json
 sys.path.append('./src')
 from chemsynthcalc import ChemicalFormula
 
@@ -75,6 +76,20 @@ class TestChemicalFormula(unittest.TestCase):
         string = self.test_data[0].get("formula:")
         self.formula = ChemicalFormula(string)
         self.formula.export_to_txt(filename='CSC_formula_test.txt')
+    
+    def test_json_serialization(self) -> None:
+        string = self.test_data[0].get("formula:")
+        self.formula = ChemicalFormula(string)
+        dictionary = json.loads(self.formula.as_json())
+        output = {
+        'formula:': 'H2O', 
+        'parsed formula:': {'H': 2.0, 'O': 1.0}, 
+        'molar mass:': 18.015, 
+        'mass percent:': {'H': 11.1907, 'O': 88.8093}, 
+        'atomic percent:': {'H': 66.6667, 'O': 33.3333}, 
+        'oxide percent:': {'H2O': 100.0}
+                }
+        self.assertEqual(dictionary, output)
 
     def test_json_export(self) -> None:
         string = self.test_data[0].get("formula:")
