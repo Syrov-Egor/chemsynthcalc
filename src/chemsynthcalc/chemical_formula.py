@@ -102,12 +102,12 @@ class ChemicalFormula():
         `ChemicalFormula`.
         '''
         output:dict = {
-            "formula:" : self.formula,
-            "parsed formula:" : self.parsed_formula,
-            "molar mass:" : self.molar_mass,
-            "mass percent:" : self.mass_percent,
-            "atomic percent:" : self.atomic_percent,
-            "oxide percent:" : self.oxide_percent
+            "formula" : self.formula,
+            "parsed formula" : self.parsed_formula,
+            "molar mass" : self.molar_mass,
+            "mass percent" : self.mass_percent,
+            "atomic percent" : self.atomic_percent,
+            "oxide percent" : self.oxide_percent
         }
         return output
 

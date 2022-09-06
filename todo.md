@@ -16,3 +16,7 @@
 - [x] Add output for `ChemicalFormula`
 - [x] Modify tests with dicts
 - [x] Add output as JSON object along with the file
+- [x] Delete : in output
+- [ ] Add custom error system
+- [x] Add checking for law of conservation
+- [x] Add tests for `force` and `check` modes

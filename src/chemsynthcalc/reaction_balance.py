@@ -1,11 +1,8 @@
-import sys
 import numpy as np
 import gc
 #import cupy as cp # in case of CuPy combinatorial function
 from .chemutils import find_gcd, find_lcm
 from fractions import Fraction
-from math import gcd
-from functools import reduce
 
 class Balancer():
     '''
@@ -128,20 +125,20 @@ class Balancer():
         '''
         # try inv
         coefficients = self.calculate_coefficients_inv()
-        if coefficients:
+        if coefficients and not any(x <= 0 for x in coefficients):
             return coefficients, "inverse"
         # if failed, try gpinv
         coefficients = self.calculate_coefficients_gpinv()
-        if coefficients:
+        if coefficients and not any(x <= 0 for x in coefficients):
             return coefficients, "general pseudoinverse"
         # if failed, try ppinv
         coefficients = self.calculate_coefficients_ppinv()
-        if coefficients:
+        if coefficients and not any(x <= 0 for x in coefficients):
             return coefficients, "partial pseudoinverse"
         # if all failed, and try_comb, try comb
         if self.try_comb:
             coefficients = self.calculate_coefficients_comb()
-            if coefficients:
+            if coefficients and not any(x <= 0 for x in coefficients):
                 return coefficients, "combinatorial"
         
         print("Cannot automatically balance this reaction")

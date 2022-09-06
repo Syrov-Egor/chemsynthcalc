@@ -16,12 +16,12 @@ class FormulaOutput():
         '''
         Prints of results that can be streamed into stdout.
         '''
-        print("formula:", self.output.get('formula:'))
-        print("parsed formula:", self.output.get('parsed formula:'))
-        print("molar mass:", round(self.output.get('molar mass:'), print_rounding_order))
-        print("mass percent:", {k: round(v, print_rounding_order) for k, v in self.output.get('mass percent:').items()})
-        print("atomic percent:", {k: round(v, print_rounding_order) for k, v in self.output.get('atomic percent:').items()})
-        print("oxide percent:", {k: round(v, print_rounding_order) for k, v in self.output.get('oxide percent:').items()})
+        print("formula:", self.output.get('formula'))
+        print("parsed formula:", self.output.get('parsed formula'))
+        print("molar mass:", round(self.output.get('molar mass'), print_rounding_order))
+        print("mass percent:", {k: round(v, print_rounding_order) for k, v in self.output.get('mass percent').items()})
+        print("atomic percent:", {k: round(v, print_rounding_order) for k, v in self.output.get('atomic percent').items()})
+        print("oxide percent:", {k: round(v, print_rounding_order) for k, v in self.output.get('oxide percent').items()})
         return
     
     def print_results(self, print_rounding_order:int) -> None:
@@ -50,9 +50,9 @@ class FormulaOutput():
         JSON serialization.
         '''
         mod_output = self.output.copy()
-        mod_output.update({"mass percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('mass percent:').items()}})
-        mod_output.update({"atomic percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('atomic percent:').items()}})
-        mod_output.update({"oxide percent:" : {k: round(v, print_rounding_order) for k, v in self.output.get('oxide percent:').items()}})
+        mod_output.update({"mass percent" : {k: round(v, print_rounding_order) for k, v in self.output.get('mass percent').items()}})
+        mod_output.update({"atomic percent" : {k: round(v, print_rounding_order) for k, v in self.output.get('atomic percent').items()}})
+        mod_output.update({"oxide percent" : {k: round(v, print_rounding_order) for k, v in self.output.get('oxide percent').items()}})
         return json.dumps(mod_output, ensure_ascii=False)
     
     def export_to_json(self, filename:str, print_rounding_order:int) -> None:
@@ -60,7 +60,7 @@ class FormulaOutput():
         Dump output dict into JSON flie.
         '''
         if filename == 'default':
-            filename = "CSC_formula_%s_%s.json" % (self.output.get("formula:"), time.time_ns())
+            filename = "CSC_formula_%s_%s.json" % (self.output.get("formula"), time.time_ns())
 
         with open(filename, 'w', encoding='utf-8') as file:
             json_obj = json.loads(self.dump_to_json(print_rounding_order))
@@ -80,20 +80,20 @@ class ReactionOutput():
         '''
         Prints of results that can be streamed into stdout.
         '''
-        print("initial reaction:", self.output.get("initial reaction:"))
+        print("initial reaction:", self.output.get("initial reaction"))
         print("reaction matrix:")
-        print(self.output.get("reaction matrix:"))
-        print("mode:", self.output.get("mode:"))
-        print("coefficients:", self.output.get("coefficients:"))
-        print("normalized coefficients:", self.output.get("normalized coefficients:"))
-        print("balanced by algorithm: %s " % self.output.get("algorithm:"))
-        print("is balanced:", self.output.get("is balanced:"))
-        print("final reaction:", self.output.get("final reaction:"))
-        print("final reaction normalized:", self.output.get("final reaction normalized:"))
-        print("target:", self.output.get("target:"))
-        formulas = self.output.get("formulas:")
-        molar_masses = self.output.get("molar masses:")
-        masses = self.output.get("masses:")
+        print(self.output.get("reaction matrix"))
+        print("mode:", self.output.get("mode"))
+        print("coefficients:", self.output.get("coefficients"))
+        print("normalized coefficients:", self.output.get("normalized coefficients"))
+        print("balanced by algorithm: %s " % self.output.get("algorithm"))
+        print("is balanced:", self.output.get("is balanced"))
+        print("final reaction:", self.output.get("final reaction"))
+        print("final reaction normalized:", self.output.get("final reaction normalized"))
+        print("target:", self.output.get("target"))
+        formulas = self.output.get("formulas")
+        molar_masses = self.output.get("molar masses")
+        masses = self.output.get("masses")
         for i, formula in enumerate(formulas):
             print("%s: M = %s g/mol, m = %s g" % (
                 formula,
@@ -114,7 +114,7 @@ class ReactionOutput():
         Print results in the txt file and saves it.
         '''
         if filename == 'default':
-            filename = "CSC_reaction_%s_%s.txt" % (self.output.get("target:"), time.time_ns())
+            filename = "CSC_reaction_%s_%s.txt" % (self.output.get("target"), time.time_ns())
         with open(filename, 'w') as file:
             sys.stdout = file
             self.__print_stream(print_rounding_order)
@@ -126,12 +126,12 @@ class ReactionOutput():
         JSON serialization.
         '''
         mod_output = self.output.copy()
-        mod_output.update({"reaction matrix:": np.array2string(self.output.get("reaction matrix:"))})
-        str_formulas = [str(formula) for formula in self.output.get("formulas:")]
-        mod_output.update({"formulas:": str_formulas})
-        mod_output.update({"target:": str(self.output.get("target:"))})
-        mod_output.update({"molar masses:": [round(mass, print_rounding_order) for mass in self.output.get("molar masses:")]})
-        mod_output.update({"masses:": [round(mass, print_rounding_order) for mass in self.output.get("masses:")]})
+        mod_output.update({"reaction matrix": np.array2string(self.output.get("reaction matrix"))})
+        str_formulas = [str(formula) for formula in self.output.get("formulas")]
+        mod_output.update({"formulas": str_formulas})
+        mod_output.update({"target": str(self.output.get("target"))})
+        mod_output.update({"molar masses": [round(mass, print_rounding_order) for mass in self.output.get("molar masses")]})
+        mod_output.update({"masses": [round(mass, print_rounding_order) for mass in self.output.get("masses")]})
         return json.dumps(mod_output, ensure_ascii=False)
     
     def export_to_json(self, filename:str, print_rounding_order:int)  -> None:
@@ -139,7 +139,7 @@ class ReactionOutput():
         Dump output dict into JSON flie.
         '''
         if filename == 'default':
-            filename = "CSC_reaction_%s_%s.json" % (self.output.get("target:"), time.time_ns())
+            filename = "CSC_reaction_%s_%s.json" % (self.output.get("target"), time.time_ns())
 
         with open(filename, 'w', encoding='utf-8') as file:
             json_obj = json.loads(self.dump_to_json(print_rounding_order))
