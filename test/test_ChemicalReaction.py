@@ -8,6 +8,7 @@ import os
 import numpy as np
 sys.path.append('./src')
 from chemsynthcalc import ChemicalReaction
+from chemsynthcalc.chem_errors import BadCoeffiecients, NoSuchMode, NoSeparator, InvalidCharacter, ReactantProductDifference, ReactionNotBalanced, NoSuchAlgorithm
 
 class TestChemicalReaction(unittest.TestCase):
 
@@ -30,23 +31,23 @@ class TestChemicalReaction(unittest.TestCase):
 
     def test_invalid_character(self) -> None:
         string = "H2+O2=фH2O"
-        self.assertRaises(ValueError, lambda: ChemicalReaction(string))
+        self.assertRaises(InvalidCharacter, lambda: ChemicalReaction(string))
 
     def test_invalid_string(self) -> None:
         string = "H2O2H2O"
-        self.assertRaises(ValueError, lambda: ChemicalReaction(string))
+        self.assertRaises(NoSeparator, lambda: ChemicalReaction(string))
 
     def test_wrong_reactant_separator(self) -> None:
         string = "H2&O2=H2O"
-        self.assertRaises(ValueError, lambda: ChemicalReaction(string))
+        self.assertRaises(InvalidCharacter, lambda: ChemicalReaction(string))
     
     def test_wrong_separator(self) -> None:
         string = "H2+O2←H2O"
-        self.assertRaises(ValueError, lambda: ChemicalReaction(string))
+        self.assertRaises(InvalidCharacter, lambda: ChemicalReaction(string))
     
     def test_unbalanceble_reaction(self) -> None:
         string = "Ho+O2=H2O"
-        self.assertRaises(ValueError, lambda: ChemicalReaction(string).coefficients)
+        self.assertRaises(ReactantProductDifference, lambda: ChemicalReaction(string).coefficients)
 
     # set of tests for ChemicalReaction with wrong parameters
     def test_reaction_type(self) -> None:
@@ -99,7 +100,7 @@ class TestChemicalReaction(unittest.TestCase):
     
     def test_wrong_mode(self) -> None:
         string = "Al2S3+HNO3=S+NO2+Al(NO3)3+H2O"
-        self.assertRaises(ValueError, lambda: ChemicalReaction(string, mode="calc"))
+        self.assertRaises(NoSuchMode, lambda: ChemicalReaction(string, mode="calc"))
 
     def test_target_mass_zero_or_less(self) -> None:
         string = "Al2S3+HNO3=S+NO2+Al(NO3)3+H2O"
@@ -184,7 +185,7 @@ class TestChemicalReaction(unittest.TestCase):
     def test_check_mode_fail(self) -> None:
         string = "H2+O2=2H2O"
         self.reaction = ChemicalReaction(string, mode='check')
-        self.assertRaises(ValueError, lambda: self.reaction.coefficients)
+        self.assertRaises(ReactionNotBalanced, lambda: self.reaction.coefficients)
     
     def test_check_mode(self) -> None:
         string = "2H2+O2=2H2O"

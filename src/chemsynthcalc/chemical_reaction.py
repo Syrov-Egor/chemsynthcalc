@@ -1,3 +1,4 @@
+import re
 import numpy as np
 from re import compile
 from functools import cached_property, lru_cache
@@ -6,6 +7,7 @@ from .reaction_matrix import ChemicalReactionMatrix
 from .reaction_balance import Balancer
 from .chem_output import ReactionOutput
 from .chemutils import stripe_formula_from_coefficients, arguments_type_checking
+from .chem_errors import BadCoeffiecients, NoSuchMode, NoSeparator, InvalidCharacter, ReactantProductDifference, ReactionNotBalanced, NoSuchAlgorithm
 
 class ChemicalReaction():
     '''
@@ -44,7 +46,7 @@ class ChemicalReaction():
         if mode in self.types_of_modes:
             self.mode:str = mode
         else:
-             raise ValueError("There is no mode %s! Please choose between force, check or balance modes" % mode)
+             raise NoSuchMode("There is no mode %s! Please choose between force, check or balance modes" % mode)
         if target >= 0:
             if target<len(self.products):
                 self.target:int = target + len(self.reactants)
@@ -73,10 +75,10 @@ class ChemicalReaction():
         if self.temp_reaction == "":
             raise ValueError("No reaction!")
 
-        if self._is_reaction_string_valid():
+        if self._is_reaction_string_valid() == True:
             return self.temp_reaction
         else:
-            raise ValueError("Incorrect reaction")
+            raise InvalidCharacter("Invalid character(s) in the reaction string: %s" % self._is_reaction_string_valid())
 
     @property
     @lru_cache
@@ -84,10 +86,10 @@ class ChemicalReaction():
         '''
         Separator between reactants and products of chemical reaction.
         '''
-        if self._is_reaction_string_valid():
-            return self._is_reaction_string_valid()
+        if self._reaction_contains_separator():
+            return self._reaction_contains_separator()
         else:
-            raise ValueError("Incorrect reaction")
+            raise NoSeparator("No separator in reaction")
 
     @property
     @lru_cache
@@ -199,13 +201,13 @@ class ChemicalReaction():
     @lru_cache
     def check_elements_count(self) -> (list|None):
         '''
-        Checks if 
+        Checks if all elements are present in both sides of reaction.
         '''
         reactants = {k: v for d in self.parsed_formulas[:len(self.reactants)] for k, v in d.items()}
         products =  {k: v for d in self.parsed_formulas[len(self.reactants):] for k, v in d.items()}
         diff = set(reactants.keys()).symmetric_difference(set(products.keys()))
         if diff:
-            raise ValueError("Cannot balance this reaction, because element(s) %s are only in one part of the reaction" % diff)
+            raise ReactantProductDifference("Cannot balance this reaction, because element(s) %s are only in one part of the reaction" % diff)
         else:
             return
 
@@ -239,7 +241,7 @@ class ChemicalReaction():
 
         avaliable_algorithms:list[str] = ["inv", "gpinv", "ppinv", "comb"]
         if algorithm not in avaliable_algorithms:
-            raise ValueError("There is no algorithm %s! Please choose between inv, gpinv, ppinv and comb algorithms" % algorithm)
+            raise NoSuchAlgorithm("There is no algorithm %s! Please choose between inv, gpinv, ppinv and comb algorithms" % algorithm)
         
         if max_comb <= 0:
             raise ValueError("Max combinations <= 0")
@@ -311,7 +313,7 @@ class ChemicalReaction():
                 self.algorithm = "user"
                 return self.to_integer(self.initial_coefficients)
             else:
-                raise ValueError("This reaction is not balanced!")
+                raise ReactionNotBalanced("This reaction is not balanced!")
 
         elif self.mode == "balance":
             try:
@@ -326,11 +328,11 @@ class ChemicalReaction():
         Checking the coefficients.
         '''
         if coefficients == None:
-            raise TypeError("Coefficients are None")
+            raise BadCoeffiecients("Coefficients are None")
         elif any(x <= 0 for x in coefficients):
-            raise ValueError("0 or -x in coefficients")
+            raise BadCoeffiecients("0 or -x in coefficients")
         elif len(coefficients) != self.matrix.shape[1]:
-            raise ValueError("number of coefficients should be equal to %s" % self.matrix.shape[1])
+            raise BadCoeffiecients("number of coefficients should be equal to %s" % self.matrix.shape[1])
         
         return True
 
@@ -400,20 +402,30 @@ class ChemicalReaction():
             for i, molar in enumerate(self.molar_masses)]
             return masses
 
-    def _is_reaction_string_valid(self) -> bool:
+    def _is_reaction_string_valid(self) -> (list|bool):
+        '''
+        Checks if the reaction string is valid for parsing:
+        if it's not contains any characters that are not
+        allowed.
+        '''
+        search=compile(self.allowed_symbols).findall
+        if search(self.temp_reaction):
+            return search(self.temp_reaction)
+        else:
+            return True
+
+
+    def _reaction_contains_separator(self) -> (str|None):
         '''
         Checks if the reaction string is valid for parsing:
         if it contains one of reactants-products separators (listed
         in possible_reaction_separators attribute).
         '''
-        search=compile(self.allowed_symbols).search
-        if bool(search(self.temp_reaction)):
-            return False 
         for separator in self.possible_reaction_separators:
             if self.temp_reaction.find(separator) != -1:
                 if self.temp_reaction.split(separator)[1] != '':
                     return separator
-        return False
+        return
     
     @property
     @lru_cache 

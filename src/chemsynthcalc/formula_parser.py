@@ -1,6 +1,7 @@
 from re import findall, match, compile
 from collections import Counter
 from .periodic_table import periodic_table
+from .chem_errors import NoSuchAtom, InvalidCharacter, MoreThanOneAdduct, BracketsNotPaired
 
 class ChemicalFormulaParser():
     '''
@@ -96,13 +97,21 @@ class ChemicalFormulaParser():
         # Fuse in all that's left at base level
         return self.__fuse(mol, self.__dictify(findall(self.atom_and_coefficient_regex, ''.join(q)))), i
 
-    def character_check(self, strg):
-        search=compile(self.allowed_symbols).search
-        return not bool(search(strg))
+    def _is_formula_valid(self) -> (list|bool):
+        '''
+        Checks if the formula string is valid for parsing:
+        if it's not contains any characters that are not
+        allowed.
+        '''
+        search=compile(self.allowed_symbols).findall
+        if search(self.formula):
+            return search(self.formula)
+        else:
+            return True
     
     def are_brackets_balanced(self) -> bool:
         '''
-        Check if all sort of brackets come in pairs
+        Check if all sort of brackets come in pairs.
         '''
         c = Counter(self.formula)
         bracket_counter = c['['] == c[']'] and c['{'] == c['}'] and c['('] == c[')']
@@ -126,21 +135,21 @@ class ChemicalFormulaParser():
     def are_atoms_legal(self, parsed) -> None:
         for atom in list(parsed.keys()):
             if atom not in self.list_of_atoms:
-                raise ValueError("No atom %s in the periodic table!" % atom)
+                raise NoSuchAtom("No atom %s in the periodic table!" % atom)
         return
             
     def parse_formula(self) -> dict:
         '''
         Parse the formula and return a dict with occurences of each atom.
         '''
-        if not self.character_check(self.formula):
-            raise ValueError("Invalid character(s) in the formula %s" % self.formula)
+        if self._is_formula_valid() != True:
+            raise InvalidCharacter("Invalid character(s) %s in the formula %s" % (self._is_formula_valid(), self.formula))
 
         if not self.is_adduct_one():
-           raise ValueError("More than one adduct in the formula")
+           raise MoreThanOneAdduct("More than one adduct in the formula")
 
         if not self.are_brackets_balanced():
-            raise ValueError("The brackers are not balanced ![{]$[&?)]}!]")
+            raise BracketsNotPaired("The brackers are not balanced ![{]$[&?)]}!]")
         
 
         transformed = self.__transform_adduct(self.formula)

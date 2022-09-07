@@ -1,9 +1,11 @@
+import imp
 import unittest
 import os
 import sys
 import json
 sys.path.append('./src')
 from chemsynthcalc import ChemicalFormula
+from chemsynthcalc.chem_errors import NoSuchAtom, InvalidCharacter, MoreThanOneAdduct, BracketsNotPaired
 
 class TestChemicalFormula(unittest.TestCase):
 
@@ -22,21 +24,21 @@ class TestChemicalFormula(unittest.TestCase):
 
     def test_invalid_character(self) -> None:
         string = "猫H2O"
-        self.assertRaises(ValueError, lambda: ChemicalFormula(string).parsed_formula)
+        self.assertRaises(InvalidCharacter, lambda: ChemicalFormula(string).parsed_formula)
 
     def test_brackets_balanced(self) -> None:
         string = "(NH42SO4"
-        self.assertRaises(ValueError, lambda: ChemicalFormula(string).parsed_formula)
+        self.assertRaises(BracketsNotPaired, lambda: ChemicalFormula(string).parsed_formula)
     
     def test_is_adduct_one(self) -> None:
         string = "(NH4)2SO4*H2O*K2SO4"
-        self.assertRaises(ValueError, lambda: ChemicalFormula(string).parsed_formula)
+        self.assertRaises(MoreThanOneAdduct, lambda: ChemicalFormula(string).parsed_formula)
         string2 = "(NH4)2SO4*H2O·K2SO4"
-        self.assertRaises(ValueError, lambda: ChemicalFormula(string2).parsed_formula)
+        self.assertRaises(MoreThanOneAdduct, lambda: ChemicalFormula(string2).parsed_formula)
 
     def test_are_atoms_legal(self) -> None:
         string = "Ca3(JO4)2"
-        self.assertRaises(ValueError, lambda: ChemicalFormula(string).parsed_formula)
+        self.assertRaises(NoSuchAtom, lambda: ChemicalFormula(string).parsed_formula)
 
     def test_formula_wrong_type(self) -> None:
         string = 3
