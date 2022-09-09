@@ -5,6 +5,17 @@ class MolarMassCalculation():
     '''
     Class for calculation of molar masses of compounds. 
     Compounds should be parsed by FormulaParser first.
+
+    Parameters:
+    * `parsed_formula:dict` - formula parsed by `ChemicalFormulaParser`
+
+    For example:
+    ```
+    >>>MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_molar_mass()
+    18.015
+    >>>MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_molar_mass()
+    46.069
+    ```
     '''
     def __init__(self, parsed_formula:dict) -> None:
         self.atomicWeight = [(x[0], x[1]) for x in periodic_table]

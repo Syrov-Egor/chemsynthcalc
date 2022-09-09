@@ -6,7 +6,13 @@ import numpy as np
 class FormulaOutput():
     '''
     A collection of methods for outputing results of
-    `ChemicalFormula` class.
+    `ChemicalFormula` class. Default filenames of 
+    output files are CSC_formula with formula
+    and nanosecond since the epoch.
+
+    Parameters:
+    * `chemical_formula_output:dict` - output of
+    `ChemicalFormula` class
     '''
     def __init__(self, chemical_formula_output:dict) -> None:
         self.output:dict = chemical_formula_output
@@ -70,7 +76,13 @@ class FormulaOutput():
 class ReactionOutput():
     '''
     A collection of methods for outputing results of
-    `ChemicalReaction` class.
+    `ChemicalReaction` class. Default filenames of 
+    output files are CSC_reaction with target
+    compound and nanosecond since the epoch.
+    
+    Parameters:
+    * `chemical_reaction_output:dict` - output of
+    `ChemicalReaction` class
     '''
     def __init__(self, chemical_reaction_output:dict) -> None:
         self.output:dict = chemical_reaction_output

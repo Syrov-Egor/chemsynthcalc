@@ -7,14 +7,24 @@ from functools import lru_cache
 class ChemicalFormula():
     '''
     A base class for representing a single chemical formula. 
-    It constructs with a formula string and calculates properties 
-    parsed_formula, molar_mass, mass_percent, atomic_percent,
-    oxide_percent from this string using ChemicalFormulaParser and
-    MolarMassCalculation classes.
+    It constructs with a formula string and calculates properties:
+    `parsed_formula`, `molar_mass`, `mass_percent`, `atomic_percent`,
+    `oxide_percent` from this string using `ChemicalFormulaParser` and
+    `MolarMassCalculation` classes.
 
     Parameters:
     * `formula:srt` - string of chemical formula
-    * `rounding_order:int` - value of rounding order (5 by default)
+    * `rounding_order:int` - value of rounding precision (8 by default)
+
+    For example:
+    ```
+    >>>ChemicalFormula("H2O")
+    H2O
+    >>>ChemicalFormula("H2O").molar_mass
+    18.015
+    >>>ChemicalFormula("H2O").mass_percent
+    {'H': 11.19067444, 'O': 88.80932556}
+    ```
     '''
 
     def __init__(self, 
@@ -41,8 +51,11 @@ class ChemicalFormula():
     def parsed_formula(self) -> dict:
         '''
         Returns parsed dictionary representation of formula string
-        created by ChemicalFormulaParser. For example, if formula is
-        "K2SO4", then the parsed formula is {'K': 2.0, 'S': 1.0, 'O': 4.0}. 
+        created by `ChemicalFormulaParser`. For example:
+        ```
+        >>>ChemicalFormula("K2SO4").parsed_formula
+        {'K': 2.0, 'S': 1.0, 'O': 4.0} 
+        ```   
         '''
         parsed = ChemicalFormulaParser(self.formula).parse_formula()
         return {k: round(v, self.rounding_order+3) for k, v in parsed.items()}
@@ -51,9 +64,14 @@ class ChemicalFormula():
     @lru_cache
     def molar_mass(self) -> float:
         '''
-        Molar mass of the formula, calculated from parsed formula
-        using MolarMassCalculation. For example, molar mass of "K2SO4" 
-        parsed into {'K': 2.0, 'S': 1.0, 'O': 4.0} is 174.2592 g/mol.
+        [Molar mass](https://en.wikipedia.org/wiki/Molar_mass) 
+        of the formula (in g/mol), calculated from 
+        parsed formula using `MolarMassCalculation`. 
+        For example:
+        ```
+        >>>ChemicalFormula("K2SO4").molar_mass
+        174.252
+        ```   
         '''
         return round(MolarMassCalculation(self.parsed_formula).calculate_molar_mass(), self.rounding_order)
     
@@ -61,10 +79,14 @@ class ChemicalFormula():
     @lru_cache
     def mass_percent(self) -> dict:
         '''
-        Calculates a mass percent (relative mass fraction)
-        of atoms in parsed chemical formula. Return dictionary, for example
-        output for "K2SO4" is {'K': 44.87373, 'S': 18.40075, 'O': 36.72552}.
-        The values of mass content are in % (with 100% sum), not fraction
+        Calculates a mass percent or [relative mass fraction](https://en.wikipedia.org/wiki/Mass_fraction_(chemistry))
+        of atoms in parsed chemical formula. The values of 
+        mass content are in % (with 100% sum), not fraction.
+        Returns dictionary, for example:
+        ```
+        >>>ChemicalFormula("K2SO4").mass_percent
+        {'K': 44.87523816, 'S': 18.39864105, 'O': 36.72612079}
+        ```   
         '''
         output = MolarMassCalculation(self.parsed_formula).calculate_mass_percent()
         return {k: round(v, self.rounding_order) for k, v in output.items()}
@@ -73,10 +95,14 @@ class ChemicalFormula():
     @lru_cache
     def atomic_percent(self) -> dict:
         '''
-        Calculates an atomic percent (relative molar fraction) 
-        dictionary of atoms in parsed chemical formula. For example, 
-        output for "K2SO4" is {'K': 28.57143, 'S': 14.28571, 'O': 57.14286}.
-        The values of mole content are in % (with 100% sum), not fraction
+        Calculates an atomic percent or [relative mole fraction](https://en.wikipedia.org/wiki/Mole_fraction)
+        dictionary of atoms in parsed chemical formula. 
+        The values of mole content are in % (with 100% sum),
+        not fraction. For example: 
+        ```
+        >>>ChemicalFormula("K2SO4").atomic_percent
+        {'K': 28.57142857, 'S': 14.28571429, 'O': 57.14285714}
+        ``` 
         '''
         output = MolarMassCalculation(self.parsed_formula).calculate_atomic_percent()
         return {k: round(v, self.rounding_order) for k, v in output.items()}
@@ -85,11 +111,15 @@ class ChemicalFormula():
     @lru_cache
     def oxide_percent(self)  -> dict:
         '''
-        Calculates an oxide percent (relative fraction of elements oxides) 
-        dictionary of atoms in parsed chemical formula. Oxide types are listed
-        in periodic_table file and can be change to any oxide formula. For example, 
-        output for "K2SO4" is {'K2O': 54.05511, 'SO3': 45.94489}.
-        The values of oxide content are in % (with 100% sum), not fraction
+        Calculates an oxide percent or [oxide fraction](https://d32ogoqmya1dw8.cloudfront.net/files/introgeo/studio/examples/minex02.pdf) dictionary of atoms in 
+        parsed chemical formula. Oxide types are listed
+        in periodic_table file and can be change to 
+        any oxide formula. The values of oxide content 
+        are in % (with 100% sum), not fraction. For example:
+        ```
+        >>>ChemicalFormula("K2SO4").oxide_percent
+        {'K2O': 54.05676836, 'SO3': 45.94323164}
+        ``` 
         '''
         output = MolarMassCalculation(self.parsed_formula).calculate_oxide_percent()
         return {k: round(v, self.rounding_order) for k, v in output.items()}
@@ -115,6 +145,9 @@ class ChemicalFormula():
         '''
         Method to print a final result of calculations
         in terminal.
+
+        Parameters:
+        * `print_rounding_order:int` - print precision (4 digits by default).
         '''
         printing = FormulaOutput(self.output_results).print_results(print_rounding_order)
         return
@@ -123,6 +156,10 @@ class ChemicalFormula():
         '''
         Method to print a final result of calculations
         in txt file.
+        
+        Parameters:
+        * `filename:str` - filename string (should end with .txt)
+        * `print_rounding_order:int` - print precision (4 digits by default).
         '''
         printing = FormulaOutput(self.output_results).export_to_txt(filename, print_rounding_order)
         return
@@ -130,6 +167,9 @@ class ChemicalFormula():
     def as_json(self, print_rounding_order:int = 4) -> str:
         '''
         Serialization of output into JSON object
+
+        Parameters:
+        * `print_rounding_order:int` - print precision (4 digits by default).
         '''
         return FormulaOutput(self.output_results).dump_to_json(print_rounding_order)
         
@@ -137,6 +177,10 @@ class ChemicalFormula():
         '''
         Method to print a final result of calculations
         in JSON file.
+                
+        Parameters:
+        * `filename:str` - filename string (should end with .json)
+        * `print_rounding_order:int` - print precision (4 digits by default).
         '''
         printing = FormulaOutput(self.output_results).export_to_json(filename, print_rounding_order)
         return

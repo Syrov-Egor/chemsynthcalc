@@ -196,7 +196,25 @@ class TestChemicalReaction(unittest.TestCase):
         for reaction in self.reactions_set[:107]:
             chemical_reaction = ChemicalReaction(reaction[0], mode='balance')
             self.assertEqual(chemical_reaction.coefficients, reaction[1])
+
+    def test_feeding_coefs_with_zero(self) -> None:
+        string = "H2+O2=H2O"
+        self.reaction = ChemicalReaction(string, mode='balance')
+        self.reaction.coefficients = [0, 1, 2]
+        self.assertRaises(BadCoeffiecients, lambda: self.reaction.masses)
+
+    def test_feeding_negative_coefs(self) -> None:
+        string = "H2+O2=H2O"
+        self.reaction = ChemicalReaction(string, mode='balance')
+        self.reaction.coefficients = [-1, 1, 2]
+        self.assertRaises(BadCoeffiecients, lambda: self.reaction.masses)
     
+    def test_feeding_wrong_shape_coefs(self) -> None:
+        string = "H2+O2=H2O"
+        self.reaction = ChemicalReaction(string, mode='balance')
+        self.reaction.coefficients = [1, 2]
+        self.assertRaises(BadCoeffiecients, lambda: self.reaction.masses)
+
     # set of tests for reaction balancing methods
     def test_inverse_method(self) -> None:
         for reaction in self.reactions_set[:100]:

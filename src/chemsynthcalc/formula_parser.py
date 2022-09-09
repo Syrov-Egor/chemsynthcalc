@@ -6,11 +6,20 @@ from .chem_errors import NoSuchAtom, InvalidCharacter, MoreThanOneAdduct, Bracke
 class ChemicalFormulaParser():
     '''
     Parser of chemical formulas. Methods of this class take string of compound chemical formula
-    and turn it to dict of atoms as keys and their coefficients as values. For example:
-    "H2O" -> {'O': 1, 'H': 2}
-    "C2H5OH" -> {'H': 6.0, 'O': 1.0, 'C': 2.0}
-    "(K0.6Na0.4)2SO4(H2O)7" -> {'O': 11.0, 'K': 1.2, 'S': 1.0, 'Na': 0.8, 'H': 14.0}
-    Atoms in the output dict are in the random order due to the nature of dicts in Python
+    and turn it to dict of atoms as keys and their coefficients as values. 
+
+    Parameters:
+    * `formula:str` - formula string
+
+    For example:
+    ```
+    >>>ChemicalFormulaParser("H2O").parse_formula()
+    {'H': 2.0, 'O': 1.0}
+    >>>ChemicalFormulaParser("C2H5OH").parse_formula()
+    {'C': 2.0, 'H': 6.0, 'O': 1.0}
+    >>>ChemicalFormulaParser("(K0.6Na0.4)2SO4*7H2O").parse_formula()
+    {'K': 1.2, 'Na': 0.8, 'S': 1.0, 'O': 11.0, 'H': 14.0}
+    ```
     '''
     def __init__(self, formula:str) -> None:
         self.atom_regex:str = '([A-Z][a-z]*)'
@@ -133,6 +142,10 @@ class ChemicalFormulaParser():
             return False
     
     def are_atoms_legal(self, parsed) -> None:
+        '''
+        Checks if all parsed atom are belong to
+        periodic table.
+        '''
         for atom in list(parsed.keys()):
             if atom not in self.list_of_atoms:
                 raise NoSuchAtom("No atom %s in the periodic table!" % atom)
