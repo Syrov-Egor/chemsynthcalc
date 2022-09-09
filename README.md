@@ -28,7 +28,6 @@ reaction_string = "BaCO3 + Y2(CO3)3 + CuCO3 + O2 → YBa2Cu3O7 + CO2"
 
 Now, we can create a chemical reaction object of `ChemicalReaction` class, which will be used in the calculation. We need to specify arguments for our particular case:
 ```Python
-
 reaction = ChemicalReaction(
     reaction = reaction_string, # our reaction string
     target = 0, # number of target compound in product list
@@ -76,13 +75,13 @@ See the docmentation for detailed functionality and all features of the package.
   ```Python
   from chemsynthcalc import ChemicalFormula
 
-  >>>ChemicalFormula("C2H5OH").parsed_formula
-  {'C': 2.0, 'H': 6.0, 'O': 1.0}
+  print(ChemicalFormula("C2H5OH").parsed_formula)
+  #{'C': 2.0, 'H': 6.0, 'O': 1.0}
   ```
 * Molar mass calculation
   ```Python
-  >>>ChemicalFormula("C2H5OH").molar_mass
-  46.069
+  print(ChemicalFormula("C2H5OH").molar_mass)
+  #46.069
   ```
 * [Mass](https://en.wikipedia.org/wiki/Mass_fraction_(chemistry)), [atomic](https://en.wikipedia.org/wiki/Mole_fraction), and [oxide](https://d32ogoqmya1dw8.cloudfront.net/files/introgeo/studio/examples/minex02.pdf) percent calculations with `mass_percent`, `atomic_percent` and `oxide_percent` properties of `ChemicalFormula`.
 * Auto-balancing chemical equations by 4 different matrix methods in `"balance"` mode:
@@ -91,26 +90,26 @@ See the docmentation for detailed functionality and all features of the package.
 
   reaction_string = "K4Fe(CN)6 + KMnO4 + H2SO4 = KHSO4 + Fe2(SO4)3 + MnSO4 + HNO3 + CO2 + H2O"
 
-  >>>ChemicalReaction(reaction_string, mode="balance").final_reaction
-  "10K4Fe(CN)6+122KMnO4+299H2SO4=162KHSO4+5Fe2(SO4)3+122MnSO4+60HNO3+60CO2+188H2O"
+  print(ChemicalReaction(reaction_string, mode="balance").final_reaction)
+  #"10K4Fe(CN)6+122KMnO4+299H2SO4=162KHSO4+5Fe2(SO4)3+122MnSO4+60HNO3+60CO2+188H2O"
   ```
 * Calculation of masses for user-defined coefficients in `"force"` (calculates regardless of balance) and `"check"` (checks if reaction is balanced by user-defined coefficients) modes.
   ```Python
-  >>>ChemicalReaction("BaCO3+TiO2=BaTiO3", mode="force").masses #we can drop CO2 product and still get masses in this mode. 
-  [0.84623961, 0.34248308, 1.0]
+  print(ChemicalReaction("BaCO3+TiO2=BaTiO3", mode="force").masses) #we can drop CO2 product and still get masses in this mode. 
+  #[0.84623961, 0.34248308, 1.0]
   ```
   ```Python
-  >>>ChemicalReaction("2H2+O2=2H2O", mode="check").coefficients #we can be sure that reaction is balanced with our coefficients in this mode
-  [2, 1, 2]
+  print(ChemicalReaction("2H2+O2=2H2O", mode="check").coefficients) #we can be sure that reaction is balanced with our coefficients in this mode
+  #[2, 1, 2]
   ```
   Setting the coefficients directly into `ChemicalReaction` instance:
   ```Python
-  >>>reaction = ChemicalReaction("H2+O2=H2O", mode="check")
-  >>>reaction.coefficients = [2,1,2]
-  >>>reaction.coefficients
-  [2, 1, 2]
-  >>>reaction.is_balanced
-  True
+  reaction = ChemicalReaction("H2+O2=H2O", mode="check")
+  reaction.coefficients = [2,1,2]
+  print(reaction.coefficients)
+  #[2, 1, 2]
+  print(reaction.is_balanced)
+  #True
   ```
 * Calculation of coefficients with `ChemicalReaction.balance_reaction()` method individually by each of 4 different algorithms (inverse, general pseudoinverse, partial pseudoinverse and combinatorial algorithms).
 * Export of results of both `ChemicalFormula` and `ChemicalReaction` into .txt file (with `.export_to_txt()`), into JSON object (with `.as_json()`) or JSON file (with `.export_to_json()`).

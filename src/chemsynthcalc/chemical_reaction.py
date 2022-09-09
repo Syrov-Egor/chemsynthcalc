@@ -7,30 +7,39 @@ from .reaction_matrix import ChemicalReactionMatrix
 from .reaction_balance import Balancer
 from .chem_output import ReactionOutput
 from .chemutils import stripe_formula_from_coefficients, arguments_type_checking
-from .chem_errors import BadCoeffiecients, NoSuchMode, NoSeparator, InvalidCharacter, ReactantProductDifference, ReactionNotBalanced, NoSuchAlgorithm
+from .chem_errors import (
+    BadCoeffiecients,
+    NoSuchMode,
+    NoSeparator,
+    InvalidCharacter,
+    ReactantProductDifference,
+    ReactionNotBalanced,
+    NoSuchAlgorithm,
+)
 
-class ChemicalReaction():
-    '''
+
+class ChemicalReaction:
+    """
     A class that represents a chemical reaction and do operations on it.
-    
+
     Parameters:
     * `reaction:str` - a reaction string
     * `target:int` - index of target compound (0 by default,
     or first compound in the products)
-    * `mode:str` - coefficients calculation mode 
+    * `mode:str` - coefficients calculation mode
     (`"balance"` by default). There are three calculation modes:
         1) `"force"` mode is used when user enters coefficients
-    in the reaction string and want masses to be calculated 
+    in the reaction string and want masses to be calculated
     whether the reaction is balanced or not.
         2) `"check"` mode is the same as force, but with reaction
     balance checks.
-        3) `"balance"` mode  tries to automatically calculate 
+        3) `"balance"` mode  tries to automatically calculate
     coefficients from the reaction string.
     * `target_mass:float` - desired mass of target compound (in grams)
     (1.0 by default)
     * `rounding_order:int` - value of rounding precision (8 by default)
-    * `try_comb:bool` - flag, which determines whether an attempt 
-    will be made to equalize the reaction using the combinatorial 
+    * `try_comb:bool` - flag, which determines whether an attempt
+    will be made to equalize the reaction using the combinatorial
     method in `"balance"` mode.
 
     For example:
@@ -42,14 +51,16 @@ class ChemicalReaction():
     >>>ChemicalReaction("2H2+O2=2H2O", mode="check").masses
     [0.11190674, 0.88809326, 1.0]
     ```
-    '''
-    def __init__(self, 
-    reaction:str = "", 
-    target:int = 0, 
-    mode:str = "balance",
-    target_mass:float = 1.0,
-    rounding_order:int = 8,
-    try_comb:bool = False
+    """
+
+    def __init__(
+        self,
+        reaction: str = "",
+        target: int = 0,
+        mode: str = "balance",
+        target_mass: float = 1.0,
+        rounding_order: int = 8,
+        try_comb: bool = False,
     ) -> None:
         arguments_type_checking(reaction, str)
         arguments_type_checking(target, int)
@@ -59,32 +70,44 @@ class ChemicalReaction():
         arguments_type_checking(try_comb, bool)
 
         if rounding_order > 0:
-            self.rounding_order:int = rounding_order
+            self.rounding_order: int = rounding_order
         else:
             raise ValueError("rounding order <= 0")
 
-        self.allowed_symbols:str = r'[^a-zA-Z0-9.({[)}\]*·•=<\->→⇄+ ]'
-        #separators order is important
-        self.possible_reaction_separators:list[str] = ['==', '=', '<->', '->', '<>', '>', '→', '⇄']
-        self.reactant_separator:str = '+'
-        self.types_of_modes:list[str] = ["force", "check", "balance"]
-        self.temp_reaction:str = reaction.replace(" ", "")
-        self.algorithm:str = ""
-        self.try_comb:bool = try_comb
+        self.allowed_symbols: str = r"[^a-zA-Z0-9.({[)}\]*·•=<\->→⇄+ ]"
+        # separators order is important
+        self.possible_reaction_separators: list[str] = [
+            "==",
+            "=",
+            "<->",
+            "->",
+            "<>",
+            ">",
+            "→",
+            "⇄",
+        ]
+        self.reactant_separator: str = "+"
+        self.types_of_modes: list[str] = ["force", "check", "balance"]
+        self.temp_reaction: str = reaction.replace(" ", "")
+        self.algorithm: str = ""
+        self.try_comb: bool = try_comb
         if mode in self.types_of_modes:
-            self.mode:str = mode
+            self.mode: str = mode
         else:
-             raise NoSuchMode("There is no mode %s! Please choose between force, check or balance modes" % mode)
+            raise NoSuchMode(
+                "There is no mode %s! Please choose between force, check or balance modes"
+                % mode
+            )
         if target >= 0:
-            if target<len(self.products):
-                self.target:int = target + len(self.reactants)
+            if target < len(self.products):
+                self.target: int = target + len(self.reactants)
             else:
                 raise ValueError("Target should be in range of products number")
         else:
             raise ValueError("Target < 0")
 
-        if target_mass>0:
-            self.target_mass:float = target_mass
+        if target_mass > 0:
+            self.target_mass: float = target_mass
         else:
             raise ValueError("Target mass cannot be 0 or lower")
 
@@ -97,33 +120,36 @@ class ChemicalReaction():
     @property
     @lru_cache
     def reaction(self) -> str:
-        '''
+        """
         Initial reaction string with validity check.
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").reaction
         KMnO4+HCl=MnCl2+Cl2+H2O+KCl
         ```
-        '''
+        """
         if self.temp_reaction == "":
             raise ValueError("No reaction!")
 
         if self._is_reaction_string_valid() == True:
             return self.temp_reaction
         else:
-            raise InvalidCharacter("Invalid character(s) in the reaction string: %s" % self._is_reaction_string_valid())
+            raise InvalidCharacter(
+                "Invalid character(s) in the reaction string: %s"
+                % self._is_reaction_string_valid()
+            )
 
     @property
     @lru_cache
     def separator(self) -> str:
-        '''
+        """
         Separator between reactants and products of chemical reaction.
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").separator
         =
         ```
-        '''
+        """
         if self._reaction_contains_separator():
             return self._reaction_contains_separator()
         else:
@@ -132,7 +158,7 @@ class ChemicalReaction():
     @property
     @lru_cache
     def reactants(self) -> list:
-        '''
+        """
         List of initially sptlitted reactants (left side of the reaction string).
         Formulas are splitted by reactant_separator (+) and includes initial
         coefficients (in case of force or check modes).
@@ -141,13 +167,13 @@ class ChemicalReaction():
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").reactants
         ['KMnO4', 'HCl']
         ```
-        '''
+        """
         return self.reaction.split(self.separator)[0].split(self.reactant_separator)
 
     @property
     @lru_cache
     def products(self) -> list:
-        '''
+        """
         List of initially sptlitted products (right side of the reaction string).
         Formulas are splitted by reactant_separator (+) and includes initial
         coefficients (in case of force or check modes).
@@ -156,41 +182,43 @@ class ChemicalReaction():
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").products
         ['MnCl2', 'Cl2', 'H2O', 'KCl']
         ```
-        '''
+        """
         return self.reaction.split(self.separator)[1].split(self.reactant_separator)
 
     @property
     @lru_cache
     def compounds(self) -> list:
-        '''
+        """
         List of all initially sptlitted products (left side and right side).
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").compounds
         ['KMnO4', 'HCl', 'MnCl2', 'Cl2', 'H2O', 'KCl']
         ```
-        '''
-        return self.reactants+self.products
+        """
+        return self.reactants + self.products
 
     @property
     @lru_cache
     def initial_coefficients(self) -> list:
-        '''
-        List of initial coefficients striped from the compounds 
-        in case they have been entered (generally the case for 
+        """
+        List of initial coefficients striped from the compounds
+        in case they have been entered (generally the case for
         force and check modes).
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").initial_coefficients
         [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
         ```
-        '''
-        return [stripe_formula_from_coefficients(compound)[0] for compound in self.compounds]
-    
+        """
+        return [
+            stripe_formula_from_coefficients(compound)[0] for compound in self.compounds
+        ]
+
     @property
     @lru_cache
     def formulas(self) -> list:
-        '''
+        """
         Decomposition of list of formulas from the reaction string:
         every formula is striped from coefficient and become
         the `ChemicalFormula` class object.
@@ -199,33 +227,35 @@ class ChemicalReaction():
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").formulas
         [KMnO4, HCl, MnCl2, Cl2, H2O, KCl]
         ```
-        '''
-        striped = [stripe_formula_from_coefficients(compound)[1] for compound in self.compounds]
+        """
+        striped = [
+            stripe_formula_from_coefficients(compound)[1] for compound in self.compounds
+        ]
         return [ChemicalFormula(formula) for formula in striped]
 
     @property
     @lru_cache
     def parsed_formulas(self) -> list:
-        '''
+        """
         List of parsed formulas of `ChemicalFormula` objects list.
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").parsed_formulas
-        [{'K': 1.0, 'Mn': 1.0, 'O': 4.0}, {'H': 1.0, 'Cl': 1.0}, 
-        {'Mn': 1.0, 'Cl': 2.0}, {'Cl': 2.0},{'H': 2.0, 'O': 1.0}, 
+        [{'K': 1.0, 'Mn': 1.0, 'O': 4.0}, {'H': 1.0, 'Cl': 1.0},
+        {'Mn': 1.0, 'Cl': 2.0}, {'Cl': 2.0},{'H': 2.0, 'O': 1.0},
         {'K': 1.0, 'Cl': 1.0}]
         ```
-        '''
+        """
         return [compound.parsed_formula for compound in self.formulas]
 
     @property
     @lru_cache
     def matrix(self) -> np.array:
-        '''
+        """
         The first implementation of reaction matrix method is probably
         belongs to [Blakley](https://doi.org/10.1021/ed059p728). In general,
         a matrix of chemical reaction is composed of coefficients of each
-        atom in each compound, giving a 2D array. The matrix composes 
+        atom in each compound, giving a 2D array. The matrix composes
         naturally from previously parsed formulas. For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").matrix
@@ -235,13 +265,13 @@ class ChemicalReaction():
          [0. 1. 0. 0. 2. 0.]  (H)
          [0. 1. 2. 2. 0. 1.]] (Cl)
         ```
-        '''
+        """
         return ChemicalReactionMatrix(self.parsed_formulas).create_reaction_matrix()
 
     @property
     @lru_cache
     def reactant_matrix(self) -> np.array:
-        '''
+        """
         Left half of the reaction matrix that consists only of
         reactnats. For example:
         ```
@@ -252,13 +282,13 @@ class ChemicalReaction():
          [0. 1.]  (H)
          [0. 1.]] (Cl)
         ```
-        '''
-        return self.matrix[:, :len(self.reactants)]
+        """
+        return self.matrix[:, : len(self.reactants)]
 
     @property
     @lru_cache
     def product_matrix(self) -> np.array:
-        '''
+        """
         Right half of the reaction matrix that consists only of
         products. For example:
         ```
@@ -269,12 +299,12 @@ class ChemicalReaction():
          [0. 0. 2. 0.]  (H)
          [2. 2. 0. 1.]] (Cl)
         ```
-        '''
-        return self.matrix[:, len(self.reactants):]
-    
+        """
+        return self.matrix[:, len(self.reactants) :]
+
     @lru_cache
-    def check_elements_count(self) -> (list|None):
-        '''
+    def check_elements_count(self) -> (list | None):
+        """
         Checks if all elements are present in both sides of reaction.
         Doesn't work in the `force` mode!
         For example:
@@ -282,16 +312,27 @@ class ChemicalReaction():
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").check_elements_count()
         None
         >>>ChemicalReaction("KMnHoO4+HCl=MnCl2+Cl2+H2O+KCl").check_elements_count()
-        chemsynthcalc.chem_errors.ReactantProductDifference: Cannot balance this 
+        chemsynthcalc.chem_errors.ReactantProductDifference: Cannot balance this
         reaction, because element(s) {'Ho'} are only in one part of the reaction
         ```
-        '''
+        """
         if self.mode != "force":
-            reactants = {k: v for d in self.parsed_formulas[:len(self.reactants)] for k, v in d.items()}
-            products =  {k: v for d in self.parsed_formulas[len(self.reactants):] for k, v in d.items()}
+            reactants = {
+                k: v
+                for d in self.parsed_formulas[: len(self.reactants)]
+                for k, v in d.items()
+            }
+            products = {
+                k: v
+                for d in self.parsed_formulas[len(self.reactants) :]
+                for k, v in d.items()
+            }
             diff = set(reactants.keys()).symmetric_difference(set(products.keys()))
             if diff:
-                raise ReactantProductDifference("Cannot balance this reaction, because element(s) %s are only in one part of the reaction" % diff)
+                raise ReactantProductDifference(
+                    "Cannot balance this reaction, because element(s) %s are only in one part of the reaction"
+                    % diff
+                )
             else:
                 return
         else:
@@ -300,18 +341,18 @@ class ChemicalReaction():
     @property
     @lru_cache
     def molar_masses(self) -> list:
-        '''
-        List of molar masses (in g/mol) calculated from parsed 
+        """
+        List of molar masses (in g/mol) calculated from parsed
         `ChemicalFormula` objects list. For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").molar_masses
         [158.032, 36.458, 125.838, 70.9, 18.015, 74.548]
         ```
-        '''
+        """
         return [compound.molar_mass for compound in self.formulas]
 
-    def to_integer(self, coefficients:list) -> list:
-        '''
+    def to_integer(self, coefficients: list) -> list:
+        """
         Cast a float to integer in a list if it is integer.
         For example:
         ```
@@ -319,11 +360,13 @@ class ChemicalReaction():
         to_integer([1.0, 8.0, 1.0, 2.5, 4.0, 1.0])
         [1, 8, 1, 2.5, 4, 1]
         ```
-        '''
+        """
         return [int(i) if i.is_integer() else i for i in coefficients]
 
-    def balance_reaction(self, algorithm:str = "inv", intify:bool = True, max_comb:int = 1e8) -> list:
-        '''
+    def balance_reaction(
+        self, algorithm: str = "inv", intify: bool = True, max_comb: int = 1e8
+    ) -> list:
+        """
         High-level function call for all balancing algorithms.
 
         Parameters:
@@ -335,11 +378,11 @@ class ChemicalReaction():
         4) `"comb"` - combinatorial algorithm
         Note: "comb" algorithm works only for integer coefficients
         less than 127 (see `Balancer.comb_algorithm` for details).
-        * `intify:bool` - determines whether the coefficients 
+        * `intify:bool` - determines whether the coefficients
         should be integers. True by default.
         * `max_comb:int` - maximum amount of coefficients vectors
         that algorithm goes through. 1e8 by default.
-        
+
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").
@@ -350,24 +393,34 @@ class ChemicalReaction():
         [0.19607843137254966, 1.568627450980392, 0.1960784313725499,
         0.49019607843137436, 0.7843137254901958, 0.19607843137254813]
         ```
-        '''
+        """
         arguments_type_checking(algorithm, str)
         arguments_type_checking(intify, bool)
         arguments_type_checking(max_comb, int, float)
 
-        self.check_elements_count()  
+        self.check_elements_count()
 
         if self.mode != "balance":
             raise ValueError("Reaction balancing is only available in balance mode")
 
-        avaliable_algorithms:list[str] = ["inv", "gpinv", "ppinv", "comb"]
+        avaliable_algorithms: list[str] = ["inv", "gpinv", "ppinv", "comb"]
         if algorithm not in avaliable_algorithms:
-            raise NoSuchAlgorithm("There is no algorithm %s! Please choose between inv, gpinv, ppinv and comb algorithms" % algorithm)
-        
+            raise NoSuchAlgorithm(
+                "There is no algorithm %s! Please choose between inv, gpinv, ppinv and comb algorithms"
+                % algorithm
+            )
+
         if max_comb <= 0:
             raise ValueError("Max combinations <= 0")
 
-        balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order, intify, self.try_comb, max_comb)
+        balance = Balancer(
+            self.reactant_matrix,
+            self.product_matrix,
+            self.rounding_order,
+            intify,
+            self.try_comb,
+            max_comb,
+        )
 
         if algorithm == "inv":
             coefficients = balance.calculate_coefficients_inv()
@@ -404,39 +457,43 @@ class ChemicalReaction():
             else:
                 print("Can't equalize this reaction by combinatorial algorithm")
                 return None
-        
+
     @cached_property
     def coefficients(self) -> list:
-        '''
+        """
         Returns coefficients of the chemical reaction. There are 3 possible
-        modes that method can run: 
-        1) force mode is when coefficients are entered by user in reaction 
-        string and the calculation and the calculation takes place regardless 
-        of reaction balance (it gives warning if reaction is not balanced); 
+        modes that method can run:
+        1) force mode is when coefficients are entered by user in reaction
+        string and the calculation and the calculation takes place regardless
+        of reaction balance (it gives warning if reaction is not balanced);
         2) check mode is basically the force mode but it will raise a
-        error if reaction is not balanced and will not calculate masses); 
+        error if reaction is not balanced and will not calculate masses);
         3) balance mode uses one of three auto-balancing aglorithms described
         in detail in `Balancer` class.
 
         In the fist two cases, the coefficients are just stripped from original
         formulas entered by user. In case of balance mode, coefficients are
         calculated.
-        
+
         For example:
         ```
         >>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").coefficients
         [2, 16, 2, 5, 8, 2]
         ```
-        '''
+        """
         self.check_elements_count()
 
         if self.mode == "force":
-            if not Balancer.is_reaction_balanced(self.reactant_matrix, self.product_matrix, self.initial_coefficients):
+            if not Balancer.is_reaction_balanced(
+                self.reactant_matrix, self.product_matrix, self.initial_coefficients
+            ):
                 self.algorithm = "user"
             return self.to_integer(self.initial_coefficients)
 
         elif self.mode == "check":
-            if Balancer.is_reaction_balanced(self.reactant_matrix, self.product_matrix, self.initial_coefficients):
+            if Balancer.is_reaction_balanced(
+                self.reactant_matrix, self.product_matrix, self.initial_coefficients
+            ):
                 self.algorithm = "user"
                 return self.to_integer(self.initial_coefficients)
             else:
@@ -444,103 +501,121 @@ class ChemicalReaction():
 
         elif self.mode == "balance":
             try:
-                balance = Balancer(self.reactant_matrix, self.product_matrix, self.rounding_order, True, self.try_comb).calculate_coefficients_auto()
+                balance = Balancer(
+                    self.reactant_matrix,
+                    self.product_matrix,
+                    self.rounding_order,
+                    True,
+                    self.try_comb,
+                ).calculate_coefficients_auto()
                 self.algorithm = balance[1]
                 return balance[0]
             except Exception:
                 return None
 
-    def coefficients_check(self, coefficients:list) -> bool:
-        '''
+    def coefficients_check(self, coefficients: list) -> bool:
+        """
         Checking the coefficients.
-        '''
+        """
         if coefficients == None:
             raise BadCoeffiecients("Coefficients are None")
         elif any(x <= 0 for x in coefficients):
             raise BadCoeffiecients("0 or -x in coefficients")
         elif len(coefficients) != self.matrix.shape[1]:
-            raise BadCoeffiecients("number of coefficients should be equal to %s" % self.matrix.shape[1])
-        
+            raise BadCoeffiecients(
+                "number of coefficients should be equal to %s" % self.matrix.shape[1]
+            )
+
         return True
 
     @property
     @lru_cache
     def normalized_coefficients(self) -> list:
-        '''
+        """
         List of coefficients normalized on target compound
         (target coefficient = 1). For exapmle:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").normalized_coefficients
         [1, 8, 1, 2.5, 4, 1]
         ```
-        '''
+        """
         if self.coefficients_check(self.coefficients):
-            normalized_coefficients = [coef/self.coefficients[self.target] for coef in self.coefficients]
-            return [int(i) if i.is_integer() else round(i, self.rounding_order) for i in normalized_coefficients]
-    
+            normalized_coefficients = [
+                coef / self.coefficients[self.target] for coef in self.coefficients
+            ]
+            return [
+                int(i) if i.is_integer() else round(i, self.rounding_order)
+                for i in normalized_coefficients
+            ]
+
     @property
     def is_balanced(self) -> bool:
-        '''
+        """
         Returns if the reaction is balanced with current coefficients.
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").is_balanced
         True
         ```
-        '''
-        balance = Balancer.is_reaction_balanced(self.reactant_matrix, self.product_matrix, self.coefficients)
+        """
+        balance = Balancer.is_reaction_balanced(
+            self.reactant_matrix, self.product_matrix, self.coefficients
+        )
         return balance
 
-    def generate_final_reaction(self, coefs:list) -> str:
-        '''
-        Final reaction string with connotated formulas and 
+    def generate_final_reaction(self, coefs: list) -> str:
+        """
+        Final reaction string with connotated formulas and
         calculated coefficients. For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").
         generate_final_reaction([2, 16, 2, 5, 8, 2])
         "2KMnO4+16HCl=2MnCl2+5Cl2+8H2O+2KCl"
         ```
-        '''
+        """
         final_reaction = []
         for i, compound in enumerate(self.formulas):
             if coefs[i] != 1 or coefs[i] != 1.0:
-                final_reaction.append(str(coefs[i])+str(compound))
+                final_reaction.append(str(coefs[i]) + str(compound))
             else:
                 final_reaction.append(str(compound))
         final_reaction = (self.reactant_separator).join(final_reaction)
-        final_reaction = final_reaction.replace(self.reactants[-1]+self.reactant_separator, self.reactants[-1]+self.separator)
+        final_reaction = final_reaction.replace(
+            self.reactants[-1] + self.reactant_separator,
+            self.reactants[-1] + self.separator,
+        )
         return final_reaction
 
     @property
     @lru_cache
     def final_reaction(self) -> str:
-        '''
+        """
         Final representasion of reaction with coefficients.
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").final_reaction
         "2KMnO4+16HCl=2MnCl2+5Cl2+8H2O+2KCl"
         ```
-        '''
+        """
         return self.generate_final_reaction(self.coefficients)
 
     @property
     @lru_cache
     def final_reaction_normalized(self) -> str:
-        '''
+        """
         Final representasion of reaction with normalized coefficients.
         For example:
         ```
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").final_reaction_normalized
         "KMnO4+8HCl=MnCl2+2.5Cl2+4H2O+KCl"
         ```
-        '''
+        """
         return self.generate_final_reaction(self.normalized_coefficients)
-    
+
     @property
     @lru_cache
     def masses(self) -> list:
-        '''
+        """
         List of masses (in grams) of the of formulas in reaction
         calculated with coefficients obtained by any of 3 methods.
         Calculates masses by calculating amount of substance nu (nu=mass/molar mass).
@@ -553,102 +628,113 @@ class ChemicalReaction():
         >>>ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl", target_mass=2.0).masses
         [2.51167374, 4.63554729, 2.0, 2.81711407, 1.14528203, 1.18482493]
         ```
-        '''
+        """
         if self.coefficients_check(self.coefficients):
-            nu = self.target_mass/self.molar_masses[self.target]
-            masses = [round(molar*nu*self.normalized_coefficients[i], self.rounding_order) 
-            for i, molar in enumerate(self.molar_masses)]
+            nu = self.target_mass / self.molar_masses[self.target]
+            masses = [
+                round(molar * nu * self.normalized_coefficients[i], self.rounding_order)
+                for i, molar in enumerate(self.molar_masses)
+            ]
             return masses
 
-    def _is_reaction_string_valid(self) -> (list|bool):
-        '''
+    def _is_reaction_string_valid(self) -> (list | bool):
+        """
         Checks if the reaction string is valid for parsing:
         if it's not contains any characters that are not
         allowed.
-        '''
-        search=compile(self.allowed_symbols).findall
+        """
+        search = compile(self.allowed_symbols).findall
         if search(self.temp_reaction):
             return search(self.temp_reaction)
         else:
             return True
 
-
-    def _reaction_contains_separator(self) -> (str|None):
-        '''
+    def _reaction_contains_separator(self) -> (str | None):
+        """
         Checks if the reaction string is valid for parsing:
         if it contains one of reactants-products separators (listed
         in possible_reaction_separators attribute).
-        '''
+        """
         for separator in self.possible_reaction_separators:
             if self.temp_reaction.find(separator) != -1:
-                if self.temp_reaction.split(separator)[1] != '':
+                if self.temp_reaction.split(separator)[1] != "":
                     return separator
         return
-    
+
     @property
-    @lru_cache 
+    @lru_cache
     def output_results(self) -> dict:
-        '''
+        """
         Collection of every output of calculated
         chemical reaction properties.
-        '''
+        """
         output = {
-            "initial reaction" : self.reaction,
-            "reaction matrix" : self.matrix,
-            "mode" : self.mode,
-            "formulas" : self.formulas,
-            "coefficients" : self.coefficients,
-            "normalized coefficients" : self.normalized_coefficients,
-            "algorithm" : self.algorithm,
-            "is balanced" : self.is_balanced,
-            "final reaction" : self.final_reaction,
-            "final reaction normalized" : self.final_reaction_normalized,
-            "molar masses" : self.molar_masses,
-            "target" : self.formulas[self.target],
-            "masses" : self.masses
-        } 
+            "initial reaction": self.reaction,
+            "reaction matrix": self.matrix,
+            "mode": self.mode,
+            "formulas": self.formulas,
+            "coefficients": self.coefficients,
+            "normalized coefficients": self.normalized_coefficients,
+            "algorithm": self.algorithm,
+            "is balanced": self.is_balanced,
+            "final reaction": self.final_reaction,
+            "final reaction normalized": self.final_reaction_normalized,
+            "molar masses": self.molar_masses,
+            "target": self.formulas[self.target],
+            "masses": self.masses,
+        }
         return output
-    
-    def print_results(self, print_rounding_order:int = 4) -> None:
-        '''
+
+    def print_results(self, print_rounding_order: int = 4) -> None:
+        """
         Method to print a final result of calculations
         in terminal.
-                        
+
         Parameters:
         * `print_rounding_order:int` - print precision (4 digits by default).
-        '''
-        printing = ReactionOutput(self.output_results).print_results(print_rounding_order)
+        """
+        printing = ReactionOutput(self.output_results).print_results(
+            print_rounding_order
+        )
         return
-        
-    def export_to_txt(self, filename:str='default', print_rounding_order:int = 4)  -> None:
-        '''
+
+    def export_to_txt(
+        self, filename: str = "default", print_rounding_order: int = 4
+    ) -> None:
+        """
         Method to print a final result of calculations
         in txt file.
-                        
+
         Parameters:
         * `filename:str` - filename string (should end with .txt)
         * `print_rounding_order:int` - print precision (4 digits by default).
-        '''
-        printing = ReactionOutput(self.output_results).export_to_txt(filename, print_rounding_order)
+        """
+        printing = ReactionOutput(self.output_results).export_to_txt(
+            filename, print_rounding_order
+        )
         return
 
-    def as_json(self, print_rounding_order:int = 4) -> str:
-        '''
+    def as_json(self, print_rounding_order: int = 4) -> str:
+        """
         Serialization of output into JSON object.
-                        
+
         Parameters:
         * `print_rounding_order:int` - print precision (4 digits by default).
-        '''
+        """
         return ReactionOutput(self.output_results).dump_to_json(print_rounding_order)
-        
-    def export_to_json(self, filename:str='default', print_rounding_order:int = 4)  -> None:
-        '''
+
+    def export_to_json(
+        self, filename: str = "default", print_rounding_order: int = 4
+    ) -> None:
+        """
         Method to print a final result of calculations
         in JSON file.
-                        
+
         Parameters:
         * `filename:str` - filename string (should end with .json)
         * `print_rounding_order:int` - print precision (4 digits by default).
-        '''
-        printing = ReactionOutput(self.output_results).export_to_json(filename, print_rounding_order)
+        """
+        printing = ReactionOutput(self.output_results).export_to_json(
+            filename, print_rounding_order
+        )
         return

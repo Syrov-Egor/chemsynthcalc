@@ -118,14 +118,16 @@ True
 from .chemical_formula import ChemicalFormula
 from .chemical_reaction import ChemicalReaction
 
+
 def run_test():
-    '''
+    """
     Run suite of tests both for `ChemicalFormula`
     and `ChemicalReaction` classes.
-    '''
+    """
     import unittest
+
     loader = unittest.TestLoader()
-    start_dir = './test'
+    start_dir = "./test"
     suite = loader.discover(start_dir)
     runner = unittest.TextTestRunner()
     runner.run(suite)
