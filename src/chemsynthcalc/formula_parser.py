@@ -126,7 +126,7 @@ class ChemicalFormulaParser:
             i,
         )
 
-    def _is_formula_valid(self) -> (list | bool):
+    def _is_formula_valid(self) -> list:
         """
         Checks if the formula string is valid for parsing:
         if it's not contains any characters that are not

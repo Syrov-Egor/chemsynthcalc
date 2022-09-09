@@ -303,7 +303,7 @@ class ChemicalReaction:
         return self.matrix[:, len(self.reactants) :]
 
     @lru_cache
-    def check_elements_count(self) -> (list | None):
+    def check_elements_count(self) -> list:
         """
         Checks if all elements are present in both sides of reaction.
         Doesn't work in the `force` mode!
@@ -637,7 +637,7 @@ class ChemicalReaction:
             ]
             return masses
 
-    def _is_reaction_string_valid(self) -> (list | bool):
+    def _is_reaction_string_valid(self) -> list:
         """
         Checks if the reaction string is valid for parsing:
         if it's not contains any characters that are not
@@ -649,7 +649,7 @@ class ChemicalReaction:
         else:
             return True
 
-    def _reaction_contains_separator(self) -> (str | None):
+    def _reaction_contains_separator(self) -> str:
         """
         Checks if the reaction string is valid for parsing:
         if it contains one of reactants-products separators (listed

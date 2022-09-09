@@ -22,7 +22,7 @@ from chemsynthcalc.chem_errors import (
 
 class TestChemicalReaction(unittest.TestCase):
     def setUp(self) -> None:
-        with open("./test/testing_reactions.csv") as csvfile:
+        with open("./tests/testing_reactions.csv") as csvfile:
             reader = list(csv.reader(csvfile))[1:]
         self.reactions_set = [(i[0], ast.literal_eval(i[1])) for i in reader]
 

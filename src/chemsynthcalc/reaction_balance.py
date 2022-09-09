@@ -53,7 +53,7 @@ class Balancer:
         self.intify: bool = intify
         self.coef_limit: int = 1000000
 
-    def calculate_coefficients_inv(self) -> list | None:
+    def calculate_coefficients_inv(self) -> list:
         """
         High-level function call to calculate coefficients
         using Thorne algorithm.
@@ -84,7 +84,7 @@ class Balancer:
         except Exception:
             return None
 
-    def calculate_coefficients_gpinv(self) -> list | None:
+    def calculate_coefficients_gpinv(self) -> list:
         """
         High-level function call to calculate coefficients
         using Risteski algorithm.
@@ -115,7 +115,7 @@ class Balancer:
         except Exception:
             return None
 
-    def calculate_coefficients_ppinv(self) -> list | None:
+    def calculate_coefficients_ppinv(self) -> list:
         """
         High-level function call to calculate coefficients
         using Risteski algorithm.
@@ -147,7 +147,7 @@ class Balancer:
         except Exception:
             return None
 
-    def calculate_coefficients_comb(self) -> list | None:
+    def calculate_coefficients_comb(self) -> list:
         """
         High-level function call to calculate coefficients
         using combinatorial algorithm.
