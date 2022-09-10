@@ -3,10 +3,10 @@ Python package for calculating the masses of substances required for chemical sy
 
 ## Prerequisites
 * [Python](https://www.python.org/downloads/) 3.8+
-* [NumPy](https://numpy.org/)
+* [NumPy](https://numpy.org/) 1.22+
 
 ## Installation
-Install from [pypi](https://pypi.org/):
+Install from [pypi](https://pypi.org/project/chemsynthcalc/):
 
 `pip install chemsynthcalc`
 

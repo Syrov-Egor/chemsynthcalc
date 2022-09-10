@@ -1,25 +1,18 @@
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.hatchling]
-packages = [
-  { include = "src"},
-  { include = "tests"},
-  ]
-
 [project]
 name = "chemsynthcalc"
-version = "1.0.0.8"
+version = "1.0.2"
 authors = [
   { name="Egor Syrov", email="syrov@unn.ru" },
 ]
 description = "Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods."
 readme = "README.md"
-license = { file="LICENSE" }
+license = "MIT"
 dependencies = [
-  "numpy"
+  "numpy>=1.22"
 ]
 
 requires-python = ">=3.8"
