@@ -12,7 +12,7 @@ description = "Python package for calculating the masses of substances required 
 readme = "README.md"
 license = "MIT"
 dependencies = [
-  "numpy>=1.22"
+  "scipy>=1.6"
 ]
 
 requires-python = ">=3.8"

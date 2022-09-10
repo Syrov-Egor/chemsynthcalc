@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.linalg
 import gc
 
 # import cupy as cp # in case of CuPy combinatorial function
@@ -345,7 +346,7 @@ class Balancer:
         be ordered by atoms apperances in the reaction string.
         """
         matrix = np.hstack((self.reactant_matrix, -self.product_matrix))
-        inverse = np.linalg.pinv(matrix)
+        inverse = scipy.linalg.pinv(matrix)
         a = np.ones((matrix.shape[1], 1))
         i = np.identity(matrix.shape[1])
         coefs = (i - inverse @ matrix) @ a
@@ -378,13 +379,13 @@ class Balancer:
         is sensetive to row order in the reaction matrix. The rows should
         be ordered by atoms apperances in the reaction string.
         """
-        MP_inverse = np.linalg.pinv(self.reactant_matrix)
+        MP_inverse = scipy.linalg.pinv(self.reactant_matrix)
         g_matrix = (
             np.identity(self.reaction_matrix.shape[0])
             - self.reactant_matrix @ MP_inverse
         )
         g_matrix = g_matrix @ self.product_matrix
-        y_multiply = np.linalg.pinv(g_matrix) @ g_matrix
+        y_multiply = scipy.linalg.pinv(g_matrix) @ g_matrix
         y_vector = (np.identity(y_multiply.shape[1]) - y_multiply).dot(
             np.ones(y_multiply.shape[1])
         )
