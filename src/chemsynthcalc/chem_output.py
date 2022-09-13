@@ -5,15 +5,15 @@ import numpy as np
 
 
 class FormulaOutput:
-    """
-    A collection of methods for outputing results of
-    `ChemicalFormula` class. Default filenames of
-    output files are CSC_formula with formula
-    and nanosecond since the epoch.
+    """Outputs for :class:`chemsynthcalc.chemical_formula.ChemicalFormula`
 
-    Parameters:
-    * `chemical_formula_output:dict` - output of
-    `ChemicalFormula` class
+    A collection of methods for outputing results of
+    :class:`chemsynthcalc.chemical_formula.ChemicalFormula`. Default filenames of
+    output files are "CSC_formula" with formula
+    and nanosecond since the epoch.
+    
+    Arguments:
+        chemical_formula_output (dict): output of :class:`chemsynthcalc.chemical_formula.ChemicalFormula`
     """
 
     def __init__(self, chemical_formula_output: dict) -> None:
@@ -21,8 +21,13 @@ class FormulaOutput:
         self.original_stdout = sys.stdout
 
     def __print_stream(self, print_rounding_order: int) -> None:
-        """
-        Prints of results that can be streamed into stdout.
+        """Prints of results that can be streamed into stdout.
+
+        Arguments:
+            print_rounding_order (int): print precision
+        
+        Returns:
+            None
         """
         print("formula:", self.output.get("formula"))
         print("parsed formula:", self.output.get("parsed formula"))
@@ -51,16 +56,27 @@ class FormulaOutput:
         return
 
     def print_results(self, print_rounding_order: int) -> None:
-        """
-        Print results in the terminal.
+        """Print results in the terminal.
+        
+        Arguments:
+            print_rounding_order (int): print precision
+                
+        Returns:
+            None
         """
         sys.stdout = self.original_stdout
         self.__print_stream(print_rounding_order)
         return
 
     def export_to_txt(self, filename: str, print_rounding_order: int) -> None:
-        """
-        Print results in the txt file and saves it.
+        """Print results in the txt file and saves it.
+        
+        Arguments:
+            filename (str): filename string (should end with .txt)
+            print_rounding_order (int): print precision
+                
+        Returns:
+            None
         """
         if filename == "default":
             filename = "CSC_formula_%s_%s.txt" % (
@@ -75,8 +91,13 @@ class FormulaOutput:
         return
 
     def dump_to_json(self, print_rounding_order: int) -> str:
-        """
-        JSON serialization.
+        """JSON serialization.
+        
+        Arguments:
+            print_rounding_order (int): print precision
+
+        Returns:
+            str: a JSON-type object of results output.
         """
         mod_output = self.output.copy()
         mod_output.update(
@@ -106,8 +127,14 @@ class FormulaOutput:
         return json.dumps(mod_output, ensure_ascii=False)
 
     def export_to_json(self, filename: str, print_rounding_order: int) -> None:
-        """
-        Dump output dict into JSON flie.
+        """Dump output dict into JSON flie.
+ 
+        Arguments:
+            filename (str): filename string (should end with .json)
+            print_rounding_order (int): print precision
+                
+        Returns:
+            None
         """
         if filename == "default":
             filename = "CSC_formula_%s_%s.json" % (
@@ -122,15 +149,15 @@ class FormulaOutput:
 
 
 class ReactionOutput:
-    """
+    """Outputs for :class:`chemsynthcalc.chemical_reaction.ChemicalReaction`
+    
     A collection of methods for outputing results of
-    `ChemicalReaction` class. Default filenames of
-    output files are CSC_reaction with target
+    :class:`chemsynthcalc.chemical_reaction.ChemicalReaction`. Default filenames of
+    output files are "CSC_reaction" with target
     compound and nanosecond since the epoch.
 
-    Parameters:
-    * `chemical_reaction_output:dict` - output of
-    `ChemicalReaction` class
+    Arguments:
+        chemical_formula_output (dict): output of :class:`chemsynthcalc.chemical_reaction.ChemicalReaction`
     """
 
     def __init__(self, chemical_reaction_output: dict) -> None:
@@ -138,8 +165,13 @@ class ReactionOutput:
         self.original_stdout = sys.stdout
 
     def __print_stream(self, print_rounding_order: int) -> None:
-        """
-        Prints of results that can be streamed into stdout.
+        """Prints of results that can be streamed into stdout.
+
+        Arguments:
+            print_rounding_order (int): print precision
+        
+        Returns:
+            None
         """
         print("initial reaction:", self.output.get("initial reaction"))
         print("reaction matrix:")
@@ -171,16 +203,27 @@ class ReactionOutput:
         return
 
     def print_results(self, print_rounding_order: int) -> None:
-        """
-        Print results in the terminal.
+        """Print results in the terminal.
+        
+        Arguments:
+            print_rounding_order (int): print precision
+                
+        Returns:
+            None
         """
         sys.stdout = self.original_stdout
         self.__print_stream(print_rounding_order)
         return
 
     def export_to_txt(self, filename: str, print_rounding_order: int) -> None:
-        """
-        Print results in the txt file and saves it.
+        """Print results in the txt file and saves it.
+        
+        Arguments:
+            filename (str): filename string (should end with .txt)
+            print_rounding_order (int): print precision
+                
+        Returns:
+            None
         """
         if filename == "default":
             filename = "CSC_reaction_%s_%s.txt" % (
@@ -194,8 +237,13 @@ class ReactionOutput:
         return
 
     def dump_to_json(self, print_rounding_order: int) -> str:
-        """
-        JSON serialization.
+        """JSON serialization.
+        
+        Arguments:
+            print_rounding_order (int): print precision
+
+        Returns:
+            str: a JSON-type object of results output.
         """
         mod_output = self.output.copy()
         mod_output.update(
@@ -223,8 +271,14 @@ class ReactionOutput:
         return json.dumps(mod_output, ensure_ascii=False)
 
     def export_to_json(self, filename: str, print_rounding_order: int) -> None:
-        """
-        Dump output dict into JSON flie.
+        """Dump output dict into JSON flie.
+ 
+        Arguments:
+            filename (str): filename string (should end with .json)
+            print_rounding_order (int): print precision
+                
+        Returns:
+            None
         """
         if filename == "default":
             filename = "CSC_reaction_%s_%s.json" % (

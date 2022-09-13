@@ -19,8 +19,7 @@ from .chem_errors import (
 
 
 class ChemicalReaction:
-    """
-    A class that represents a chemical reaction and do operations on it.
+    """A class that represents a chemical reaction and do operations on it.
 
     Parameters:
     * `reaction:str` - a reaction string
