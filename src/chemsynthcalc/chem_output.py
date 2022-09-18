@@ -97,7 +97,7 @@ class FormulaOutput:
             print_rounding_order (int): print precision
 
         Returns:
-            str: a JSON-type object of results output.
+            str: A JSON-type object of results output.
         """
         mod_output = self.output.copy()
         mod_output.update(
@@ -243,7 +243,7 @@ class ReactionOutput:
             print_rounding_order (int): print precision
 
         Returns:
-            str: a JSON-type object of results output.
+            str: A JSON-type object of results output.
         """
         mod_output = self.output.copy()
         mod_output.update(

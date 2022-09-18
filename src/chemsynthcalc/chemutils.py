@@ -8,8 +8,17 @@ which are not belong to main classes
 
 
 def arguments_type_checking(argument, *args) -> None:
-    """
-    Checks for type of function argument.
+    """Checks for type of function argument.
+    
+    Argments:
+        argument (Any): Argument of the function in question
+        types (Any): Types that allowed for this argument
+    
+    Raises:
+        TypeError: if agrument type is not one of specified types
+    
+    Returns:
+        None
     """
     if not isinstance(argument, args):
         raise TypeError(
@@ -19,8 +28,17 @@ def arguments_type_checking(argument, *args) -> None:
 
 
 def find_lcm(int_list: list) -> int:
-    """
-    Finds least common multiple of the list of integers.
+    """Finds least common multiple of the list of integers.
+
+    Arguments:
+        int_list (list): list of integers
+    
+    Returns:
+        int: Least common multiple
+    
+    Example:
+        >>> chemsynthcalc.chemutils.find_lcm([10,20,30]
+        60
     """
     lcm = 1
     for i in int_list:
@@ -29,17 +47,34 @@ def find_lcm(int_list: list) -> int:
 
 
 def find_gcd(int_list: list) -> int:
-    """
-    Finds greatest common divisor of the list of integers.
+    """Finds greatest common divider of the list of integers.
+
+    Arguments:
+        int_list (list): list of integers
+    
+    Returns:
+        int: greatest common divider
+    
+    Example:
+        >>> chemsynthcalc.chemutils.find_gcd([10,20,30]
+        10
     """
     x = reduce(gcd, int_list)
     return x
 
 
 def stripe_formula_from_coefficients(formula) -> tuple:
-    """
-    A function to stripe the initially parsed formulas from
-    chemical reaction string. For example, 4.3H3PO4 -> (4.3, H3PO4).
+    """A function to stripe the initially parsed formulas from chemical reaction string.
+    
+    Arguments:
+        formula (str): a formula string
+
+    Returns:
+        tuple: (float, str) tuple of (coefficient, reaction)
+    
+    Example:
+        >>> chemsynthcalc.chemutils.stripe_formula_from_coefficients("4.3H3PO4")
+        (4.3, 'H3PO4')
     """
     if not formula[0].isdigit():
         return 1.0, formula
@@ -50,30 +85,6 @@ def stripe_formula_from_coefficients(formula) -> tuple:
                 coef.append(symbol)
             else:
                 return float("".join(coef)), formula[i:]
-
-
-def merge_list_of_dicts(list_of_dicts) -> dict:
-    """
-    Merge dictionaries and keep values of common keys as sum.
-    """
-
-    def mergeDict(dict1, dict2):
-        def merge_two_dicts(dict1, dict2):
-            dict3 = dict1.copy()
-            dict3.update(dict2)
-            return dict3
-
-        dict3 = merge_two_dicts(dict1, dict2)
-        for key, value in dict3.items():
-            if key in dict1 and key in dict2:
-                dict3[key] = sum([value, dict1[key]])
-        return dict3
-
-    final_dict = list_of_dicts[0]
-    for dict_i in list_of_dicts[1:]:
-        final_dict = mergeDict(final_dict, dict_i)
-    return final_dict
-
 
 """
     def intify_coefficients_pinv(self, coefficients:list) -> list:

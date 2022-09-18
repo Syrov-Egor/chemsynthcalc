@@ -3,20 +3,16 @@ from .formula_parser import ChemicalFormulaParser
 
 
 class MolarMassCalculation:
-    """
-    Class for calculation of molar masses of compounds.
+    """Class for calculation of molar masses and percentages of compounds.
+    
     Compounds should be parsed by FormulaParser first.
 
-    Parameters:
-    * `parsed_formula:dict` - formula parsed by `ChemicalFormulaParser`
+    Arguments:
+        parsed_formula (dict): formula parsed by :class:`chemsynthcalc.formula_parser.ChemicalFormulaParser`
 
-    For example:
-    ```
-    >>>MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_molar_mass()
-    18.015
-    >>>MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_molar_mass()
-    46.069
-    ```
+    Attributes:
+        atomicWeight (list): list of (atom, weight) tuple formed from :mod:`chemsynthcalc.periodic_table`
+        list_of_atoms (list): list of atoms formed from :mod:`chemsynthcalc.periodic_table`
     """
 
     def __init__(self, parsed_formula: dict) -> None:
@@ -25,9 +21,18 @@ class MolarMassCalculation:
         self.list_of_atoms = [x[0] for x in periodic_table]
 
     def calculate_molar_mass(self) -> float:
-        """
-        Calculation of molar mass of compound from atomic masses of atoms in parsed formula.
-        Atomic masses are taken from periodic_table file.
+        """Calculation of molar mass of compound from atomic masses of atoms in parsed formula.
+        
+        Atomic masses are taken from :mod:`chemsynthcalc.periodic_table` file.
+
+        Returns:
+            float: molar mass (in g/mol)
+
+        Examples:
+            >>> MolarMassCalculation({'H':2, 'O':1}).calculate_molar_mass()
+            18.015
+            >>> MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_molar_mass()
+            46.069
         """
         atomic_masses_list = []
         for atom, n in self.parsed_formula.items():
@@ -36,8 +41,16 @@ class MolarMassCalculation:
         return sum(atomic_masses_list)
 
     def calculate_mass_percent(self) -> dict:
-        """
-        Calculation of mass percents of atoms in parsed formula.
+        """Calculation of mass percents of atoms in parsed formula.
+
+        Returns:
+            dict: mass percentages of atoms in formula
+        
+        Examples:
+            >>> MolarMassCalculation({'H':2, 'O':1}).calculate_mass_percent()
+            {'H': 11.19067443796836, 'O': 88.80932556203163}
+            >>> MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_mass_percent()
+            {'C': 52.14352384466777, 'H': 13.12813388612733, 'O': 34.72834226920489}
         """
         atomic_masses_list = []
         for atom, n in self.parsed_formula.items():
@@ -48,8 +61,16 @@ class MolarMassCalculation:
         return dict(zip(self.parsed_formula.keys(), percents))
 
     def calculate_atomic_percent(self) -> dict:
-        """
-        Calculation of atomic percents of atoms in parsed formula.
+        """Calculation of atomic percents of atoms in parsed formula.
+
+        Returns:
+            dict: atomic percentages of atoms in formula
+        
+        Examples:
+            >>> MolarMassCalculation({'H':2, 'O':1}).calculate_atomic_percent()
+            {'H': 66.66666666666666, 'O': 33.33333333333333
+            >>> MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_atomic_percent()
+            {'C': 22.22222222222222, 'H': 66.66666666666666, 'O': 11.11111111111111}
         """
         values = list(self.parsed_formula.values())
         total = sum(values)
@@ -57,7 +78,8 @@ class MolarMassCalculation:
         return dict(zip(self.parsed_formula.keys(), atomic))
 
     def calculate_oxide_percent(self) -> dict:
-        """
+        """Calculation of oxide percents in parsed formula.
+
         Calculation of oxide percents in parsed formula from types
         of oxides declared in periodic table file. This type of data
         is mostly used in XRF spectrometry and mineralogy. The oxide
@@ -69,6 +91,15 @@ class MolarMassCalculation:
         or even salts, however, modification of this function is required
         (for instance, in case of binary compound, removing X atom
         from list of future compounds should have X as an argument of this function)
+
+        Returns:
+            dict: oxide percentages of oxides in formula
+        
+        Examples:
+            >>> MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_oxide_percent()
+            {'CO2': 61.9570190690046, 'H2O': 38.04298093099541}
+            >>> MolarMassCalculation({'Ba':1, 'Ti':1, 'O':3}).calculate_oxide_percent()
+            {'BaO': 65.7516917244869, 'TiO2': 34.24830827551309}
         """
         oxide_types = [i[3] for i in periodic_table]
         old_atoms = list(self.parsed_formula.keys())

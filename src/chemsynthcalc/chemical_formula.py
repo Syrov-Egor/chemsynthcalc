@@ -54,7 +54,7 @@ class ChemicalFormula:
         """Formula parsed into dict.
 
         Returns:
-            dict: parsed dictionary representation of formula string
+            dict: Parsed dictionary representation of formula string
             created by :class:`chemsynthcalc.formula_parser.ChemicalFormulaParser`.
 
         Example:
@@ -89,7 +89,7 @@ class ChemicalFormula:
         """ Mass percents of atoms in formula.
 
         Returns:
-            dict: a mass percent or 
+            dict: A mass percent or 
             `relative mass fraction <https://en.wikipedia.org/wiki/Mass_fraction_(chemistry)>`_
             of atoms in parsed chemical formula. The values of
             mass content are in % (with 100% sum), not fraction.
@@ -107,7 +107,7 @@ class ChemicalFormula:
         """Atomic percents of atoms in formula.
 
         Returns:
-            dict: an atomic percent or 
+            dict: An atomic percent or 
             `relative mole fraction <https://en.wikipedia.org/wiki/Mole_fraction>`_
             dictionary of atoms in parsed chemical formula.
             The values of mole content are in % (with 100% sum),
@@ -126,7 +126,7 @@ class ChemicalFormula:
         """Oxide percents of metals in formula.
 
         Returns:
-            dict: an oxide percent or 
+            dict: An oxide percent or 
             `oxide fraction <https://d32ogoqmya1dw8.cloudfront.net/files/introgeo/studio/examples/minex02.pdf>`_ 
             dictionary of atoms in parsed chemical formula. Oxide types are listed
             in :mod:`chemsynthcalc.periodic_table` file and can be changed to
@@ -146,7 +146,7 @@ class ChemicalFormula:
         """Dictionary of calculation resulst output for class.
 
         Returns:
-            dict: output dictionary for all properties listed above.
+            dict: Output dictionary for all properties listed above.
 
         Example:
             >>> ChemicalFormula("H2O").output_results
@@ -205,7 +205,7 @@ class ChemicalFormula:
             print_rounding_order (int): print precision (4 digits by default)
         
         Returns:
-            str: a JSON-type object of results output.
+            str: A JSON-type object of results output.
         """
         return FormulaOutput(self.output_results).dump_to_json(print_rounding_order)
 

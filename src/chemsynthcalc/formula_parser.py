@@ -8,24 +8,24 @@ from .chem_errors import (
     BracketsNotPaired,
 )
 
-
 class ChemicalFormulaParser:
-    """
-    Parser of chemical formulas. Methods of this class take string of compound chemical formula
+    """Parser of chemical formulas.
+    
+    Methods of this class take string of compound chemical formula
     and turn it to dict of atoms as keys and their coefficients as values.
 
-    Parameters:
-    * `formula:str` - formula string
+    Arguments:
+        formula (str): formula string
 
-    For example:
-    ```
-    >>>ChemicalFormulaParser("H2O").parse_formula()
-    {'H': 2.0, 'O': 1.0}
-    >>>ChemicalFormulaParser("C2H5OH").parse_formula()
-    {'C': 2.0, 'H': 6.0, 'O': 1.0}
-    >>>ChemicalFormulaParser("(K0.6Na0.4)2SO4*7H2O").parse_formula()
-    {'K': 1.2, 'Na': 0.8, 'S': 1.0, 'O': 11.0, 'H': 14.0}
-    ```
+    Attributes:
+        atom_regex (str): regular expression for finding atoms in formula
+        coefficient_regex (str): regular expression for atoms amounts in formula
+        atom_and_coefficient_regex (str): atom_regex+coefficient_regex
+        opener_brackets (str): opener brackets variations
+        closer_brackets (str): closer brackets variations
+        adduct_symbols (str): symbols for adduct notation (water of crystallization most often)
+        allowed_symbols (str): regular expression for all symbols allowed in the formula string
+        list_of_atoms (list): list of all atoms in the periodic table
     """
 
     def __init__(self, formula: str) -> None:
@@ -40,9 +40,13 @@ class ChemicalFormulaParser:
         self.list_of_atoms: list = [x[0] for x in periodic_table]
 
     def __transform_adduct(self, formula: str) -> str:
-        """
-        Transform adduct notation in formula to general
-        brackets notation.
+        """Transform adduct notation in formula to general brackets notation.
+
+        Arguments:
+            formula (str): initial formula string
+        
+        Returns:
+            str: New formula with adduct in bracket notation
         """
         transformed_formula = formula
         for i, token in enumerate(formula):
@@ -58,8 +62,13 @@ class ChemicalFormulaParser:
         return transformed_formula
 
     def __dictify(self, tuples: tuple) -> dict:
-        """
-        Transform tuples of tuples to a dict of atoms.
+        """Transform tuples of tuples to a dict of atoms.
+
+        Arguments:
+            tuples (tuple): tuple of tuples of atoms
+
+        Returns:
+            dict: dictionary of atoms
         """
         res = dict()
         for atom, n, m, k in tuples:
@@ -70,8 +79,15 @@ class ChemicalFormulaParser:
         return res
 
     def __fuse(self, mol1: dict, mol2: dict, w: int = 1) -> dict:
-        """
-        Fuse 2 dicts representing molecules. Return a new dict.
+        """Fuse 2 dicts representing molecules. 
+        
+        Arguments:
+            mol1 (dict): dict of atoms 1
+            mol2 (dict): dict of atoms 2
+            w (int): weight
+
+        Returns:
+            dict: a new fuse dict
         """
         return {
             atom: (mol1.get(atom, 0) + mol2.get(atom, 0)) * w
@@ -79,12 +95,18 @@ class ChemicalFormulaParser:
         }
 
     def __parse(self, formula: str) -> dict:
-        """
-        Return the molecule dict and length of parsed part.
+        """Parse the formula string
+       
         Recurse on opening brackets to parse the subpart and
         return on closing ones because it is the end of said subpart.
         Formula is the argument of this method due to the complications
         of self. Constructions in recursive functions.
+
+        Arguments:
+            formula (str): formula string
+
+        Returns:
+            dict: Return the molecule dict and length of parsed part
         """
         q = []
         mol = {}
@@ -127,10 +149,20 @@ class ChemicalFormulaParser:
         )
 
     def _is_formula_valid(self) -> list:
-        """
-        Checks if the formula string is valid for parsing:
-        if it's not contains any characters that are not
+        """Checks if the formula string is valid for parsing
+        
+        If it does not contains any characters that are not
         allowed.
+
+        Returns:
+            bool: True if all characters are allowed
+            list: List of characters that are not allowed
+        
+        Examples:
+            >>> ChemicalFormulaParser("K2SO4*H2O")._is_formula_valid()
+            True
+            >>> ChemicalFormulaParser("K2SO4ンH2O")._is_formula_valid()
+            ['ン']
         """
         search = compile(self.allowed_symbols).findall
         if search(self.formula):
@@ -139,8 +171,16 @@ class ChemicalFormulaParser:
             return True
 
     def are_brackets_balanced(self) -> bool:
-        """
-        Check if all sort of brackets come in pairs.
+        """Check if all sort of brackets come in pairs.
+
+        Returns:
+            bool: True if all brackets are in pairs
+        
+        Examples:
+            >>> ChemicalFormulaParser("(K2SO4)*H2O").are_brackets_balanced()
+            True
+            >>> ChemicalFormulaParser("(K2SO4)*H2O").are_brackets_balanced()
+            False
         """
         c = Counter(self.formula)
         bracket_counter = c["["] == c["]"] and c["{"] == c["}"] and c["("] == c[")"]
@@ -148,8 +188,16 @@ class ChemicalFormulaParser:
         return bracket_counter
 
     def is_adduct_one(self) -> bool:
-        """
-        Check if there is only one adduct in formula
+        """ Check if there is only one adduct in formula
+
+        Returns:
+            bool: True if there is only one adduct symbol
+        
+        Examples:
+            >>> ChemicalFormulaParser("K2SO4*H2O").is_adduct_one()
+            True
+            >>> ChemicalFormulaParser("K2SO4*H2O*CO2").is_adduct_one()
+            False
         """
         c = Counter(self.formula)
         i = 0
@@ -161,10 +209,23 @@ class ChemicalFormulaParser:
         else:
             return False
 
-    def are_atoms_legal(self, parsed) -> None:
-        """
-        Checks if all parsed atom are belong to
-        periodic table.
+    def are_atoms_legal(self, parsed:dict) -> None:
+        """Checks if all parsed atom are belong to the periodic table.
+        
+        Arguments:
+            parsed (dict): dictionary of parsed atoms
+        
+        Raises:
+            NoSuchAtom: if one of the parsed atoms are not in the periodic table
+
+        Returns:
+            None
+        
+        Examples:
+            >>> ChemicalFormulaParser("K2SO4*H2O").are_atoms_legal({'K': 2.0, 'S': 1.0, 'O': 5.0, 'H': 2.0})
+            None
+            >>> ChemicalFormulaParser("KHuSO4*H2O").are_atoms_legal({'K': 1.0, 'Hu':1.0, 'S': 1.0, 'O': 5.0, 'H': 2.0})
+            chemsynthcalc.chem_errors.NoSuchAtom: No atom Hu in the periodic table!
         """
         for atom in list(parsed.keys()):
             if atom not in self.list_of_atoms:
@@ -172,8 +233,23 @@ class ChemicalFormulaParser:
         return
 
     def parse_formula(self) -> dict:
-        """
-        Parse the formula and return a dict with occurences of each atom.
+        """Parse the formula and return a dict with occurences of each atom.
+
+        Raises:
+            InvalidCharacter: if some characters in initial string is not in `allowed_characters`
+            MoreThanOneAdduct: if there is more than one adduct symbol (i.e. *)
+            BracketsNotPaired: if some bracket type is not coming in pairs
+        
+        Returns:
+            dict: Dictionary of parsed atoms
+
+        Examples:
+            >>> ChemicalFormulaParser("H2O").parse_formula()
+            {'H': 2.0, 'O': 1.0}
+            >>> ChemicalFormulaParser("C2H5OH").parse_formula()
+            {'C': 2.0, 'H': 6.0, 'O': 1.0}
+            >>> ChemicalFormulaParser("(K0.6Na0.4)2SO4*7H2O").parse_formula()
+            {'K': 1.2, 'Na': 0.8, 'S': 1.0, 'O': 11.0, 'H': 14.0}
         """
         if self._is_formula_valid() != True:
             raise InvalidCharacter(
