@@ -73,9 +73,6 @@ CO2: M = 44.0090 g/mol, m = 1.2882 g
 ```
 Now, we got all masses ready for our planned synthesis!
 
-## Documentation
-See the docmentation for detailed functionality and all features of the package.
-
 ## Features
 * Formula parsing
   ```Python
