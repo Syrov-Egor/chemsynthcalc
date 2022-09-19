@@ -36,6 +36,8 @@ napoleon_preprocess_types = False
 napoleon_type_aliases = None
 napoleon_attr_annotations = True
 
+master_doc = 'index'
+
 templates_path = ['_templates']
 exclude_patterns = []
 
