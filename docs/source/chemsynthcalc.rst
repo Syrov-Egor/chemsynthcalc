@@ -83,11 +83,3 @@ chemsynthcalc.reaction\_matrix module
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: chemsynthcalc
-   :members:
-   :undoc-members:
-   :show-inheritance:

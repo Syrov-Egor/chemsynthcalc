@@ -3,10 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary']
-
-Welcome to chemsynthcalc's documentation!
+chemsynthcalc
 =========================================
+ChemSynthCalc stands for Chemical Synthesis Calculator.
 
 .. toctree::
    :maxdepth: 2

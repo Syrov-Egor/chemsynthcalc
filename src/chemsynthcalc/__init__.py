@@ -119,10 +119,8 @@ __version__ = "1.0.3"
 from .chemical_formula import ChemicalFormula
 from .chemical_reaction import ChemicalReaction
 
-def run_test():
-    """
-    Run suite of tests both for `ChemicalFormula`
-    and `ChemicalReaction` classes.
+def run_test() -> None:
+    """Run suite of tests both for :class:`chemsynthcalc.chemical_formula.ChemicalFormula` and :class:`chemsynthcalc.chemical_reaction.ChemicalReaction` classes.
     """
     import unittest
     import os
