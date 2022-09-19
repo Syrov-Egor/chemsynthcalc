@@ -1,2 +1,1 @@
 sphinx_rtd_theme
-chemsynthcalc==1.0.4
