@@ -24,8 +24,7 @@ sys.path.append("./src")
 extensions = ['sphinx.ext.autodoc', 
 'sphinx.ext.autosummary', 
 'sphinx.ext.napoleon', 
-'sphinx_rtd_theme',
-"sphinx_toolbox.more_autodoc"]
+'sphinx_rtd_theme',]
 autodoc_member_order = 'bysource'
 # Napoleon settings
 napoleon_google_docstring = True
