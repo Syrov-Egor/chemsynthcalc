@@ -70,9 +70,9 @@ class ReactionNotBalanced(Exception):
 
 class ReactantProductDifference(Exception):
     """
-    The elements in reaction are not evenly
-    distributed in reactants and products:
-    some of atoms are only in one part of
+    The elements in reaction are not evenly 
+    distributed in reactants and products: 
+    some of atoms are only in one part of 
     reaction.
     """
 

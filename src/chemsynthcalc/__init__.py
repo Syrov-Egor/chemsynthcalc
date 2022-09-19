@@ -120,7 +120,9 @@ from .chemical_formula import ChemicalFormula
 from .chemical_reaction import ChemicalReaction
 
 def run_test() -> None:
-    """Run suite of tests both for :class:`chemsynthcalc.chemical_formula.ChemicalFormula` and :class:`chemsynthcalc.chemical_reaction.ChemicalReaction` classes.
+    """Run suite of tests both for 
+    :class:`chemsynthcalc.chemical_formula.ChemicalFormula`
+    and :class:`chemsynthcalc.chemical_reaction.ChemicalReaction` classes.
     """
     import unittest
     import os

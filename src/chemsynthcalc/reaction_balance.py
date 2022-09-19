@@ -17,8 +17,8 @@ class Balancer:
     from general reaction matrix. Matrices are in the form of NumPy 2D array.
 
     Note:
-        Why using `scipy.linalg.pinv <https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.pinv.html>`_,
-        when `numpy.linalg.pinv <https://numpy.org/doc/stable/reference/generated/numpy.linalg.pinv.html>`_ is doing
+        Why using `scipy.linalg.pinv <https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.pinv.html>`_, 
+        when `numpy.linalg.pinv <https://numpy.org/doc/stable/reference/generated/numpy.linalg.pinv.html>`_ is doing 
         the same thing and does not require the whole scipy import?
 
         There are some peculiar reaction cases where (especially for :meth:`ppinv_algorithm` method) the results for
@@ -357,30 +357,31 @@ class Balancer:
         The calculation is based on nullity, or dimensionality, of the matrix.
 
         The algorithm can described in steps:
-        1) First, check the reaction matrix shape.
-        If number of rows in greater then number of columns, add zero
-        columns until the matrix becomes square (Note: this is modification
+
+        1) First, check the reaction matrix shape. \
+        If number of rows in greater then number of columns, add zero \
+        columns until the matrix becomes square (Note: this is modification \
         of original Thorne method described in article).
 
-        2) If reaction matrix is square (which means that number
-        of atoms involved is equal to number of compound) than
-        we turn matrix in its row-echelon form by singular value
+        2) If reaction matrix is square (which means that number \
+        of atoms involved is equal to number of compound) than \
+        we turn matrix in its row-echelon form by singular value \
         decomposition.
 
-        3) Calculation of the nullity of the matrix, which is
+        3) Calculation of the nullity of the matrix, which is \
         basically number of compounds minus rank of the matrix.
 
-        4) Create matrix augumented by nullity number of rows
-        of flipped identity matrix. If any rows are zeroes -
+        4) Create matrix augumented by nullity number of rows \
+        of flipped identity matrix. If any rows are zeroes, \
         replace it with identity matrix rows.
 
-        5) Inverse the augumented matrix
+        5) Inverse the augumented matrix.
 
-        6) Exctract and transpose rightmost column
+        6) Exctract and transpose rightmost column.
 
-        7) Normalize this value with absolute min value of vector
+        7) Normalize this value with absolute min value of vector.
 
-        8) Round up float operations errors
+        8) Round up float operations errors.
 
         Absolute values of this vector are coefficients for the
         reaction.
@@ -449,13 +450,13 @@ class Balancer:
         algorithm seems to be most convenient for matrix calculations.
         The algorithm can described in steps:
 
-        1) Stack reactant matrix and negative product matrix
+        1) Stack reactant matrix and negative product matrix.
 
-        2) Calculate MP pseudoinverse of this matrix
+        2) Calculate MP pseudoinverse of this matrix.
 
-        3) Calculate coefficients by formula:
-        x = (I – A+A)a, where x is the coefficients vector,
-        I - identity matrix, A+ - MP inverse, A - matrix,
+        3) Calculate coefficients by formula: \
+        x = (I – A+A)a, where x is the coefficients vector, \
+        I - identity matrix, A+ - MP inverse, A - matrix, \
         a - arbitrary vector (in this case, vector of ones).
 
         Note:
@@ -498,16 +499,17 @@ class Balancer:
         pseudoinverse matrix.
 
         The algorithm can described in steps:
-        1) Take the Moore-Penrose pseudoinverse of reactant matrix
 
-        2) Create a G matrix in the form of (I-AA^-)B, where
-        I is the identity matrix, A is the reactant matrix, A^- is
+        1) Take the Moore-Penrose pseudoinverse of reactant matrix.
+
+        2) Create a G matrix in the form of (I-AA^-)B, where \
+        I is the identity matrix, A is the reactant matrix, A^- is \
         the MP pseudoinverse of A and B is the product matrix.
 
-        3) Then, vector y (coefficients of products) is equal to
+        3) Then, vector y (coefficients of products) is equal to \
         (I-G^-G)u.
-
-        4) Vector x (coefficients of reactants) is equal to
+        
+        4) Vector x (coefficients of reactants) is equal to \
         A^-By + (I-A^-A)v, where u and v are columns of ones.
 
         Note:
@@ -574,15 +576,15 @@ class Balancer:
             list: list of calculated coefficients
         
         Examples:
-        >>> reaction = ChemicalReaction("KMnO4+H2S+H2SO4=S+MnSO4+K2SO4+H2O")
-        >>> Balancer(reaction.reactant_matrix, reaction.product_matrix, 8, True, True).comb_algorithm()
-        [2, 2, 2, 1, 2, 1, 4]
-        >>> reaction = ChemicalReaction("H2O2+KNO3+H2SO4=K2SO4+NO+H2O+O2")
-        >>> Balancer(reaction.reactant_matrix, reaction.product_matrix, 8, True, True).comb_algorithm()
-        [1, 2, 1, 1, 2, 2, 2]
-        >>> reaction = ChemicalReaction("Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2")
-        >>> Balancer(reaction.reactant_matrix, reaction.product_matrix, 8, True, True).comb_algorithm()
-        [4, 5, 1, 1, 1, 1, 1, 3]
+            >>> reaction = ChemicalReaction("KMnO4+H2S+H2SO4=S+MnSO4+K2SO4+H2O")
+            >>> Balancer(reaction.reactant_matrix, reaction.product_matrix, 8, True, True).comb_algorithm()
+            [2, 2, 2, 1, 2, 1, 4]
+            >>> reaction = ChemicalReaction("H2O2+KNO3+H2SO4=K2SO4+NO+H2O+O2")
+            >>> Balancer(reaction.reactant_matrix, reaction.product_matrix, 8, True, True).comb_algorithm()
+            [1, 2, 1, 1, 2, 2, 2]
+            >>> reaction = ChemicalReaction("Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2")
+            >>> Balancer(reaction.reactant_matrix, reaction.product_matrix, 8, True, True).comb_algorithm()
+            [4, 5, 1, 1, 1, 1, 1, 3]
         """
         byte = 127
         number_of_compounds = self.reaction_matrix.shape[1]
