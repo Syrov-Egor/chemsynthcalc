@@ -15,6 +15,7 @@ release = '1.0.3'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 import sys
 import sphinx_rtd_theme
+import chemsynthcalc
 
 sys.path.append("./src")
 
