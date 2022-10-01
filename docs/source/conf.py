@@ -22,15 +22,19 @@ import sphinx_rtd_theme
 
 #print(chemsynthcalc.chem_errors.BadCoeffiecients)
 
-dirname=os.path.dirname
-path = dirname(dirname(dirname(os.path.realpath(__file__))))+"\src"
-print(path)
-sys.path.append(path)
-import chemsynthcalc.chem_errors
+#dirname=os.path.dirname
+#path = dirname(dirname(dirname(os.path.realpath(__file__))))+"\src"
+#print(path)
+#sys.path.append(path)
+#import chemsynthcalc.chem_errors
 
     # If extensions (or modules to document with autodoc) are in another directory,
     # add these directories to sys.path here. If the directory is relative to the
     # documentation root, use os.path.abspath to make it absolute, like shown here.
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
 
 extensions = ['sphinx.ext.autodoc', 
 'sphinx.ext.autosummary', 
