@@ -15,6 +15,7 @@ release = '1.0.4'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 import sys
 import os
+import sphinx_theme
 import sphinx_rtd_theme
 
 #sys.path.insert(0, os.path.abspath("src"))
@@ -22,9 +23,7 @@ import sphinx_rtd_theme
 
 #print(chemsynthcalc.chem_errors.BadCoeffiecients)
 
-#dirname=os.path.dirname
-#path = dirname(dirname(dirname(os.path.realpath(__file__))))+"\src"
-#print(path)
+
 #sys.path.append(path)
 #import chemsynthcalc.chem_errors
 
@@ -34,8 +33,9 @@ import sphinx_rtd_theme
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.')+'\\src')
-print(sys.path)
+dirname=os.path.dirname
+path = dirname(dirname(dirname(os.path.realpath(__file__))))+"\src"
+sys.path.append(path)
 
 extensions = ['sphinx.ext.autodoc', 
 'sphinx.ext.autosummary', 
@@ -68,5 +68,6 @@ language = 'English'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_rtd_theme"
+html_theme = 'stanford_theme'
+html_theme_path = [sphinx_theme.get_html_theme_path('stanford-theme')]
 #html_static_path = ['_static']
