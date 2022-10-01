@@ -21,8 +21,11 @@ import sphinx_rtd_theme
 #
 
 #print(chemsynthcalc.chem_errors.BadCoeffiecients)
-sys.path.append("e:\\Programming\\chemsynthcalc\\src")
-print(sys.path)
+
+dirname=os.path.dirname
+path = dirname(dirname(dirname(os.path.realpath(__file__))))+"\src"
+print(path)
+sys.path.append(path)
 import chemsynthcalc.chem_errors
 
     # If extensions (or modules to document with autodoc) are in another directory,
