@@ -558,7 +558,7 @@ class Balancer:
         coefficients. The solution space is created by Cartesian product
         (in this case, np.meshgrid function), therefore it is very
         limited by memory. There must a better, clever and fast solution
-        to this.
+        to this!
 
         Important:
             Only for integer coefficients less than 128. Only for reactions
