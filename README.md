@@ -1,5 +1,3 @@
-[![Documentation Status](https://readthedocs.org/projects/chemsynthcalc/badge/?version=latest)](https://chemsynthcalc.readthedocs.io/en/latest/?badge=latest)
-
 # Chemical synthesis calculator
 Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods.
 
@@ -21,7 +19,7 @@ chemsynthcalc.run_test()
 ```
 
 ## Documentation
-[Read the documentation](https://chemsynthcalc.readthedocs.io/en/latest/)
+[Read the documentation](https://syrov-egor.github.io/chemsynthcalc/)
 
 ## Example use
 Let's say that we need to prepare 3 grams of [YBCO](https://en.wikipedia.org/wiki/Yttrium_barium_copper_oxide) by solid-state synthesis from respective carbonates. The reaction string will look something like this (to simplify, let's leave it without oxygen nonstoichiometry):
