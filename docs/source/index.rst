@@ -5,7 +5,7 @@
 
 chemsynthcalc
 =========================================
-ChemSynthCalc stands for Chemical Synthesis Calculator.
+ChemSynthCalc stands for Chemical Synthesis Calculator. A
 
 .. toctree::
    :maxdepth: 2
