@@ -40,7 +40,8 @@ sys.path.append(path)
 extensions = ['sphinx.ext.autodoc', 
 'sphinx.ext.autosummary', 
 'sphinx.ext.napoleon', 
-'sphinx_rtd_theme',]
+'sphinx_rtd_theme',
+'sphinx_search.extension']
 autodoc_member_order = 'bysource'
 # Napoleon settings
 napoleon_google_docstring = True
@@ -68,6 +69,5 @@ language = 'English'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'stanford_theme'
-html_theme_path = [sphinx_theme.get_html_theme_path('stanford-theme')]
+html_theme = "sphinx_rtd_theme"
 #html_static_path = ['_static']

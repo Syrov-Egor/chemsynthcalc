@@ -5,7 +5,8 @@
 
 chemsynthcalc
 =========================================
-ChemSynthCalc stands for Chemical Synthesis Calculator. A
+**ChemSynthCalc** stands for **Chem**\ ical **Synth**\ esis **Calc**\ ulator - 
+a Python 3 package for 
 
 .. toctree::
    :maxdepth: 2
