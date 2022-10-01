@@ -17,11 +17,13 @@ import sys
 import os
 import sphinx_rtd_theme
 
-sys.path.insert(0, os.path.abspath("src"))
-import chemsynthcalc.chem_errors
+#sys.path.insert(0, os.path.abspath("src"))
+#
 
-print(chemsynthcalc.chem_errors.BadCoeffiecients)
-#sys.path.append("./src")
+#print(chemsynthcalc.chem_errors.BadCoeffiecients)
+sys.path.append("e:\\Programming\\chemsynthcalc\\src")
+print(sys.path)
+import chemsynthcalc.chem_errors
 
     # If extensions (or modules to document with autodoc) are in another directory,
     # add these directories to sys.path here. If the directory is relative to the
