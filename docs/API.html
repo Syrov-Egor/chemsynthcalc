@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installing &mdash; chemsynthcalc 1.0.4 documentation</title>
+  <title>API &mdash; chemsynthcalc 1.0.4 documentation</title>
   
 
   
@@ -43,8 +43,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Usage" href="usage.html" />
-    <link rel="prev" title="chemsynthcalc" href="index.html" /> 
+    <link rel="next" title="chemsynthcalc package" href="chemsynthcalc.html" />
+    <link rel="prev" title="ChemicalReaction class" href="chemical_reaction.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,16 +90,14 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#python-3-8-or-later">Python 3.8 or later</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#numpy-and-scipy">NumPy and SciPy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#but-why-chemsynthcalc-is-using-scipy">But why chemsynthcalc is using SciPy?</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chemical_formula.html">ChemicalFormula class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chemical_reaction.html">ChemicalReaction class</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html">chemsynthcalc package</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -149,13 +147,13 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Installing</li>
+      <li>API</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/API.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -168,35 +166,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installing">
-<h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="python-3-8-or-later">
-<h2>Python 3.8 or later<a class="headerlink" href="#python-3-8-or-later" title="Permalink to this headline">¶</a></h2>
-<p>chemsynthacalc requires <a class="reference external" href="https://www.python.org/downloads/">Python 3.8</a> or later.</p>
-</div>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>Install from <a class="reference external" href="https://pypi.org/project/chemsynthcalc/">pypi</a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">chemsynthcalc</span>
-</pre></div>
-</div>
-<p>After installation, run test to make sure everything works properly:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">chemsynthcalc</span>
-
-<span class="n">chemsynthcalc</span><span class="o">.</span><span class="n">run_test</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="numpy-and-scipy">
-<h2>NumPy and SciPy<a class="headerlink" href="#numpy-and-scipy" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://numpy.org/">NumPy</a> and <a class="reference external" href="https://scipy.org/">SciPy</a> are requirements
-for fast matrix operations for the reaction balancing. They will be installed automatically
-by pip if they are not already installed.</p>
-</div>
-<div class="section" id="but-why-chemsynthcalc-is-using-scipy">
-<h2>But why chemsynthcalc is using SciPy?<a class="headerlink" href="#but-why-chemsynthcalc-is-using-scipy" title="Permalink to this headline">¶</a></h2>
-<p>In short: to ensure consistent results across all platforms.
-See <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.reaction_balance.Balancer" title="chemsynthcalc.reaction_balance.Balancer"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.reaction_balance.Balancer</span></code></a> note for the full answer.</p>
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chemsynthcalc.html">chemsynthcalc package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.chem_errors">chemsynthcalc.chem_errors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.chem_output">chemsynthcalc.chem_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.chemical_formula">chemsynthcalc.chemical_formula module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.chemical_reaction">chemsynthcalc.chemical_reaction module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.chemutils">chemsynthcalc.chemutils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.formula_parser">chemsynthcalc.formula_parser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.molar_mass">chemsynthcalc.molar_mass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.periodic_table">chemsynthcalc.periodic_table module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.reaction_balance">chemsynthcalc.reaction_balance module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemsynthcalc.html#module-chemsynthcalc.reaction_matrix">chemsynthcalc.reaction_matrix module</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 
@@ -206,8 +194,8 @@ See <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.reactio
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="index.html" class="btn btn-neutral float-left" title="chemsynthcalc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chemsynthcalc.html" class="btn btn-neutral float-right" title="chemsynthcalc package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="chemical_reaction.html" class="btn btn-neutral float-left" title="ChemicalReaction class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

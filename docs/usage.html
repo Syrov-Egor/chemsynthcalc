@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Usage &mdash; chemsynthcalc 1.0.4 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css\rtd_sphinx_search.min.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/js\rtd_sphinx_search.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ChemicalFormula class" href="chemical_formula.html" />
+    <link rel="prev" title="Installing" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> chemsynthcalc
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reaction-string">Reaction string</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#chemicalreaction-object">ChemicalReaction object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculation-and-output">Calculation and output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chemical_formula.html">ChemicalFormula class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chemical_reaction.html">ChemicalReaction class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">chemsynthcalc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>Let's say that we need to prepare 3 grams of <a class="reference external" href="https://en.wikipedia.org/wiki/Yttrium_barium_copper_oxide">YBCO</a>
+by solid-state synthesis from respective carbonates.</p>
+<div class="section" id="reaction-string">
+<h2>Reaction string<a class="headerlink" href="#reaction-string" title="Permalink to this headline">¶</a></h2>
+<p>The reaction string will look something like this
+(to simplify, let's leave it without oxygen nonstoichiometry):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;BaCO3 + Y2(CO3)3 + CuCO3 + O2 → YBa2Cu3O7 + CO2&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="chemicalreaction-object">
+<h2>ChemicalReaction object<a class="headerlink" href="#chemicalreaction-object" title="Permalink to this headline">¶</a></h2>
+<p>Now, we can create a chemical reaction object of <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction</span></code></a> class,
+which will be used in the calculation. We need to specify arguments for our particular case:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;BaCO3 + Y2(CO3)3 + CuCO3 + O2 → YBa2Cu3O7 + CO2&quot;</span>
+
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span>
+    <span class="n">reaction</span> <span class="o">=</span> <span class="n">reaction_string</span><span class="p">,</span> <span class="c1"># our reaction string</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1"># number of target compound in product list</span>
+    <span class="n">target_mass</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="c1"># desired mass of target compound,</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;balance&quot;</span> <span class="c1"># mode of coefficients calculations,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calculation-and-output">
+<h2>Calculation and output<a class="headerlink" href="#calculation-and-output" title="Permalink to this headline">¶</a></h2>
+<p>Now, to perform automatic calculation, all we need to do is to put
+<a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.print_results" title="chemsynthcalc.chemical_reaction.ChemicalReaction.print_results"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.print_results()</span></code></a> method</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;BaCO3 + Y2(CO3)3 + CuCO3 + O2 → YBa2Cu3O7 + CO2&quot;</span>
+
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span>
+    <span class="n">reaction</span> <span class="o">=</span> <span class="n">reaction_string</span><span class="p">,</span> <span class="c1"># our reaction string</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1"># number of target compound in product list</span>
+    <span class="n">target_mass</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="c1"># desired mass of target compound,</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;balance&quot;</span> <span class="c1"># mode of coefficients calculations,</span>
+<span class="p">)</span>
+
+<span class="n">reaction</span><span class="o">.</span><span class="n">print_results</span><span class="p">(</span><span class="n">print_rounding_order</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="c1"># assuming we use analytical balances with 4 digits presicion</span>
+</pre></div>
+</div>
+<p>And we get our ouput in the console:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>initial reaction: BaCO3+Y2(CO3)3+CuCO3+O2→YBa2Cu3O7+CO2
+reaction matrix:
+[[1. 0. 0. 0. 2. 0.]
+ [1. 3. 1. 0. 0. 1.]
+ [3. 9. 3. 2. 7. 2.]
+ [0. 2. 0. 0. 1. 0.]
+ [0. 0. 1. 0. 3. 0.]]
+mode: balance
+coefficients: [8, 2, 12, 1, 4, 26]
+normalized coefficients: [2, 0.5, 3, 0.25, 1, 6.5]
+balanced by algorithm: inverse
+is balanced: True
+final reaction: 8BaCO3+2Y2(CO3)3+12CuCO3+O2→4YBa2Cu3O7+26CO2
+final reaction normalized: 2BaCO3+0.5Y2(CO3)3+3CuCO3+0.25O2→YBa2Cu3O7+6.5CO2
+target: YBa2Cu3O7
+BaCO3: M = 197.3380 g/mol, m = 1.7773 g
+Y2(CO3)3: M = 357.8360 g/mol, m = 0.8057 g
+CuCO3: M = 123.5540 g/mol, m = 1.6692 g
+O2: M = 31.9980 g/mol, m = 0.0360 g
+YBa2Cu3O7: M = 666.1970 g/mol, m = 3.0000 g
+CO2: M = 44.0090 g/mol, m = 1.2882 g
+</pre></div>
+</div>
+<p>Thus, we got all masses ready for our planned synthesis!</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="chemical_formula.html" class="btn btn-neutral float-right" title="ChemicalFormula class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2022, Egor Syrov.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

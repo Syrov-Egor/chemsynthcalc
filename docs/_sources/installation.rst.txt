@@ -13,7 +13,6 @@ Install from `pypi <https://pypi.org/project/chemsynthcalc/>`_::
 
   pip install chemsynthcalc
 
-
 After installation, run test to make sure everything works properly::
 
   import chemsynthcalc

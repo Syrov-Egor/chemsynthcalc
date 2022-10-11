@@ -268,7 +268,7 @@ class ChemicalReaction:
         
         Example:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").parsed_formulas
-            [{'K': 1.0, 'Mn': 1.0, 'O': 4.0}, {'H': 1.0, 'Cl': 1.0},{'Mn': 1.0, 'Cl': 2.0}, {'Cl': 2.0}, {'H': 2.0, 'O': 1.0}, {'K': 1.0, 'Cl': 1.0}]
+            [{'K': 1.0, 'Mn': 1.0, 'O': 4.0}, {'H': 1.0, 'Cl': 1.0}, {'Mn': 1.0, 'Cl': 2.0}, {'Cl': 2.0}, {'H': 2.0, 'O': 1.0}, {'K': 1.0, 'Cl': 1.0}]
         """
         return [compound.parsed_formula for compound in self.formulas]
 

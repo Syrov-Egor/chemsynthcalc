@@ -48,8 +48,12 @@ Contents
 ========
 .. toctree::
    :maxdepth: 3
-   
+
    installation
+   usage
+   chemical_formula
+   chemical_reaction
+   API
    license
 
 
