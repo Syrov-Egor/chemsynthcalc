@@ -188,6 +188,14 @@
 <p>Whitespaces will be ignored. If there are any other symbols
 in the string, they won't be ignored, instead
 <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.InvalidCharacter" title="chemsynthcalc.chem_errors.InvalidCharacter"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.InvalidCharacter</span></code></a> exception will be raised.</p>
+<p>All brackets in formula should be paired bracket-type-wise (), {}, [].
+If not, <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.BracketsNotPaired" title="chemsynthcalc.chem_errors.BracketsNotPaired"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.BracketsNotPaired</span></code></a> exception will be raised.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Only one adduct (like X*H2O) per formula is allowed. If parser detects more
+than one adduct symbols (*·•) it will raise <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.MoreThanOneAdduct" title="chemsynthcalc.chem_errors.MoreThanOneAdduct"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.MoreThanOneAdduct</span></code></a>
+exception.</p>
 </div>
 <p>There is an optional <strong>rounding_order (int)</strong> parameter for rounding precision:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalFormula</span>
@@ -238,6 +246,19 @@ in the string, they won't be ignored, instead
 </div>
 <div class="section" id="output">
 <h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p>A typical ChemicalFormula results output will look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalFormula</span>
+
+<span class="n">ChemicalFormula</span><span class="p">(</span><span class="s2">&quot;(NH4)2SO4&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">print_results</span><span class="p">()</span>
+
+<span class="n">formula</span><span class="p">:</span> <span class="p">(</span><span class="n">NH4</span><span class="p">)</span><span class="mi">2</span><span class="n">SO4</span>
+<span class="n">parsed</span> <span class="n">formula</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">8.0</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">}</span>
+<span class="n">molar</span> <span class="n">mass</span><span class="p">:</span> <span class="mf">132.134</span>
+<span class="n">mass</span> <span class="n">percent</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">21.2012</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">6.1029</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">24.2632</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="mf">48.4327</span><span class="p">}</span>
+<span class="n">atomic</span> <span class="n">percent</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mf">13.3333</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">53.3333</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mf">6.6667</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="mf">26.6667</span><span class="p">}</span>
+<span class="n">oxide</span> <span class="n">percent</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;NO2&#39;</span><span class="p">:</span> <span class="mf">37.6894</span><span class="p">,</span> <span class="s1">&#39;H2O&#39;</span><span class="p">:</span> <span class="mf">29.5174</span><span class="p">,</span> <span class="s1">&#39;SO3&#39;</span><span class="p">:</span> <span class="mf">32.7932</span><span class="p">}</span>
+</pre></div>
+</div>
 <p>One can output ChemicalFormula results using one of the 4 methods:</p>
 <ul class="simple">
 <li><dl class="simple">

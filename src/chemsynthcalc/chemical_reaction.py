@@ -104,7 +104,7 @@ class ChemicalReaction:
         self.reactant_separator: str = "+"
         self.types_of_modes: list[str] = ["force", "check", "balance"]
         self.temp_reaction: str = reaction.replace(" ", "")
-        self.algorithm: str = ""
+        self.algorithm: str = "user"
         self.try_comb: bool = try_comb
         if mode in self.types_of_modes:
             self.mode: str = mode

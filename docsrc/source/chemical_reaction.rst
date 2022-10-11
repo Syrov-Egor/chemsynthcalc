@@ -6,8 +6,8 @@ chemical reaction from the reaction string.
 :class:`chemsynthcalc.chemical_reaction.ChemicalReaction`
 
 
-Object initialization
----------------------
+Reaction object initialization
+------------------------------
 To create a reaction object from a string::
 
     from chemsynthcalc import ChemicalReaction
@@ -24,7 +24,16 @@ To create a reaction object from a string::
     in the string, they won't be ignored, instead
     :class:`chemsynthcalc.chem_errors.InvalidCharacter` exception will be raised.
 
-There are others important arguments for reaction object creation. The most important
+.. important::
+    Other important conditions for calculations are:
+
+    There must be a reactants-products separator (listed in :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators`)
+    
+    Sets of atoms in reactant and product (left-right) parts of equation should be equal 
+    (in other words, all atoms in the left must appear on the right). If not, :class:`chemsynthcalc.chem_errors.ReactantProductDifference` \
+    exception will be raised.
+
+There are other important arguments for reaction object creation. The most important
 concept is calculation *modes*.
 
 Modes
@@ -33,8 +42,309 @@ Modes
 force mode
 ++++++++++
 
+.. warning::
+    This mode does not imply any automatic checking of calculation results.
+    Use it at your own risk!
+
+Force mode can be used when user enters coefficients in the reaction string
+and want masses to be calculated whether the reaction is balanced or not.
+For example, if we consider the following reaction for iodine synthesis::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+KI+H2SO4=I2+K2SO4+H2O"
+
+If we know beforehand that coefficient list will be [1,5,3,3,3,3], we can input::
+
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O"
+    reaction = ChemicalReaction(reaction_string, mode="force")
+
+We can make sure that reaction is balanced::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O"
+    reaction = ChemicalReaction(reaction_string, mode="force")
+    print(reaction.is_balanced)
+    # True
+
+And calculate respective masses from this reaction::
+        
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O"
+    reaction = ChemicalReaction(reaction_string, mode="force")
+    print(reaction.is_balanced)
+    print(reaction.masses)
+
+    # True
+    # [0.28105463, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]
+
+But what if we decided to add a 3-fold excess of KIO3? In the force mode, we **can**
+do that and still get output masses, even though the reaction is not balanced::
+
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "3KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O"
+    reaction = ChemicalReaction(reaction_string, mode="force")
+    print(reaction.is_balanced)
+    print(reaction.masses)
+
+    # False
+    # [0.84316391, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]
+
+As we can see, the mass of KIO3 has increased, while all other masses
+have not been changed.
+
 check mode
 ++++++++++
+Check mode is almost the same as force mode, but with mandatory reaction balance checks.
+Therefore, an unbalanced reaction cannot be calculated::
+
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "3KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O"
+    reaction = ChemicalReaction(reaction_string, mode="check")
+    print(reaction.is_balanced)
+    print(reaction.masses)
+    
+    # chemsynthcalc.chem_errors.ReactionNotBalanced: This reaction is not balanced!
+
+Whereas if we input the right list of coefficients::
+
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O"
+    reaction = ChemicalReaction(reaction_string, mode="check")
+    print(reaction.is_balanced)
+    print(reaction.masses)
+    
+    # True
+    # [0.28105463, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]
 
 balance mode
 ++++++++++++
+The last mode is  designed for the automatic reaction balancing by
+means of :class:`chemsynthcalc.reaction_balance.Balancer` class.
+For most reactions, the auto balancing option is enough::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+KI+H2SO4=I2+K2SO4+H2O"
+    reaction = ChemicalReaction(reaction_string, mode="balance")
+    print(reaction.coefficients)
+    print(reaction.is_balanced)
+    print(reaction.algorithm) # we can also check which algorithm solved the reaction
+    print(reaction.masses)
+    
+    # [1, 5, 3, 3, 3, 3]
+    # True
+    # inverse
+    # [0.28105463, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]
+
+In some cases, however, the auto-balancing is not enough, or one would
+want to calculate coefficients strictly with specific algorithm. To 
+address these issues, the following is implemented in ChemicalReaction class
+logic:
+
+Coefficients property setter
+----------------------------
+Unlike other properties of ChemicalFormula and ChemicalReaction, which are
+programmed as get-only cached properties without setters,
+the :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients` property
+can be set directly with appropriate list of coefficients::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+KI+H2SO4=I2+K2SO4+H2O"
+    reaction = ChemicalReaction(reaction_string, mode="check")
+    reaction.coefficients = [1, 5, 3, 3, 3, 3]
+    print(reaction.coefficients)
+    print(reaction.is_balanced)
+
+    # [1, 5, 3, 3, 3, 3]
+    # True
+
+The :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check()` method check
+setted coefficients *after* setting in such properties as 
+:py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients` and
+:py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.masses`, therefore does not allow
+methods to calculate values with bad coefficients, for example::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+KI+H2SO4=I2+K2SO4+H2O"
+    reaction = ChemicalReaction(reaction_string, mode="check")
+    reaction.coefficients = [1]
+    print(reaction.coefficients)
+    print(reaction.is_balanced)
+    print(reaction.masses)
+
+    # [1]
+    # False
+    # chemsynthcalc.chem_errors.BadCoeffiecients: number of coefficients should be equal to 6
+
+This is one more way (along with direct input of coefficients in the reaction string for force
+and check modes) to input a custom set of coefficients for a particular reaction.
+
+.. note::
+    Coefficients setting works in all three modes (force, check and balance).
+
+Coefficients property calculation
+---------------------------------
+The :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()` method
+is designed to give high-level interface to every coefficient calculation algorithm
+implemented in chemsynthcalc. These can be choosed by the first argument, "algorithm",
+and they are:
+
+inv or matrix inverse Thorne algorithm
+++++++++++++++++++++++++++++++++++++++
+See :meth:`chemsynthcalc.reaction_balance.Balancer.inv_algorithm()`
+
+gpinv or general pseudoinverse Risteski algorithm
++++++++++++++++++++++++++++++++++++++++++++++++++
+See :meth:`chemsynthcalc.reaction_balance.Balancer.gpinv_algorithm()`
+
+ppinv or partial pseudoinverse Risteski algorithm
++++++++++++++++++++++++++++++++++++++++++++++++++
+See :meth:`chemsynthcalc.reaction_balance.Balancer.ppinv_algorithm()`
+
+comb or combinatorial algorithm
++++++++++++++++++++++++++++++++++++++++++++++++++
+See :meth:`chemsynthcalc.reaction_balance.Balancer.comb_algorithm()`
+
+One can also specify whether or not calculated coefficients should be integers
+(by "intify" bool flag), and the maximum number of combinations ("max_comb") for 
+the combinatorial algorithm.
+
+.. note::
+    Although :meth:`chemsynthcalc.reaction_balance.Balancer.intify_coefficients()`
+    *tries* to intify coefficients, it won't always succeed. In this case, coefficients
+    will stay *float* without any exception raise.
+
+Some examples of the same reaction balanced by these four different methods::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
+    reaction = ChemicalReaction(reaction_string, mode="balance")
+    reaction.coefficients = reaction.balance_reaction(algorithm='inv')
+    print(reaction.coefficients)
+    print(reaction.is_balanced)
+
+    # Can't equalize this reaction by inverse algorithm
+    # None
+    # False
+
+The inverse algorithm can't handle this! Let's try others, like general pseudoinverse::
+        
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
+    reaction = ChemicalReaction(reaction_string, mode="balance")
+    reaction.coefficients = reaction.balance_reaction(algorithm='gpinv')
+    print(reaction.coefficients)
+    print(reaction.is_balanced)
+
+    # [1954, 1854, 518, 1093, 1096, 55, 901, 898]
+    # True
+
+partial pseudoinverse::
+            
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
+    reaction = ChemicalReaction(reaction_string, mode="balance")
+    reaction.coefficients = reaction.balance_reaction(algorithm='ppinv')
+    print(reaction.coefficients)
+    print(reaction.is_balanced)
+
+    # [39, 39, 13, 13, 11, 5, 16, 18]
+    # True
+
+and combinatorial::
+       
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
+    reaction = ChemicalReaction(reaction_string, mode="balance")
+    reaction.coefficients = reaction.balance_reaction(algorithm='comb')
+    print(reaction.coefficients)
+    print(reaction.is_balanced)
+
+    # [4, 5, 1, 1, 1, 1, 1, 3]
+    # True
+
+As we can see, we've got *four* different results (including 3 right ones) using 
+*four* different algorithms. This is why :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()`
+method was implemented. We can, of course, get gpinv or ppinv data without intification::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
+    reaction = ChemicalReaction(reaction_string, mode="balance")
+    reaction.coefficients = reaction.balance_reaction(algorithm='gpinv', intify=False)
+    print(reaction.coefficients)
+    print(reaction.is_balanced)
+
+    # [1.4169688179840456, 1.3444525018129083, 0.37563451776649776, 0.7926033357505439, 0.7947788252356772, 0.03988397389412329, 0.6533720087019586, 0.6511965192168249]
+    # True
+
+.. note::
+    Coefficients calculating by :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()` 
+    works only in the balance mode.
+
+Now, when we covered *modes* and coefficients property calculations, we can get back to other
+arguments for reaction object creation.
+
+Target
+------
+
+
+Output
+------
+A typical ChemicalReaction results output will look like this::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "KIO3+KI+H2SO4=I2+K2SO4+H2O"
+    reaction = ChemicalReaction(reaction_string, mode="balance")
+    reaction.print_results()
+
+    initial reaction: KIO3+KI+H2SO4=I2+K2SO4+H2O
+    reaction matrix:
+    [[1. 1. 0. 0. 2. 0.]
+     [1. 1. 0. 2. 0. 0.]
+     [3. 0. 4. 0. 4. 1.]
+     [0. 0. 2. 0. 0. 2.]
+     [0. 0. 1. 0. 1. 0.]]
+    mode: balance
+    coefficients: [1, 5, 3, 3, 3, 3]
+    normalized coefficients: [0.33333333, 1.66666667, 1, 1, 1, 1]
+    balanced by algorithm: inverse
+    is balanced: True
+    final reaction: KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O
+    final reaction normalized: 0.33333333KIO3+1.66666667KI+H2SO4=I2+K2SO4+H2O
+    target: I2
+    KIO3: M = 213.9950 g/mol, m = 0.2811 g
+    KI: M = 165.9980 g/mol, m = 1.0901 g
+    H2SO4: M = 98.0720 g/mol, m = 0.3864 g
+    I2: M = 253.8000 g/mol, m = 1.0000 g
+    K2SO4: M = 174.2520 g/mol, m = 0.6866 g
+    H2O: M = 18.0150 g/mol, m = 0.0710 g
+
+One can output ChemicalReaction results using one of the 4 methods:
+
+* print_results: print to console
+    :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.print_results()`
+
+* export_to_txt: save as plain txt file
+    :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_txt()`
+
+* as_json: serialization of output into JSON object
+    :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.as_json()`
+
+* export_to_json: save as JSON file
+    :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json()`

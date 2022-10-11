@@ -94,11 +94,23 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chemical_formula.html">ChemicalFormula class</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ChemicalReaction class</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#object-initialization">Object initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reaction-object-initialization">Reaction object initialization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#modes">Modes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#force-mode">force mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#check-mode">check mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#balance-mode">balance mode</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#coefficients-property-setter">Coefficients property setter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coefficients-property-calculation">Coefficients property calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#inv-or-matrix-inverse-thorne-algorithm">inv or matrix inverse Thorne algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gpinv-or-general-pseudoinverse-risteski-algorithm">gpinv or general pseudoinverse Risteski algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ppinv-or-partial-pseudoinverse-risteski-algorithm">ppinv or partial pseudoinverse Risteski algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comb-or-combinatorial-algorithm">comb or combinatorial algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#target">Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output">Output</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
@@ -175,8 +187,8 @@
 <p>An interface class to parse, decompose and calculate end results of
 chemical reaction from the reaction string.</p>
 <p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction</span></code></a></p>
-<div class="section" id="object-initialization">
-<h2>Object initialization<a class="headerlink" href="#object-initialization" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reaction-object-initialization">
+<h2>Reaction object initialization<a class="headerlink" href="#reaction-object-initialization" title="Permalink to this headline">¶</a></h2>
 <p>To create a reaction object from a string:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
 
@@ -192,14 +204,339 @@ chemical reaction from the reaction string.</p>
 in the string, they won't be ignored, instead
 <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.InvalidCharacter" title="chemsynthcalc.chem_errors.InvalidCharacter"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.InvalidCharacter</span></code></a> exception will be raised.</p>
 </div>
-<p>There are others important arguments for reaction object creation. The most important
-concept are calculation <em>modes</em>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Other important conditions for calculations are:</p>
+<p>There must be a reactants-products separator (listed in <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators" title="chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators</span></code></a>)</p>
+<p>Sets of atoms in reactant and product (left-right) parts of equation should be equal
+(in other words, all atoms in the left must appear on the right). If not, <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.ReactantProductDifference" title="chemsynthcalc.chem_errors.ReactantProductDifference"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.ReactantProductDifference</span></code></a> exception will be raised.</p>
+</div>
+<p>There are other important arguments for reaction object creation. The most important
+concept is calculation <em>modes</em>.</p>
 </div>
 <div class="section" id="modes">
 <h2>Modes<a class="headerlink" href="#modes" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="force-mode">
 <h3>force mode<a class="headerlink" href="#force-mode" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This mode does not imply any automatic checking of calculation results.
+Use it at your own risk!</p>
 </div>
+<p>Force mode can be used when user enters coefficients in the reaction string
+and want masses to be calculated whether the reaction is balanced or not.
+For example, if we consider the following reaction for iodine synthesis:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+KI+H2SO4=I2+K2SO4+H2O&quot;</span>
+</pre></div>
+</div>
+<p>If we know beforehand that coefficient list will be [1,5,3,3,3,3], we can input:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;force&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can make sure that reaction is balanced:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;force&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+<span class="c1"># True</span>
+</pre></div>
+</div>
+<p>And calculate respective masses from this reaction:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;force&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># True</span>
+<span class="c1"># [0.28105463, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]</span>
+</pre></div>
+</div>
+<p>But what if we decided to add a 3-fold excess of KIO3? In the force mode, we <strong>can</strong>
+do that and still get output masses, even though the reaction is not balanced:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;3KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;force&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># False</span>
+<span class="c1"># [0.84316391, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]</span>
+</pre></div>
+</div>
+<p>As we can see, the mass of KIO3 has increased, while all other masses
+have not been changed.</p>
+</div>
+<div class="section" id="check-mode">
+<h3>check mode<a class="headerlink" href="#check-mode" title="Permalink to this headline">¶</a></h3>
+<p>Check mode is almost the same as force mode, but with mandatory reaction balance checks.
+Therefore, an unbalanced reaction cannot be calculated:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;3KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;check&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># chemsynthcalc.chem_errors.ReactionNotBalanced: This reaction is not balanced!</span>
+</pre></div>
+</div>
+<p>Whereas if we input the right list of coefficients:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;check&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># True</span>
+<span class="c1"># [0.28105463, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="balance-mode">
+<h3>balance mode<a class="headerlink" href="#balance-mode" title="Permalink to this headline">¶</a></h3>
+<p>The last mode is  designed for the automatic reaction balancing by
+means of <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.reaction_balance.Balancer" title="chemsynthcalc.reaction_balance.Balancer"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.reaction_balance.Balancer</span></code></a> class.
+For most reactions, the auto balancing option is enough:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+KI+H2SO4=I2+K2SO4+H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)</span> <span class="c1"># we can also check which algorithm solved the reaction</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># [1, 5, 3, 3, 3, 3]</span>
+<span class="c1"># True</span>
+<span class="c1"># inverse</span>
+<span class="c1"># [0.28105463, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]</span>
+</pre></div>
+</div>
+<p>In some cases, however, the auto-balancing is not enough, or one would
+want to calculate coefficients strictly with specific algorithm. To
+address these issues, the following is implemented in ChemicalReaction class
+logic:</p>
+</div>
+</div>
+<div class="section" id="coefficients-property-setter">
+<h2>Coefficients property setter<a class="headerlink" href="#coefficients-property-setter" title="Permalink to this headline">¶</a></h2>
+<p>Unlike other properties of ChemicalFormula and ChemicalReaction, which are
+programmed as get-only cached properties without setters,
+the <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients" title="chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients</span></code></a> property
+can be set directly with appropriate list of coefficients:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+KI+H2SO4=I2+K2SO4+H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;check&quot;</span><span class="p">)</span>
+<span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+
+<span class="c1"># [1, 5, 3, 3, 3, 3]</span>
+<span class="c1"># True</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check" title="chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check()</span></code></a> method check
+setted coefficients <em>after</em> setting in such properties as
+<a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients" title="chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients</span></code></a> and
+<a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.masses" title="chemsynthcalc.chemical_reaction.ChemicalReaction.masses"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.masses</span></code></a>, therefore does not allow
+methods to calculate values with bad coefficients, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+KI+H2SO4=I2+K2SO4+H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;check&quot;</span><span class="p">)</span>
+<span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># [1]</span>
+<span class="c1"># False</span>
+<span class="c1"># chemsynthcalc.chem_errors.BadCoeffiecients: number of coefficients should be equal to 6</span>
+</pre></div>
+</div>
+<p>This is one more way (along with direct input of coefficients in the reaction string for force
+and check modes) to input a custom set of coefficients for a particular reaction.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Coefficients setting works in all three modes (force, check and balance).</p>
+</div>
+</div>
+<div class="section" id="coefficients-property-calculation">
+<h2>Coefficients property calculation<a class="headerlink" href="#coefficients-property-calculation" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a> method
+is designed to give high-level interface to every coefficient calculation algorithm
+implemented in chemsynthcalc. These can be choosed by the first argument, &quot;algorithm&quot;,
+and they are:</p>
+<div class="section" id="inv-or-matrix-inverse-thorne-algorithm">
+<h3>inv or matrix inverse Thorne algorithm<a class="headerlink" href="#inv-or-matrix-inverse-thorne-algorithm" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.reaction_balance.Balancer.inv_algorithm" title="chemsynthcalc.reaction_balance.Balancer.inv_algorithm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.reaction_balance.Balancer.inv_algorithm()</span></code></a></p>
+</div>
+<div class="section" id="gpinv-or-general-pseudoinverse-risteski-algorithm">
+<h3>gpinv or general pseudoinverse Risteski algorithm<a class="headerlink" href="#gpinv-or-general-pseudoinverse-risteski-algorithm" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.reaction_balance.Balancer.gpinv_algorithm" title="chemsynthcalc.reaction_balance.Balancer.gpinv_algorithm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.reaction_balance.Balancer.gpinv_algorithm()</span></code></a></p>
+</div>
+<div class="section" id="ppinv-or-partial-pseudoinverse-risteski-algorithm">
+<h3>ppinv or partial pseudoinverse Risteski algorithm<a class="headerlink" href="#ppinv-or-partial-pseudoinverse-risteski-algorithm" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.reaction_balance.Balancer.ppinv_algorithm" title="chemsynthcalc.reaction_balance.Balancer.ppinv_algorithm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.reaction_balance.Balancer.ppinv_algorithm()</span></code></a></p>
+</div>
+<div class="section" id="comb-or-combinatorial-algorithm">
+<h3>comb or combinatorial algorithm<a class="headerlink" href="#comb-or-combinatorial-algorithm" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.reaction_balance.Balancer.comb_algorithm" title="chemsynthcalc.reaction_balance.Balancer.comb_algorithm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.reaction_balance.Balancer.comb_algorithm()</span></code></a></p>
+<p>One can also specify whether or not calculated coefficients should be integers
+(by &quot;intify&quot; bool flag), and the maximum number of combinations (&quot;max_comb&quot;) for
+the combinatorial algorithm.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.reaction_balance.Balancer.intify_coefficients" title="chemsynthcalc.reaction_balance.Balancer.intify_coefficients"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.reaction_balance.Balancer.intify_coefficients()</span></code></a>
+<em>tries</em> to intify coefficients, it won't always succeed. In this case, coefficients
+will stay <em>float</em> without any exception raise.</p>
+</div>
+<p>Some examples of the same reaction balanced by these four different methods:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">)</span>
+<span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">balance_reaction</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;inv&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+
+<span class="c1"># Can&#39;t equalize this reaction by inverse algorithm</span>
+<span class="c1"># None</span>
+<span class="c1"># False</span>
+</pre></div>
+</div>
+<p>The inverse algorithm can't handle this! Let's try others, like general pseudoinverse:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">)</span>
+<span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">balance_reaction</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;gpinv&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+
+<span class="c1"># [1954, 1854, 518, 1093, 1096, 55, 901, 898]</span>
+<span class="c1"># True</span>
+</pre></div>
+</div>
+<p>partial pseudoinverse:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">)</span>
+<span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">balance_reaction</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;ppinv&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+
+<span class="c1"># [39, 39, 13, 13, 11, 5, 16, 18]</span>
+<span class="c1"># True</span>
+</pre></div>
+</div>
+<p>and combinatorial:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">)</span>
+<span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">balance_reaction</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;comb&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+
+<span class="c1"># [4, 5, 1, 1, 1, 1, 1, 3]</span>
+<span class="c1"># True</span>
+</pre></div>
+</div>
+<p>As we can see, we've got <em>four</em> different results (including 3 right ones) using
+<em>four</em> different algorithms. This is why <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a>
+method was implemented. We can, of course, get gpinv or ppinv data without intification:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">)</span>
+<span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">reaction</span><span class="o">.</span><span class="n">balance_reaction</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;gpinv&#39;</span><span class="p">,</span> <span class="n">intify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">is_balanced</span><span class="p">)</span>
+
+<span class="c1"># [1.4169688179840456, 1.3444525018129083, 0.37563451776649776, 0.7926033357505439, 0.7947788252356772, 0.03988397389412329, 0.6533720087019586, 0.6511965192168249]</span>
+<span class="c1"># True</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Coefficients calculating by <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a>
+works only in the balance mode.</p>
+</div>
+<p>Now, when we covered <em>modes</em> and coefficients property calculations, we can get back to other
+arguments for reaction object creation.</p>
+</div>
+</div>
+<div class="section" id="target">
+<h2>Target<a class="headerlink" href="#target" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p>A typical ChemicalReaction results output will look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+KI+H2SO4=I2+K2SO4+H2O&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">)</span>
+<span class="n">reaction</span><span class="o">.</span><span class="n">print_results</span><span class="p">()</span>
+
+<span class="n">initial</span> <span class="n">reaction</span><span class="p">:</span> <span class="n">KIO3</span><span class="o">+</span><span class="n">KI</span><span class="o">+</span><span class="n">H2SO4</span><span class="o">=</span><span class="n">I2</span><span class="o">+</span><span class="n">K2SO4</span><span class="o">+</span><span class="n">H2O</span>
+<span class="n">reaction</span> <span class="n">matrix</span><span class="p">:</span>
+<span class="p">[[</span><span class="mf">1.</span> <span class="mf">1.</span> <span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">2.</span> <span class="mf">0.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">1.</span> <span class="mf">1.</span> <span class="mf">0.</span> <span class="mf">2.</span> <span class="mf">0.</span> <span class="mf">0.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">3.</span> <span class="mf">0.</span> <span class="mf">4.</span> <span class="mf">0.</span> <span class="mf">4.</span> <span class="mf">1.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">2.</span> <span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">2.</span><span class="p">]</span>
+ <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span> <span class="mf">1.</span> <span class="mf">0.</span> <span class="mf">1.</span> <span class="mf">0.</span><span class="p">]]</span>
+<span class="n">mode</span><span class="p">:</span> <span class="n">balance</span>
+<span class="n">coefficients</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">normalized</span> <span class="n">coefficients</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.33333333</span><span class="p">,</span> <span class="mf">1.66666667</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">balanced</span> <span class="n">by</span> <span class="n">algorithm</span><span class="p">:</span> <span class="n">inverse</span>
+<span class="ow">is</span> <span class="n">balanced</span><span class="p">:</span> <span class="kc">True</span>
+<span class="n">final</span> <span class="n">reaction</span><span class="p">:</span> <span class="n">KIO3</span><span class="o">+</span><span class="mi">5</span><span class="n">KI</span><span class="o">+</span><span class="mi">3</span><span class="n">H2SO4</span><span class="o">=</span><span class="mi">3</span><span class="n">I2</span><span class="o">+</span><span class="mi">3</span><span class="n">K2SO4</span><span class="o">+</span><span class="mi">3</span><span class="n">H2O</span>
+<span class="n">final</span> <span class="n">reaction</span> <span class="n">normalized</span><span class="p">:</span> <span class="mf">0.33333333</span><span class="n">KIO3</span><span class="o">+</span><span class="mf">1.66666667</span><span class="n">KI</span><span class="o">+</span><span class="n">H2SO4</span><span class="o">=</span><span class="n">I2</span><span class="o">+</span><span class="n">K2SO4</span><span class="o">+</span><span class="n">H2O</span>
+<span class="n">target</span><span class="p">:</span> <span class="n">I2</span>
+<span class="n">KIO3</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="mf">213.9950</span> <span class="n">g</span><span class="o">/</span><span class="n">mol</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mf">0.2811</span> <span class="n">g</span>
+<span class="n">KI</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="mf">165.9980</span> <span class="n">g</span><span class="o">/</span><span class="n">mol</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mf">1.0901</span> <span class="n">g</span>
+<span class="n">H2SO4</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="mf">98.0720</span> <span class="n">g</span><span class="o">/</span><span class="n">mol</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mf">0.3864</span> <span class="n">g</span>
+<span class="n">I2</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="mf">253.8000</span> <span class="n">g</span><span class="o">/</span><span class="n">mol</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mf">1.0000</span> <span class="n">g</span>
+<span class="n">K2SO4</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="mf">174.2520</span> <span class="n">g</span><span class="o">/</span><span class="n">mol</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mf">0.6866</span> <span class="n">g</span>
+<span class="n">H2O</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="mf">18.0150</span> <span class="n">g</span><span class="o">/</span><span class="n">mol</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mf">0.0710</span> <span class="n">g</span>
+</pre></div>
+</div>
+<p>One can output ChemicalReaction results using one of the 4 methods:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>print_results: print to console</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.print_results" title="chemsynthcalc.chemical_reaction.ChemicalReaction.print_results"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.print_results()</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>export_to_txt: save as plain txt file</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_txt" title="chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_txt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_txt()</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>as_json: serialization of output into JSON object</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.as_json" title="chemsynthcalc.chemical_reaction.ChemicalReaction.as_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.as_json()</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>export_to_json: save as JSON file</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json" title="chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json()</span></code></a></p>
+</dd>
+</dl>
+</li>
+</ul>
 </div>
 </div>
 

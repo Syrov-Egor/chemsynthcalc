@@ -21,6 +21,14 @@ To create a formula object from a string::
     Whitespaces will be ignored. If there are any other symbols 
     in the string, they won't be ignored, instead
     :class:`chemsynthcalc.chem_errors.InvalidCharacter` exception will be raised.
+    
+    All brackets in formula should be paired bracket-type-wise (), {}, [].
+    If not, :class:`chemsynthcalc.chem_errors.BracketsNotPaired` exception will be raised.
+
+.. important::
+    Only one adduct (like X*H2O) per formula is allowed. If parser detects more
+    than one adduct symbols (\*·•) it will raise :class:`chemsynthcalc.chem_errors.MoreThanOneAdduct`
+    exception.
 
 There is an optional **rounding_order (int)** parameter for rounding precision::
     
@@ -56,6 +64,19 @@ After the object initialization, we can access ChemicalFormula properties:
 
 Output
 -------------------------
+A typical ChemicalFormula results output will look like this::
+    
+    from chemsynthcalc import ChemicalFormula
+
+    ChemicalFormula("(NH4)2SO4").print_results()
+
+    formula: (NH4)2SO4
+    parsed formula: {'N': 2.0, 'H': 8.0, 'S': 1.0, 'O': 4.0}
+    molar mass: 132.134
+    mass percent: {'N': 21.2012, 'H': 6.1029, 'S': 24.2632, 'O': 48.4327}
+    atomic percent: {'N': 13.3333, 'H': 53.3333, 'S': 6.6667, 'O': 26.6667}
+    oxide percent: {'NO2': 37.6894, 'H2O': 29.5174, 'SO3': 32.7932}
+
 One can output ChemicalFormula results using one of the 4 methods:
 
 * print_results: print to console
