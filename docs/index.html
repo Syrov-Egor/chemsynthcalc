@@ -43,7 +43,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="License" href="license.html" /> 
+    <link rel="next" title="Installing" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,6 +89,7 @@
             
             
               <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -174,12 +175,38 @@ It includes solutions for all intermidiate steps:</p>
 <li><p>Output to terminal, as plain txt or JSON (object or file)</p></li>
 <li><p>... and more</p></li>
 </ul>
-<p>A</p>
+</div>
+<div class="section" id="background">
+<h1>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h1>
+<p>ChemSynthCalc was created to address the issue of inorganic synthesis calculations.
+There are three main aspects to this problem.</p>
+<p>First of all, a case of single student, scientist, postdoc, etc. sitting in their lab
+and trying to synthesize a new material. The sample size of potential reactions is
+quite small in this case, and our fellow scientist can use an the old-fashioned way
+of pen and paper. But why one should not try to automate this boring task?</p>
+<p>Secondly, while we are not quite there yet, one can imagine a robotic inorganic synthesis
+station, like <a class="reference external" href="https://pubs.rsc.org/en/content/articlelanding/2012/LC/c2lc40761b">Dr Cronin</a>
+devices. In this case, we need to calculate a large number of reactions fast and precise, and
+we really should not hardcore all the masses beforehand.</p>
+<p>Finally, there are datasets of <a class="reference external" href="https://www.nature.com/articles/s41597-019-0224-1">text-mined inorganic reaction</a>.
+They surely will expand and grow in size. With sample size of ten of thousands we need our reaction balancing
+software to be extremely fast, robust yet flexible enough to balance as many reactions as it can. In this case,
+we surely need a free, open-source solution that can be embedded in the data processing system.</p>
+<p>ChemSynthCalc addresses all three of those cases. It is simple enough to use for a single
+scientist who are familiar with using Python packages, and fast and robust enough to precisely
+calculate hundreds and thousands reactions.</p>
 </div>
 <div class="section" id="contents">
 <h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#python-3-8-or-later">Python 3.8 or later</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#numpy-and-scipy">NumPy and SciPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#but-why-chemsynthcalc-is-using-scipy">But why chemsynthcalc is using SciPy?</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 </div>
@@ -199,7 +226,7 @@ It includes solutions for all intermidiate steps:</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

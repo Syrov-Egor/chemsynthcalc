@@ -87,24 +87,11 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">chemsynthcalc package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.chem_errors">chemsynthcalc.chem_errors module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.chem_output">chemsynthcalc.chem_output module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.chemical_formula">chemsynthcalc.chemical_formula module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.chemical_reaction">chemsynthcalc.chemical_reaction module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.chemutils">chemsynthcalc.chemutils module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.formula_parser">chemsynthcalc.formula_parser module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.molar_mass">chemsynthcalc.molar_mass module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.periodic_table">chemsynthcalc.periodic_table module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.reaction_balance">chemsynthcalc.reaction_balance module</a></li>
-<li><a class="reference internal" href="#module-chemsynthcalc.reaction_matrix">chemsynthcalc.reaction_matrix module</a></li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
-</li>
-</ul>
-</div>
+
             
           
         </div>
@@ -1867,7 +1854,7 @@ from general reaction matrix. Matrices are in the form of NumPy 2D array.</p>
 when <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.pinv.html">numpy.linalg.pinv</a> is doing
 the same thing and does not require the whole scipy import?</p>
 <p>There are some peculiar reaction cases where (especially for <a class="reference internal" href="#chemsynthcalc.reaction_balance.Balancer.ppinv_algorithm" title="chemsynthcalc.reaction_balance.Balancer.ppinv_algorithm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ppinv_algorithm()</span></code></a> method) the results for
-numpy.linalg.pinv differs from system to syste (np version, OS, python version etc.). My understanding is that
+numpy.linalg.pinv differs from system to system (np version, OS, python version etc.). My understanding is that
 the cause of this behaviour lies in small differences for pinv algorithm in numpy C-libraries and BLAS-libraries,
 hence the difference. To avoid this, more consistent scipy.linalg.pinv method used.</p>
 </div>

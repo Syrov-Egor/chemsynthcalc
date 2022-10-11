@@ -22,7 +22,7 @@ class Balancer:
         the same thing and does not require the whole scipy import?
 
         There are some peculiar reaction cases where (especially for :meth:`ppinv_algorithm` method) the results for
-        numpy.linalg.pinv differs from system to syste (np version, OS, python version etc.). My understanding is that
+        numpy.linalg.pinv differs from system to system (np version, OS, python version etc.). My understanding is that
         the cause of this behaviour lies in small differences for pinv algorithm in numpy C-libraries and BLAS-libraries,
         hence the difference. To avoid this, more consistent scipy.linalg.pinv method used.
 
