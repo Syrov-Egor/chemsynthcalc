@@ -20,6 +20,10 @@ It includes solutions for all intermidiate steps:
 * Output to terminal, as plain txt or JSON (object or file)
 * ... and more
 
+Main project page
+=================
+https://github.com/Syrov-Egor/chemsynthcalc
+
 Background
 ==========
 ChemSynthCalc was created to address the issue of inorganic synthesis calculations.
@@ -31,11 +35,11 @@ quite small in this case, and our fellow scientist can use an the old-fashioned 
 of pen and paper. But why one should not try to automate this boring task?
 
 Secondly, while we are not quite there yet, one can imagine a robotic inorganic synthesis
-station, like `Dr Cronin <https://pubs.rsc.org/en/content/articlelanding/2012/LC/c2lc40761b>`_
+station, like `Dr. Cronin <https://pubs.rsc.org/en/content/articlelanding/2012/LC/c2lc40761b>`_
 devices. In this case, we need to calculate a large number of reactions fast and precise, and
 we really should not hardcore all the masses beforehand.
 
-Finally, there are datasets of `text-mined inorganic reaction <https://www.nature.com/articles/s41597-019-0224-1>`_.
+Finally, there are datasets of `text-mined inorganic reactions <https://www.nature.com/articles/s41597-019-0224-1>`_.
 They surely will expand and grow in size. With sample size of ten of thousands we need our reaction balancing
 software to be extremely fast, robust yet flexible enough to balance as many reactions as it can. In this case,
 we surely need a free, open-source solution that can be embedded in the data processing system.
@@ -43,6 +47,53 @@ we surely need a free, open-source solution that can be embedded in the data pro
 ChemSynthCalc addresses all three of those cases. It is simple enough to use for a single
 scientist who are familiar with using Python packages, and fast and robust enough to precisely
 calculate hundreds and thousands reactions.
+
+Competitive analysis
+======================
+There are already a large number of reaction balancing software, why do you need
+chemsynthcalc and why is it better than competitors?
+
+* chemsynthcalc is completely free and open-source (under MIT license)
+* chemsynthcalc provides rich and simple API for its functions
+* chemsynthcalc can balance a huge variety of reactions
+* chemsynthcalc can deal with formulas with float atom count (like RbLa0.99Eu0.01Nb2O7), both for molar mass and reaction balancing
+* chemsynthcalc supports infinite amount of nested parentheses in formulas
+* chemsynthcalc supports adduct notaion (like CuSO4*5H2O)
+* chemsynthcalc is fast thanks to NumPy matrix operations
+* finally, chemsynthcalc is one of the few programs that can directly output precursor masses from a reaction string (in three lines of code!)
+
+.. list-table:: chemsynthcalc competitive analysis
+   :widths: 25 25 25 25
+   :header-rows: 1
+
+   * - Software
+     - Mass calculation
+     - Float coefficients and atom amounts
+     - API
+   * - `chemsynthcalc <https://github.com/Syrov-Egor/chemsynthcalc>`_
+     - ✓
+     - ✓
+     - ✓
+   * - `WebQC <https://www.webqc.org/balance.php>`_
+     - ✓
+     - x
+     - x
+   * - `Equation Balancer <https://equationbalancer.com/>`_
+     - x
+     - x
+     - x
+   * - `ChemicalAid <https://en.intl.chemicalaid.com/tools/equationbalancer.php>`_
+     - x
+     - ✓
+     - x
+   * - `CHEMIX School <https://www.chemix-chemistry-software.com/chemistry-software.html>`_
+     - x
+     - ✓
+     - x
+   * - `ChemPy <https://github.com/bjodah/chempy>`_
+     - x
+     - x
+     - ✓
 
 Contents
 ========
@@ -55,6 +106,7 @@ Contents
    chemical_reaction
    API
    license
+   contacts
 
 
 Indices and tables

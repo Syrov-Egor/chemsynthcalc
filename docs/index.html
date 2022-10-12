@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="chemical_reaction.html">ChemicalReaction class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contacts.html">Contacts</a></li>
 </ul>
 
             
@@ -180,6 +181,10 @@ It includes solutions for all intermidiate steps:</p>
 <li><p>... and more</p></li>
 </ul>
 </div>
+<div class="section" id="main-project-page">
+<h1>Main project page<a class="headerlink" href="#main-project-page" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/Syrov-Egor/chemsynthcalc">https://github.com/Syrov-Egor/chemsynthcalc</a></p>
+</div>
 <div class="section" id="background">
 <h1>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h1>
 <p>ChemSynthCalc was created to address the issue of inorganic synthesis calculations.
@@ -189,16 +194,79 @@ and trying to synthesize a new material. The sample size of potential reactions 
 quite small in this case, and our fellow scientist can use an the old-fashioned way
 of pen and paper. But why one should not try to automate this boring task?</p>
 <p>Secondly, while we are not quite there yet, one can imagine a robotic inorganic synthesis
-station, like <a class="reference external" href="https://pubs.rsc.org/en/content/articlelanding/2012/LC/c2lc40761b">Dr Cronin</a>
+station, like <a class="reference external" href="https://pubs.rsc.org/en/content/articlelanding/2012/LC/c2lc40761b">Dr. Cronin</a>
 devices. In this case, we need to calculate a large number of reactions fast and precise, and
 we really should not hardcore all the masses beforehand.</p>
-<p>Finally, there are datasets of <a class="reference external" href="https://www.nature.com/articles/s41597-019-0224-1">text-mined inorganic reaction</a>.
+<p>Finally, there are datasets of <a class="reference external" href="https://www.nature.com/articles/s41597-019-0224-1">text-mined inorganic reactions</a>.
 They surely will expand and grow in size. With sample size of ten of thousands we need our reaction balancing
 software to be extremely fast, robust yet flexible enough to balance as many reactions as it can. In this case,
 we surely need a free, open-source solution that can be embedded in the data processing system.</p>
 <p>ChemSynthCalc addresses all three of those cases. It is simple enough to use for a single
 scientist who are familiar with using Python packages, and fast and robust enough to precisely
 calculate hundreds and thousands reactions.</p>
+</div>
+<div class="section" id="competitive-analysis">
+<h1>Competitive analysis<a class="headerlink" href="#competitive-analysis" title="Permalink to this headline">¶</a></h1>
+<p>There are already a large number of reaction balancing software, why do you need
+chemsynthcalc and why is it better than competitors?</p>
+<ul class="simple">
+<li><p>chemsynthcalc is completely free and open-source (under MIT license)</p></li>
+<li><p>chemsynthcalc provides rich and simple API for its functions</p></li>
+<li><p>chemsynthcalc can balance a huge variety of reactions</p></li>
+<li><p>chemsynthcalc can deal with formulas with float atom count (like RbLa0.99Eu0.01Nb2O7), both for molar mass and reaction balancing</p></li>
+<li><p>chemsynthcalc supports infinite amount of nested parentheses in formulas</p></li>
+<li><p>chemsynthcalc supports adduct notaion (like CuSO4*5H2O)</p></li>
+<li><p>chemsynthcalc is fast thanks to NumPy matrix operations</p></li>
+<li><p>finally, chemsynthcalc is one of the few programs that can directly output precursor masses from a reaction string (in three lines of code!)</p></li>
+</ul>
+<table class="colwidths-given docutils align-default" id="id2">
+<caption><span class="caption-text">chemsynthcalc competitive analysis</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Software</p></th>
+<th class="head"><p>Mass calculation</p></th>
+<th class="head"><p>Float coefficients and atom amounts</p></th>
+<th class="head"><p>API</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Syrov-Egor/chemsynthcalc">chemsynthcalc</a></p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://www.webqc.org/balance.php">WebQC</a></p></td>
+<td><p>✓</p></td>
+<td><p>x</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://equationbalancer.com/">Equation Balancer</a></p></td>
+<td><p>x</p></td>
+<td><p>x</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://en.intl.chemicalaid.com/tools/equationbalancer.php">ChemicalAid</a></p></td>
+<td><p>x</p></td>
+<td><p>✓</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://www.chemix-chemistry-software.com/chemistry-software.html">CHEMIX School</a></p></td>
+<td><p>x</p></td>
+<td><p>✓</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/bjodah/chempy">ChemPy</a></p></td>
+<td><p>x</p></td>
+<td><p>x</p></td>
+<td><p>✓</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="contents">
 <h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
@@ -240,6 +308,9 @@ calculate hundreds and thousands reactions.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="chemical_reaction.html#target">Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemical_reaction.html#target-mass">Target mass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemical_reaction.html#other-arguments">Other arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chemical_reaction.html#chemicalreaction-properties">ChemicalReaction properties</a></li>
 <li class="toctree-l2"><a class="reference internal" href="chemical_reaction.html#output">Output</a></li>
 </ul>
 </li>
@@ -261,6 +332,7 @@ calculate hundreds and thousands reactions.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contacts.html">Contacts</a></li>
 </ul>
 </div>
 </div>

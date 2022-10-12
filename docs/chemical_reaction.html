@@ -110,6 +110,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#target">Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#target-mass">Target mass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-arguments">Other arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#chemicalreaction-properties">ChemicalReaction properties</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#output">Output</a></li>
 </ul>
 </li>
@@ -376,7 +379,7 @@ and check modes) to input a custom set of coefficients for a particular reaction
 <h2>Coefficients property calculation<a class="headerlink" href="#coefficients-property-calculation" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a> method
 is designed to give high-level interface to every coefficient calculation algorithm
-implemented in chemsynthcalc. These can be choosed by the first argument, &quot;algorithm&quot;,
+implemented in chemsynthcalc. These can be chose by the first argument, &quot;algorithm&quot;,
 and they are:</p>
 <div class="section" id="inv-or-matrix-inverse-thorne-algorithm">
 <h3>inv or matrix inverse Thorne algorithm<a class="headerlink" href="#inv-or-matrix-inverse-thorne-algorithm" title="Permalink to this headline">¶</a></h3>
@@ -472,7 +475,7 @@ method was implemented. We can, of course, get gpinv or ppinv data without intif
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Coefficients calculating by <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a>
+<p>Coefficients calculation by <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a>
 works only in the balance mode.</p>
 </div>
 <p>Now, when we covered <em>modes</em> and coefficients property calculations, we can get back to other
@@ -481,6 +484,151 @@ arguments for reaction object creation.</p>
 </div>
 <div class="section" id="target">
 <h2>Target<a class="headerlink" href="#target" title="Permalink to this headline">¶</a></h2>
+<p>The target is the target chemical synthesis substance (i.e., whose mass is known in advance).
+The target choise is implemented as integer pointer to formula index in products (right side of equation).
+There are, of course, other ways to do this (like explicitly input target as formula string),
+but integer index target was chose as method less prone to errors. Most of the time the target
+of the synthesis is the first product anyway (which equals to 0 by default).
+We can set target with initialization (target is 1 which is FeO):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># [3.97359366, 0.28358172, 1.52731369, 1.0, 0.77944268, 0.12575572, 0.32138621, 0.5032771]</span>
+</pre></div>
+</div>
+<p>If we change the target, masses will obviously change too:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># [5.09799345, 0.36382626, 1.95949455, 1.28296797, 1.0, 0.16134056, 0.41232821, 0.64568841]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="target-mass">
+<h2>Target mass<a class="headerlink" href="#target-mass" title="Permalink to this headline">¶</a></h2>
+<p>Mass of target compound - the only mass that we know in advance before synthesis (in grams).
+1 gram by default. We can change the target mass during the ChemicalReaction object
+initialization:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
+
+<span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;balance&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">target_mass</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">reaction</span><span class="o">.</span><span class="n">masses</span><span class="p">)</span>
+
+<span class="c1"># [7.94718732, 0.56716344, 3.05462737, 2.0, 1.55888536, 0.25151145, 0.64277241, 1.0065542]</span>
+</pre></div>
+</div>
+<p>As we can see, mass of the target (FeO) is now 2.0, and all other masses also have been changed.</p>
+</div>
+<div class="section" id="other-arguments">
+<h2>Other arguments<a class="headerlink" href="#other-arguments" title="Permalink to this headline">¶</a></h2>
+<p>There are two more arguments of ChemicalReaction object.</p>
+<p><em>try_comb</em> bool flag determines whether there should be an attempt to calculate the coefficients
+using the combinatorial method in automatic balance mode if all other methods have failed.</p>
+<p><em>rounding_order</em> (int) parameter for rounding precision.</p>
+</div>
+<div class="section" id="chemicalreaction-properties">
+<h2>ChemicalReaction properties<a class="headerlink" href="#chemicalreaction-properties" title="Permalink to this headline">¶</a></h2>
+<p>After the object initialization, we can access ChemicalFormula properties:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>reaction</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.reaction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.reaction</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>separator</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.separator" title="chemsynthcalc.chemical_reaction.ChemicalReaction.separator"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.separator</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>reactants</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.reactants" title="chemsynthcalc.chemical_reaction.ChemicalReaction.reactants"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.reactants</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>products</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.products" title="chemsynthcalc.chemical_reaction.ChemicalReaction.products"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.products</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>compounds</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.compounds" title="chemsynthcalc.chemical_reaction.ChemicalReaction.compounds"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.compounds</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>initial_coefficients</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.initial_coefficients" title="chemsynthcalc.chemical_reaction.ChemicalReaction.initial_coefficients"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.initial_coefficients</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>formulas</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.formulas" title="chemsynthcalc.chemical_reaction.ChemicalReaction.formulas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.formulas</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>matrix</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.matrix" title="chemsynthcalc.chemical_reaction.ChemicalReaction.matrix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.matrix</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>reactant_matrix</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.reactant_matrix" title="chemsynthcalc.chemical_reaction.ChemicalReaction.reactant_matrix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.reactant_matrix</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>product_matrix</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.product_matrix" title="chemsynthcalc.chemical_reaction.ChemicalReaction.product_matrix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.product_matrix</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>molar_masses</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.molar_masses" title="chemsynthcalc.chemical_reaction.ChemicalReaction.molar_masses"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.molar_masses</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>coefficients</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients" title="chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalized_coefficients</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients" title="chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>is_balanced</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.is_balanced" title="chemsynthcalc.chemical_reaction.ChemicalReaction.is_balanced"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.is_balanced</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>final_reaction</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.final_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.final_reaction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.final_reaction</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>final_reaction_normalized</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.final_reaction_normalized" title="chemsynthcalc.chemical_reaction.ChemicalReaction.final_reaction_normalized"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.final_reaction_normalized</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>masses</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.masses" title="chemsynthcalc.chemical_reaction.ChemicalReaction.masses"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.masses</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output_results</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.output_results" title="chemsynthcalc.chemical_reaction.ChemicalReaction.output_results"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.output_results</span></code></a></p>
+</dd>
+</dl>
+</li>
+</ul>
 </div>
 <div class="section" id="output">
 <h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>

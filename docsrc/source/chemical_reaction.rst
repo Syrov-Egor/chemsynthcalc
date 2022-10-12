@@ -196,7 +196,7 @@ Coefficients property calculation
 ---------------------------------
 The :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()` method
 is designed to give high-level interface to every coefficient calculation algorithm
-implemented in chemsynthcalc. These can be choosed by the first argument, "algorithm",
+implemented in chemsynthcalc. These can be chose by the first argument, "algorithm",
 and they are:
 
 inv or matrix inverse Thorne algorithm
@@ -293,7 +293,7 @@ method was implemented. We can, of course, get gpinv or ppinv data without intif
     # True
 
 .. note::
-    Coefficients calculating by :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()` 
+    Coefficients calculation by :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()` 
     works only in the balance mode.
 
 Now, when we covered *modes* and coefficients property calculations, we can get back to other
@@ -301,7 +301,114 @@ arguments for reaction object creation.
 
 Target
 ------
+The target is the target chemical synthesis substance (i.e., whose mass is known in advance).
+The target choise is implemented as integer pointer to formula index in products (right side of equation).
+There are, of course, other ways to do this (like explicitly input target as formula string),
+but integer index target was chose as method less prone to errors. Most of the time the target
+of the synthesis is the first product anyway (which equals to 0 by default).
+We can set target with initialization (target is 1 which is FeO)::
+    
+    from chemsynthcalc import ChemicalReaction
 
+    reaction_string = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
+    reaction = ChemicalReaction(reaction_string, mode="balance", target=1)
+    print(reaction.masses)
+
+    # [3.97359366, 0.28358172, 1.52731369, 1.0, 0.77944268, 0.12575572, 0.32138621, 0.5032771]
+
+If we change the target, masses will obviously change too::
+    
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
+    reaction = ChemicalReaction(reaction_string, mode="balance", target=2)
+    print(reaction.masses)
+
+    # [5.09799345, 0.36382626, 1.95949455, 1.28296797, 1.0, 0.16134056, 0.41232821, 0.64568841]
+
+Target mass
+-----------
+Mass of target compound - the only mass that we know in advance before synthesis (in grams).
+1 gram by default. We can change the target mass during the ChemicalReaction object
+initialization::
+
+    from chemsynthcalc import ChemicalReaction
+
+    reaction_string = "Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2"
+    reaction = ChemicalReaction(reaction_string, mode="balance", target=1, target_mass=2)
+
+    print(reaction.masses)
+    
+    # [7.94718732, 0.56716344, 3.05462737, 2.0, 1.55888536, 0.25151145, 0.64277241, 1.0065542]
+
+As we can see, mass of the target (FeO) is now 2.0, and all other masses also have been changed.
+
+Other arguments
+---------------
+There are two more arguments of ChemicalReaction object.
+
+*try_comb* bool flag determines whether there should be an attempt to calculate the coefficients
+using the combinatorial method in automatic balance mode if all other methods have failed.
+
+*rounding_order* (int) parameter for rounding precision.
+
+ChemicalReaction properties
+---------------------------
+After the object initialization, we can access ChemicalFormula properties:
+
+* reaction
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.reaction`
+
+* separator
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.separator`
+
+* reactants
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.reactants`
+
+* products
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.products`
+
+* compounds
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.compounds`
+
+* initial_coefficients
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.initial_coefficients`
+
+* formulas
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.formulas`
+
+* matrix
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.matrix`
+
+* reactant_matrix
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.reactant_matrix`
+
+* product_matrix
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.product_matrix`
+
+* molar_masses
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.molar_masses`
+
+* coefficients
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients`
+
+* normalized_coefficients
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients`
+
+* is_balanced
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.is_balanced`
+
+* final_reaction
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.final_reaction`
+
+* final_reaction_normalized
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.final_reaction_normalized`
+
+* masses
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.masses`
+
+* output_results
+    :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.output_results`
 
 Output
 ------
