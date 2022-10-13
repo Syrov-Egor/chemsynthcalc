@@ -1,5 +1,5 @@
 # Chemical synthesis calculator
-Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods.
+Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermediate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods.
 
 ## Prerequisites
 * [Python](https://www.python.org/downloads/) 3.8+
@@ -30,22 +30,23 @@ from chemsynthcalc import ChemicalReaction
 reaction_string = "BaCO3 + Y2(CO3)3 + CuCO3 + O2 → YBa2Cu3O7 + CO2"
 ```
 
-Now, we can create a chemical reaction object of `ChemicalReaction` class, which will be used in the calculation. We need to specify arguments for our particular case:
+Now, we can create a chemical reaction object of the `ChemicalReaction` class, which will be used in the calculation. We need to specify the arguments for our particular case:
 ```Python
 reaction = ChemicalReaction(
     reaction = reaction_string, # our reaction string
-    target = 0, # number of target compound in product list
+    target = 0, # index of target compound in the product list
     target_mass = 3, # desired mass of target compound,
     mode = "balance" # mode of coefficients calculations,
 )
 ```
 
-Now, to perform automatic calculation, all we need to do is to put:
+Now, to perform the automatic calculation, all we need to do is to put:
 ```Python
-reaction.print_results(print_rounding_order=4) # assuming we use analytical balances with 4 digits presicion
+reaction.print_results(print_rounding_order=4) 
+# assuming that we use analytical balances with 4 digit presicion
 ```
 
-And we get our ouput in the console:
+And we get our output in the console:
 ```
 initial reaction: BaCO3+Y2(CO3)3+CuCO3+O2→YBa2Cu3O7+CO2
 reaction matrix:
@@ -69,7 +70,7 @@ O2: M = 31.9980 g/mol, m = 0.0360 g
 YBa2Cu3O7: M = 666.1970 g/mol, m = 3.0000 g
 CO2: M = 44.0090 g/mol, m = 1.2882 g
 ```
-Now, we got all masses ready for our planned synthesis!
+Now, we've got all the masses ready for our planned synthesis!
 
 ## Features
 * Formula parsing
@@ -79,7 +80,7 @@ Now, we got all masses ready for our planned synthesis!
   print(ChemicalFormula("C2H5OH").parsed_formula)
   #{'C': 2.0, 'H': 6.0, 'O': 1.0}
   ```
-* Molar mass calculation
+* Calculation of the molar mass 
   ```Python
   print(ChemicalFormula("C2H5OH").molar_mass)
   #46.069
@@ -117,3 +118,7 @@ Now, we got all masses ready for our planned synthesis!
 
 ## License
 The code is provided under the MIT license.
+
+## Contact
+If you have any questions, please contact **Egor Syrov** at syrov_ev@mail.ru or
+create an issue at github https://github.com/Syrov-Egor/chemsynthcalc/issues.
