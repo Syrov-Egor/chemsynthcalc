@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>ChemicalFormula class &mdash; chemsynthcalc 1.0.4 documentation</title>
+  <title>ChemicalFormula class &mdash; chemsynthcalc 1.0.5 documentation</title>
   
 
   
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="chemical_reaction.html">ChemicalReaction class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contacts.html">Contacts</a></li>
 </ul>
 
             
@@ -183,10 +184,10 @@
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>The allowed symbols for ChemicalFormula input string are:</p>
+<p>The symbols allowed for the ChemicalFormula input string are:</p>
 <p>a-z A-Z 0-9 . () {} [] * · • <em>whitespace</em></p>
 <p>Whitespaces will be ignored. If there are any other symbols
-in the string, they won't be ignored, instead
+in the string, they will not be ignored, instead
 <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.InvalidCharacter" title="chemsynthcalc.chem_errors.InvalidCharacter"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.InvalidCharacter</span></code></a> exception will be raised.</p>
 <p>All brackets in formula should be paired bracket-type-wise (), {}, [].
 If not, <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.BracketsNotPaired" title="chemsynthcalc.chem_errors.BracketsNotPaired"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.BracketsNotPaired</span></code></a> exception will be raised.</p>
@@ -272,12 +273,12 @@ exception.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>as_json: serialization of output into JSON object</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_formula.ChemicalFormula.as_json" title="chemsynthcalc.chemical_formula.ChemicalFormula.as_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_formula.ChemicalFormula.as_json()</span></code></a></p>
+<dt>as_json: serialization of output into an JSON object</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_formula.ChemicalFormula.as_json" title="chemsynthcalc.chemical_formula.ChemicalFormula.as_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_formula.ChemicalFormula.as_json()</span></code></a></p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>export_to_json: save as JSON file</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_formula.ChemicalFormula.export_to_json" title="chemsynthcalc.chemical_formula.ChemicalFormula.export_to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_formula.ChemicalFormula.export_to_json()</span></code></a></p>
+<dt>export_to_json: save as an JSON file</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_formula.ChemicalFormula.export_to_json" title="chemsynthcalc.chemical_formula.ChemicalFormula.export_to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_formula.ChemicalFormula.export_to_json()</span></code></a></p>
 </dd>
 </dl>
 </li>

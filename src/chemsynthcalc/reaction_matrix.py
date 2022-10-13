@@ -26,7 +26,7 @@ class ChemicalReactionMatrix:
     def create_reaction_matrix(self) -> np.array:
         """Create chemical reaction matrix.
         
-        Method that creates a chemical matrix of reaction from list of
+        Method that creates a chemical matrix of reaction from the list of
         parsed compound. Initially contains a species type (atom label)
         at the start of each row of matrix (might be used in case of future
         expansion of matrix representation in print). Retruns 2D
@@ -34,7 +34,7 @@ class ChemicalReactionMatrix:
         https://numpy.org/doc/stable/reference/generated/numpy.matrix.html).
 
         Returns:
-            np.array: 2D array of chemical reaction matrix 
+            np.array: the 2D array of chemical reaction matrix 
             (amounts of all atoms in all compounds of reaction)
 
         Example:

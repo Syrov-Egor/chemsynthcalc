@@ -23,8 +23,8 @@ class ChemicalReaction:
 
     There are three calculation modes:
 
-    1. "force" mode is used when user enters coefficients
-    in the reaction string and want masses to be calculated
+    1. The "force" mode is used when a user enters coefficients 
+    in the reaction string and wants the masses to be calculated 
     whether the reaction is balanced or not.
 
     2. "check" mode is the same as force, but with reaction
@@ -34,7 +34,7 @@ class ChemicalReaction:
     coefficients from the reaction string.
     
     Important:
-        Unlike other properties of this class, `coefficients`
+        Unlike other properties of this class, the :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients`
         property can be set directly.
 
     Arguments:
@@ -43,7 +43,7 @@ class ChemicalReaction:
         mode (str): coefficients calculation mode
         target_mass (float): desired mass of target compound (in grams)
         rounding_order (int): value of rounding precision (8 by default)
-        try_comb (bool): flag, which determines whether an attempt will be made to equalize the reaction using the combinatorial method in "balance" mode
+        try_comb (bool): flag, which determines whether an attempt will be made to equalize the reaction using the combinatorial method in the "balance" mode
 
     Attributes:
         allowed_symbols (str): characters that allowed in the reaction string
@@ -182,11 +182,11 @@ class ChemicalReaction:
     @property
     @lru_cache
     def reactants(self) -> list:
-        """List of initially sptlitted reactants (left side of the reaction string).
+        """List of initially split reactants (left side of the reaction string).
         
         Returns:
-            list: Formulas on the left side are splitted by reactant_separator (+) 
-            and includes initial coefficients (in case of force or check modes).
+            list: Formulas on the left side are split by reactant_separator (+) 
+            and include initial coefficients (in case of force or check modes).
 
         Example:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").reactants
@@ -197,11 +197,11 @@ class ChemicalReaction:
     @property
     @lru_cache
     def products(self) -> list:
-        """List of initially sptlitted products (right side of the reaction string).
+        """List of initially split products (right side of the reaction string).
         
         Returns:
-            list: Formulas on the right side that have been splitted
-            by reactant_separator (+) and includes initial coefficients (in case of force or check modes).
+            list: Formulas on the right side that have been split by reactant_separator 
+            (+) and include initial coefficients (in case of force or check modes).
 
         Example:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").products
@@ -212,7 +212,7 @@ class ChemicalReaction:
     @property
     @lru_cache
     def compounds(self) -> list:
-        """List of all initially sptlitted products (left side and right side).
+        """List of all initially split products (left side and right side).
 
         Returns:
             list: Sum of `reactants` and `products`
@@ -246,7 +246,7 @@ class ChemicalReaction:
     @property
     @lru_cache
     def formulas(self) -> list:
-        """Decomposition of list of formulas from the reaction string
+        """Decomposition of a list of formulas from the reaction string.
 
         Returns:
             list: Every formula is striped from coefficient and become
@@ -279,8 +279,8 @@ class ChemicalReaction:
 
         The first implementation of reaction matrix method is probably
         belongs to `Blakley <https://doi.org/10.1021/ed059p728>`_. In general,
-        a matrix of chemical reaction is composed of coefficients of each
-        atom in each compound, giving a 2D array. The matrix composes
+        a chemical reaction matrix is composed of the coefficients of each 
+        atom in each compound, giving a 2D array. The matrix composes 
         naturally from previously parsed formulas.
 
         Returns:
@@ -350,19 +350,19 @@ class ChemicalReaction:
     def coefficients(self) -> list:
         """Coefficients of the chemical reaction.
         
-        There are 3 possible modes that method can run:
+        There are 3 possible modes that the method can run:
 
         1) force mode is when coefficients are entered by user in reaction
         string and the calculation and the calculation takes place regardless
         of reaction balance (it gives warning if reaction is not balanced);
 
-        2) check mode is basically the force mode but it will raise a
+        2) check mode is basically the force mode but it will raise an
         error if reaction is not balanced and will not calculate masses);
 
         3) balance mode uses one of three auto-balancing aglorithms described
-        in detail in :class:`chemsynthcalc.reaction_balance.Balancer` class.
+        in detail in the :class:`chemsynthcalc.reaction_balance.Balancer` class.
 
-        In the fist two cases, the coefficients are just stripped from original
+        In the fisrt two cases, the coefficients are just stripped from original
         formulas entered by user. In case of balance mode, coefficients are
         calculated.
 
@@ -444,7 +444,7 @@ class ChemicalReaction:
 
     @property
     def is_balanced(self) -> bool:
-        """Is reaction balanced.
+        """Is the reaction balanced?
 
         Returns:
             bool: True if the reaction is balanced with current coefficients
@@ -461,10 +461,10 @@ class ChemicalReaction:
     @property
     @lru_cache
     def final_reaction(self) -> str:
-        """Final representasion of reaction with coefficients.
+        """Final representation of the reaction with coefficients.
         
         Returns:
-            str: string of final reaction
+            str: string of the final reaction
         
         Example:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").final_reaction
@@ -475,10 +475,10 @@ class ChemicalReaction:
     @property
     @lru_cache
     def final_reaction_normalized(self) -> str:
-        """Final representasion of reaction with normalized coefficients.
+        """Final representation of the reaction with normalized coefficients.
         
         Returns:
-            str: String of final normalized reaction
+            str: String of the final normalized reaction
         
         Example:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").final_reaction_normalized
@@ -492,10 +492,10 @@ class ChemicalReaction:
         """List of masses of compounds (in grams).
         
         List of masses of the of formulas in reaction
-        calculated with coefficients obtained by any of 3 methods.
+        calculated with coefficients obtained by any of the 3 methods.
         Calculates masses by calculating amount of substance nu (nu=mass/molar mass).
         Coefficients of reaction are normalized to the target. After nu of target compound is
-        calculated, it broadcasted to other compound (with respect to its coefficients).
+        calculated, it broadcasted to other compound (with respect to their coefficients).
 
         Returns:
             list: List of masses of compound
@@ -642,12 +642,12 @@ class ChemicalReaction:
 
     @lru_cache
     def check_elements_count(self) -> set:
-        """Checks if all elements are present in both sides of reaction.
+        """Checks if all elements are present in both sides of the reaction.
 
-        Doesn't work in the `force` mode!
+        Does not work in the `force` mode!
 
         Returns:
-            set: Set of difference of atoms in left and right sides of reaction.
+            set: Set of atom differences on the left and right sides of the reaction.
 
         Examples:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").check_elements_count()
@@ -850,7 +850,7 @@ class ChemicalReaction:
             print_rounding_order (int): print precision (4 digits by default).
         
         Returns:
-            str: JSON object of output results.
+            str: JSON object of the output results.
         """
         return ReactionOutput(self.output_results).dump_to_json(print_rounding_order)
 

@@ -3,9 +3,9 @@ from .formula_parser import ChemicalFormulaParser
 
 
 class MolarMassCalculation:
-    """Class for calculation of molar masses and percentages of compounds.
+    """Class for the calculation of molar masses and percentages of compounds.
     
-    Compounds should be parsed by FormulaParser first.
+    Compounds should be parsed by :class:`chemsynthcalc.formula_parser.ChemicalFormulaParser` first.
 
     Arguments:
         parsed_formula (dict): formula parsed by :class:`chemsynthcalc.formula_parser.ChemicalFormulaParser`
@@ -21,7 +21,7 @@ class MolarMassCalculation:
         self.list_of_atoms = [x[0] for x in periodic_table]
 
     def calculate_molar_mass(self) -> float:
-        """Calculation of molar mass of compound from atomic masses of atoms in parsed formula.
+        """Calculation of the molar mass of compound from the atomic masses of atoms in a parsed formula.
         
         Atomic masses are taken from :mod:`chemsynthcalc.periodic_table` file.
 
@@ -61,7 +61,7 @@ class MolarMassCalculation:
         return dict(zip(self.parsed_formula.keys(), percents))
 
     def calculate_atomic_percent(self) -> dict:
-        """Calculation of atomic percents of atoms in parsed formula.
+        """Calculation of atomic percents of atoms in the parsed formula.
 
         Returns:
             dict: atomic percentages of atoms in formula
@@ -80,17 +80,17 @@ class MolarMassCalculation:
     def calculate_oxide_percent(self) -> dict:
         """Calculation of oxide percents in parsed formula.
 
-        Calculation of oxide percents in parsed formula from types
-        of oxides declared in periodic table file. This type of data
+        Calculation of oxide percents in parsed formula from the types of oxide 
+        declared in the periodic table file. This type of data
         is mostly used in XRF spectrometry and mineralogy. The oxide
-        percents are calculated by finding the convertion factor between elenent
+        percents are calculated by finding the convertion factor between element
         and its respective oxide (https://www.geol.umd.edu/~piccoli/probe/molweight.html)
         and normalizing the total sum to 100%. One can change the oxide type
-        for certain element in periodic_table file. Theoretically, this function
+        for certain elements in the :mod:`chemsynthcalc.periodic_table` file. Theoretically, this function
         should work for other types of binary compound (sulfides, fluorides etc.)
         or even salts, however, modification of this function is required
         (for instance, in case of binary compound, removing X atom
-        from list of future compounds should have X as an argument of this function)
+        from the list of future compounds should have X as an argument of this function)
 
         Returns:
             dict: oxide percentages of oxides in formula

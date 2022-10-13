@@ -14,12 +14,12 @@ To create a formula object from a string::
     formula = ChemicalFormula(formula_string)
 
 .. important::
-    The allowed symbols for ChemicalFormula input string are:
+    The symbols allowed for the ChemicalFormula input string are:
     
     a-z A-Z 0-9 . () {} [] * · • *whitespace*
     
     Whitespaces will be ignored. If there are any other symbols 
-    in the string, they won't be ignored, instead
+    in the string, they will not be ignored, instead
     :class:`chemsynthcalc.chem_errors.InvalidCharacter` exception will be raised.
     
     All brackets in formula should be paired bracket-type-wise (), {}, [].
@@ -85,8 +85,8 @@ One can output ChemicalFormula results using one of the 4 methods:
 * export_to_txt: save as plain txt file
     :meth:`chemsynthcalc.chemical_formula.ChemicalFormula.export_to_txt()`
 
-* as_json: serialization of output into JSON object
+* as_json: serialization of output into an JSON object
     :meth:`chemsynthcalc.chemical_formula.ChemicalFormula.as_json()`
 
-* export_to_json: save as JSON file
+* export_to_json: save as an JSON file
     :meth:`chemsynthcalc.chemical_formula.ChemicalFormula.export_to_json()`

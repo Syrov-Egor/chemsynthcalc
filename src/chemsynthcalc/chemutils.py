@@ -47,7 +47,7 @@ def find_lcm(int_list: list) -> int:
 
 
 def find_gcd(int_list: list) -> int:
-    """Finds greatest common divider of the list of integers.
+    """Finds the greatest common divider of the list of integers.
 
     Arguments:
         int_list (list): list of integers

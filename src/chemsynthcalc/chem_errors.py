@@ -13,7 +13,7 @@ class NoSuchAtom(Exception):
 
 class InvalidCharacter(Exception):
     """
-    Found some characters that does not belong in
+    Found some characters that do not belong in the
     chemical formula or reaction.
     """
 
@@ -22,7 +22,7 @@ class InvalidCharacter(Exception):
 
 class MoreThanOneAdduct(Exception):
     """
-    There are more than one adduct (*).
+    There is more than one adduct (*).
     """
 
     pass
@@ -30,7 +30,7 @@ class MoreThanOneAdduct(Exception):
 
 class BracketsNotPaired(Exception):
     """
-    Some brackets are not come in pairs.
+    Some brackets do not come in pairs.
     """
 
     pass
@@ -54,7 +54,7 @@ class NoSuchAlgorithm(Exception):
 
 class NoSeparator(Exception):
     """
-    No separator found in the reaction string.
+    No separator was found in the reaction string.
     """
 
     pass

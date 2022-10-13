@@ -23,7 +23,7 @@ NumPy and SciPy
 ---------------
 
 `NumPy <https://numpy.org/>`_ and `SciPy <https://scipy.org/>`_ are requirements 
-for fast matrix operations for the reaction balancing. They will be installed automatically
+for fast matrix operations for reaction balancing. They will be installed automatically
 by pip if they are not already installed.
 
 But why chemsynthcalc is using SciPy?

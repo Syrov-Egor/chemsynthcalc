@@ -16,20 +16,20 @@ To create a reaction object from a string::
     reaction = ChemicalReaction(reaction_string)
 
 .. important::
-    The allowed symbols for ChemicalReaction input string are:
+    The symbols allowed for the ChemicalReaction input string are:
     
     a-z A-Z 0-9 . () [] {} * · • = < - > → ⇄ + *whitespace*
     
     Whitespaces will be ignored. If there are any other symbols 
-    in the string, they won't be ignored, instead
+    in the string, they will not be ignored, instead
     :class:`chemsynthcalc.chem_errors.InvalidCharacter` exception will be raised.
 
 .. important::
     Other important conditions for calculations are:
 
-    There must be a reactants-products separator (listed in :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators`)
+    There must be a reactant-product separator (listed in :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators`)
     
-    Sets of atoms in reactant and product (left-right) parts of equation should be equal 
+    The sets of atoms in the reactant and product (left-right) parts of equation should be equal 
     (in other words, all atoms in the left must appear on the right). If not, :class:`chemsynthcalc.chem_errors.ReactantProductDifference` \
     exception will be raised.
 
@@ -48,7 +48,7 @@ force mode
 
 Force mode can be used when user enters coefficients in the reaction string
 and want masses to be calculated whether the reaction is balanced or not.
-For example, if we consider the following reaction for iodine synthesis::
+For example, consider the following reaction for iodine synthesis::
     
     from chemsynthcalc import ChemicalReaction
 
@@ -61,7 +61,7 @@ If we know beforehand that coefficient list will be [1,5,3,3,3,3], we can input:
     reaction_string = "KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O"
     reaction = ChemicalReaction(reaction_string, mode="force")
 
-We can make sure that reaction is balanced::
+We can make sure that the reaction is balanced::
     
     from chemsynthcalc import ChemicalReaction
 
@@ -70,7 +70,7 @@ We can make sure that reaction is balanced::
     print(reaction.is_balanced)
     # True
 
-And calculate respective masses from this reaction::
+And calculate the respective masses from this reaction::
         
     from chemsynthcalc import ChemicalReaction
 
@@ -145,7 +145,7 @@ For most reactions, the auto balancing option is enough::
     # [0.28105463, 1.09008406, 0.3864145, 1.0, 0.6865721, 0.07098109]
 
 In some cases, however, the auto-balancing is not enough, or one would
-want to calculate coefficients strictly with specific algorithm. To 
+want to calculate coefficients strictly with a specific algorithm. To 
 address these issues, the following is implemented in ChemicalReaction class
 logic:
 
@@ -167,7 +167,7 @@ can be set directly with appropriate list of coefficients::
     # [1, 5, 3, 3, 3, 3]
     # True
 
-The :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check()` method check
+The :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check()` method checks
 setted coefficients *after* setting in such properties as 
 :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients` and
 :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.masses`, therefore does not allow
@@ -196,7 +196,7 @@ Coefficients property calculation
 ---------------------------------
 The :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()` method
 is designed to give high-level interface to every coefficient calculation algorithm
-implemented in chemsynthcalc. These can be chose by the first argument, "algorithm",
+implemented in chemsynthcalc. These can be chosen by the first argument, "algorithm",
 and they are:
 
 inv or matrix inverse Thorne algorithm
@@ -277,9 +277,9 @@ and combinatorial::
     # [4, 5, 1, 1, 1, 1, 1, 3]
     # True
 
-As we can see, we've got *four* different results (including 3 right ones) using 
-*four* different algorithms. This is why :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()`
-method was implemented. We can, of course, get gpinv or ppinv data without intification::
+As we can see, we have got *four* different results (including 3 right ones) using *four* different algorithms.
+This is why the :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()`
+method was implemented in the first place. We can, of course, get gpinv or ppinv data without intification::
     
     from chemsynthcalc import ChemicalReaction
 
@@ -302,11 +302,11 @@ arguments for reaction object creation.
 Target
 ------
 The target is the target chemical synthesis substance (i.e., whose mass is known in advance).
-The target choise is implemented as integer pointer to formula index in products (right side of equation).
+The target choice is implemented as an integer pointer to formula index in products (right side of equation).
 There are, of course, other ways to do this (like explicitly input target as formula string),
 but integer index target was chose as method less prone to errors. Most of the time the target
-of the synthesis is the first product anyway (which equals to 0 by default).
-We can set target with initialization (target is 1 which is FeO)::
+of the synthesis is the first product anyway (which is equal to 0 by default).
+We can set a target with initialization (the target is 1 which is FeO)::
     
     from chemsynthcalc import ChemicalReaction
 
@@ -328,7 +328,7 @@ If we change the target, masses will obviously change too::
 
 Target mass
 -----------
-Mass of target compound - the only mass that we know in advance before synthesis (in grams).
+The mass of target compound, the only mass that we know in advance before synthesis (in grams).
 1 gram by default. We can change the target mass during the ChemicalReaction object
 initialization::
 
@@ -347,14 +347,14 @@ Other arguments
 ---------------
 There are two more arguments of ChemicalReaction object.
 
-*try_comb* bool flag determines whether there should be an attempt to calculate the coefficients
+The *try_comb* bool flag determines whether there should be an attempt to calculate the coefficients
 using the combinatorial method in automatic balance mode if all other methods have failed.
 
 *rounding_order* (int) parameter for rounding precision.
 
 ChemicalReaction properties
 ---------------------------
-After the object initialization, we can access ChemicalFormula properties:
+After the object initialization, we can access the ChemicalReaction properties:
 
 * reaction
     :py:attr:`chemsynthcalc.chemical_reaction.ChemicalReaction.reaction`
@@ -450,8 +450,8 @@ One can output ChemicalReaction results using one of the 4 methods:
 * export_to_txt: save as plain txt file
     :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_txt()`
 
-* as_json: serialization of output into JSON object
+* as_json: serialization of output into an JSON object
     :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.as_json()`
 
-* export_to_json: save as JSON file
+* export_to_json: save as an JSON file
     :meth:`chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json()`

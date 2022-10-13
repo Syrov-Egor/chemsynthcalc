@@ -12,7 +12,7 @@ class ChemicalFormulaParser:
     """Parser of chemical formulas.
     
     Methods of this class take string of compound chemical formula
-    and turn it to dict of atoms as keys and their coefficients as values.
+    and turn it into a dict of atoms as keys and their coefficients as values.
 
     Arguments:
         formula (str): formula string
@@ -171,7 +171,7 @@ class ChemicalFormulaParser:
             return True
 
     def are_brackets_balanced(self) -> bool:
-        """Check if all sort of brackets come in pairs.
+        """Check if all kinds of brackets come in pairs.
 
         Returns:
             bool: True if all brackets are in pairs
@@ -210,7 +210,7 @@ class ChemicalFormulaParser:
             return False
 
     def are_atoms_legal(self, parsed:dict) -> None:
-        """Checks if all parsed atom are belong to the periodic table.
+        """Checks if all parsed atoms belong to the periodic table.
         
         Arguments:
             parsed (dict): dictionary of parsed atoms
@@ -233,7 +233,7 @@ class ChemicalFormulaParser:
         return
 
     def parse_formula(self) -> dict:
-        """Parse the formula and return a dict with occurences of each atom.
+        """Parse the formula and return a dict with occurrences of each atom.
 
         Raises:
             InvalidCharacter: if some characters in initial string is not in `allowed_characters`

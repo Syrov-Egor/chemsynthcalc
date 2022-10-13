@@ -70,9 +70,9 @@ class ChemicalFormula:
         """Molar mass of formula.
 
         Returns:
-            float: `molar mass <https://en.wikipedia.org/wiki/Molar_mass>`_
+            float: The `molar mass <https://en.wikipedia.org/wiki/Molar_mass>`_
             of the formula (in g/mol), calculated from
-            parsed formula using :class:`chemsynthcalc.molar_mass.MolarMassCalculation`.
+            parsed the formula using :class:`chemsynthcalc.molar_mass.MolarMassCalculation`.
 
         Example:
             >>> ChemicalFormula("K2SO4").molar_mass
@@ -86,7 +86,7 @@ class ChemicalFormula:
     @property
     @lru_cache
     def mass_percent(self) -> dict:
-        """ Mass percents of atoms in formula.
+        """The percentage of mass of atoms in the formula.
 
         Returns:
             dict: A mass percent or 
@@ -104,14 +104,14 @@ class ChemicalFormula:
     @property
     @lru_cache
     def atomic_percent(self) -> dict:
-        """Atomic percents of atoms in formula.
+        """Atomic percents of atoms in the formula.
 
         Returns:
             dict: An atomic percent or 
             `relative mole fraction <https://en.wikipedia.org/wiki/Mole_fraction>`_
-            dictionary of atoms in parsed chemical formula.
+            dictionary of atoms in a parsed chemical formula.
             The values of mole content are in % (with 100% sum),
-            not fraction
+            not fraction.
         
         Example:
             >>> ChemicalFormula("K2SO4").atomic_percent
@@ -129,7 +129,7 @@ class ChemicalFormula:
             dict: An oxide percent or 
             `oxide fraction <https://d32ogoqmya1dw8.cloudfront.net/files/introgeo/studio/examples/minex02.pdf>`_ 
             dictionary of atoms in parsed chemical formula. Oxide types are listed
-            in :mod:`chemsynthcalc.periodic_table` file and can be changed to
+            in the :mod:`chemsynthcalc.periodic_table` file and can be changed to
             any oxide formula. The values of oxide content
             are in % (with 100% sum), not fraction.
 
@@ -143,7 +143,7 @@ class ChemicalFormula:
     @property
     @lru_cache
     def output_results(self) -> dict:
-        """Dictionary of calculation resulst output for class.
+        """Dictionary of the calculation result output for class.
 
         Returns:
             dict: Output dictionary for all properties listed above.
@@ -168,7 +168,7 @@ class ChemicalFormula:
         return output
 
     def print_results(self, print_rounding_order: int = 4) -> None:
-        """ Method to print a final result of calculations in terminal.
+        """Method to print a final result of calculations in terminal.
 
         Arguments:
             print_rounding_order (int): print precision (4 digits by default)
@@ -184,7 +184,7 @@ class ChemicalFormula:
     def export_to_txt(
         self, filename: str = "default", print_rounding_order: int = 4
     ) -> None:
-        """Method to print a final result of calculations in a txt file.
+        """Method to print the final result of the calculations in a txt file.
 
         Arguments:
             filename (str): filename string (should end with .txt)
@@ -212,7 +212,7 @@ class ChemicalFormula:
     def export_to_json(
         self, filename: str = "default", print_rounding_order: int = 4
     ) -> None:
-        """Method to print a final result of calculations in JSON file.
+        """Method to print a final result of calculations in a JSON file.
 
         Arguments:
             filename (str): filename string (should end with .json)

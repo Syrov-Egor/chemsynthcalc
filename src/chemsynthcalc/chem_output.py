@@ -69,7 +69,7 @@ class FormulaOutput:
         return
 
     def export_to_txt(self, filename: str, print_rounding_order: int) -> None:
-        """Print results in the txt file and saves it.
+        """Prints results into the txt file and saves them.
         
         Arguments:
             filename (str): filename string (should end with .txt)
@@ -127,7 +127,7 @@ class FormulaOutput:
         return json.dumps(mod_output, ensure_ascii=False)
 
     def export_to_json(self, filename: str, print_rounding_order: int) -> None:
-        """Dump output dict into JSON flie.
+        """Dump the output dict into an JSON file.
  
         Arguments:
             filename (str): filename string (should end with .json)
@@ -151,10 +151,9 @@ class FormulaOutput:
 class ReactionOutput:
     """Outputs for :class:`chemsynthcalc.chemical_reaction.ChemicalReaction`
     
-    A collection of methods for outputing results of
-    :class:`chemsynthcalc.chemical_reaction.ChemicalReaction`. Default filenames of
-    output files are "CSC_reaction" with target
-    compound and nanosecond since the epoch.
+    A collection of methods to output the results of
+    :class:`chemsynthcalc.chemical_reaction.ChemicalReaction`.The default 
+    filenames of the output files are "CSC_reaction" with target compound and nanoseconds since the epoch.
 
     Arguments:
         chemical_formula_output (dict): output of :class:`chemsynthcalc.chemical_reaction.ChemicalReaction`
@@ -216,7 +215,7 @@ class ReactionOutput:
         return
 
     def export_to_txt(self, filename: str, print_rounding_order: int) -> None:
-        """Print results in the txt file and saves it.
+        """Prints results into the txt file and saves it.
         
         Arguments:
             filename (str): filename string (should end with .txt)

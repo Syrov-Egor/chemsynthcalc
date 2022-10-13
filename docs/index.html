@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>chemsynthcalc &mdash; chemsynthcalc 1.0.4 documentation</title>
+  <title>chemsynthcalc &mdash; chemsynthcalc 1.0.5 documentation</title>
   
 
   
@@ -171,9 +171,9 @@ chemical synthesis directly from the reaction string.
 It includes solutions for all intermidiate steps:</p>
 <ul class="simple">
 <li><p>Chemical formula strings parsing</p></li>
-<li><p>Molar mass calculation</p></li>
+<li><p>Calculation of molar mass</p></li>
 <li><p>Reaction string parsing and decomposition</p></li>
-<li><p>Reaction matrix creation</p></li>
+<li><p>Creation of reaction matrix</p></li>
 <li><p>Manual reaction balance</p></li>
 <li><p>Automatic reaction balance</p></li>
 <li><p>Masses calculations</p></li>
@@ -189,21 +189,21 @@ It includes solutions for all intermidiate steps:</p>
 <h1>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h1>
 <p>ChemSynthCalc was created to address the issue of inorganic synthesis calculations.
 There are three main aspects to this problem.</p>
-<p>First of all, a case of single student, scientist, postdoc, etc. sitting in their lab
-and trying to synthesize a new material. The sample size of potential reactions is
-quite small in this case, and our fellow scientist can use an the old-fashioned way
-of pen and paper. But why one should not try to automate this boring task?</p>
+<p>First of all, a single student, scientist, postdoc, etc., sitting in their lab
+trying to synthesize a new material. The sample size of potential reactions is quite small in this case,
+and our fellow scientist can use the old-fashioned pen and paper method.
+But why should one not try to automate this boring task?</p>
 <p>Secondly, while we are not quite there yet, one can imagine a robotic inorganic synthesis
 station, like <a class="reference external" href="https://pubs.rsc.org/en/content/articlelanding/2012/LC/c2lc40761b">Dr. Cronin</a>
-devices. In this case, we need to calculate a large number of reactions fast and precise, and
-we really should not hardcore all the masses beforehand.</p>
+devices. In this case, we need to calculate a large number of reactions fast and precisely,
+and we really should not hard-core all the masses beforehand.</p>
 <p>Finally, there are datasets of <a class="reference external" href="https://www.nature.com/articles/s41597-019-0224-1">text-mined inorganic reactions</a>.
-They surely will expand and grow in size. With sample size of ten of thousands we need our reaction balancing
-software to be extremely fast, robust yet flexible enough to balance as many reactions as it can. In this case,
-we surely need a free, open-source solution that can be embedded in the data processing system.</p>
-<p>ChemSynthCalc addresses all three of those cases. It is simple enough to use for a single
-scientist who are familiar with using Python packages, and fast and robust enough to precisely
-calculate hundreds and thousands reactions.</p>
+They will surely expand and grow in size. With a sample size of tens of thousands, we need our reaction balancing software
+to be extremely fast, robust, and flexible enough to balance as many reactions as it can.
+In this case, we surely need a free open-source solution that can be embedded in the data processing system.</p>
+<p>ChemSynthCalc addresses all three of those cases. It is simple enough to use for a single scientist who
+is familiar with using Python packages and fast and robust enough to precisely
+calculate hundreds and thousands of reactions.</p>
 </div>
 <div class="section" id="competitive-analysis">
 <h1>Competitive analysis<a class="headerlink" href="#competitive-analysis" title="Permalink to this headline">¶</a></h1>
@@ -211,10 +211,10 @@ calculate hundreds and thousands reactions.</p>
 chemsynthcalc and why is it better than competitors?</p>
 <ul class="simple">
 <li><p>chemsynthcalc is completely free and open-source (under MIT license)</p></li>
-<li><p>chemsynthcalc provides rich and simple API for its functions</p></li>
+<li><p>chemsynthcalc provides a rich and simple API for its functions</p></li>
 <li><p>chemsynthcalc can balance a huge variety of reactions</p></li>
 <li><p>chemsynthcalc can deal with formulas with float atom count (like RbLa0.99Eu0.01Nb2O7), both for molar mass and reaction balancing</p></li>
-<li><p>chemsynthcalc supports infinite amount of nested parentheses in formulas</p></li>
+<li><p>chemsynthcalc supports an infinite amount of nested parentheses in formulas</p></li>
 <li><p>chemsynthcalc supports adduct notaion (like CuSO4*5H2O)</p></li>
 <li><p>chemsynthcalc is fast thanks to NumPy matrix operations</p></li>
 <li><p>finally, chemsynthcalc is one of the few programs that can directly output precursor masses from a reaction string (in three lines of code!)</p></li>

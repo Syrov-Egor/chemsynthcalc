@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>ChemicalReaction class &mdash; chemsynthcalc 1.0.4 documentation</title>
+  <title>ChemicalReaction class &mdash; chemsynthcalc 1.0.5 documentation</title>
   
 
   
@@ -118,6 +118,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contacts.html">Contacts</a></li>
 </ul>
 
             
@@ -201,17 +202,17 @@ chemical reaction from the reaction string.</p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>The allowed symbols for ChemicalReaction input string are:</p>
+<p>The symbols allowed for the ChemicalReaction input string are:</p>
 <p>a-z A-Z 0-9 . () [] {} * · • = &lt; - &gt; → ⇄ + <em>whitespace</em></p>
 <p>Whitespaces will be ignored. If there are any other symbols
-in the string, they won't be ignored, instead
+in the string, they will not be ignored, instead
 <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.InvalidCharacter" title="chemsynthcalc.chem_errors.InvalidCharacter"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.InvalidCharacter</span></code></a> exception will be raised.</p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Other important conditions for calculations are:</p>
-<p>There must be a reactants-products separator (listed in <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators" title="chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators</span></code></a>)</p>
-<p>Sets of atoms in reactant and product (left-right) parts of equation should be equal
+<p>There must be a reactant-product separator (listed in <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators" title="chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.possible_reaction_separators</span></code></a>)</p>
+<p>The sets of atoms in the reactant and product (left-right) parts of equation should be equal
 (in other words, all atoms in the left must appear on the right). If not, <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chem_errors.ReactantProductDifference" title="chemsynthcalc.chem_errors.ReactantProductDifference"><code class="xref py py-class docutils literal notranslate"><span class="pre">chemsynthcalc.chem_errors.ReactantProductDifference</span></code></a> exception will be raised.</p>
 </div>
 <p>There are other important arguments for reaction object creation. The most important
@@ -228,7 +229,7 @@ Use it at your own risk!</p>
 </div>
 <p>Force mode can be used when user enters coefficients in the reaction string
 and want masses to be calculated whether the reaction is balanced or not.
-For example, if we consider the following reaction for iodine synthesis:</p>
+For example, consider the following reaction for iodine synthesis:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
 
 <span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+KI+H2SO4=I2+K2SO4+H2O&quot;</span>
@@ -241,7 +242,7 @@ For example, if we consider the following reaction for iodine synthesis:</p>
 <span class="n">reaction</span> <span class="o">=</span> <span class="n">ChemicalReaction</span><span class="p">(</span><span class="n">reaction_string</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;force&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We can make sure that reaction is balanced:</p>
+<p>We can make sure that the reaction is balanced:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
 
 <span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O&quot;</span>
@@ -250,7 +251,7 @@ For example, if we consider the following reaction for iodine synthesis:</p>
 <span class="c1"># True</span>
 </pre></div>
 </div>
-<p>And calculate respective masses from this reaction:</p>
+<p>And calculate the respective masses from this reaction:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
 
 <span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;KIO3+5KI+3H2SO4=3I2+3K2SO4+3H2O&quot;</span>
@@ -326,7 +327,7 @@ For most reactions, the auto balancing option is enough:</p>
 </pre></div>
 </div>
 <p>In some cases, however, the auto-balancing is not enough, or one would
-want to calculate coefficients strictly with specific algorithm. To
+want to calculate coefficients strictly with a specific algorithm. To
 address these issues, the following is implemented in ChemicalReaction class
 logic:</p>
 </div>
@@ -349,7 +350,7 @@ can be set directly with appropriate list of coefficients:</p>
 <span class="c1"># True</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check" title="chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check()</span></code></a> method check
+<p>The <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check" title="chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.coefficients_check()</span></code></a> method checks
 setted coefficients <em>after</em> setting in such properties as
 <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients" title="chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.normalized_coefficients</span></code></a> and
 <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.masses" title="chemsynthcalc.chemical_reaction.ChemicalReaction.masses"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.masses</span></code></a>, therefore does not allow
@@ -379,7 +380,7 @@ and check modes) to input a custom set of coefficients for a particular reaction
 <h2>Coefficients property calculation<a class="headerlink" href="#coefficients-property-calculation" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a> method
 is designed to give high-level interface to every coefficient calculation algorithm
-implemented in chemsynthcalc. These can be chose by the first argument, &quot;algorithm&quot;,
+implemented in chemsynthcalc. These can be chosen by the first argument, &quot;algorithm&quot;,
 and they are:</p>
 <div class="section" id="inv-or-matrix-inverse-thorne-algorithm">
 <h3>inv or matrix inverse Thorne algorithm<a class="headerlink" href="#inv-or-matrix-inverse-thorne-algorithm" title="Permalink to this headline">¶</a></h3>
@@ -458,9 +459,9 @@ will stay <em>float</em> without any exception raise.</p>
 <span class="c1"># True</span>
 </pre></div>
 </div>
-<p>As we can see, we've got <em>four</em> different results (including 3 right ones) using
-<em>four</em> different algorithms. This is why <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a>
-method was implemented. We can, of course, get gpinv or ppinv data without intification:</p>
+<p>As we can see, we have got <em>four</em> different results (including 3 right ones) using <em>four</em> different algorithms.
+This is why the <a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.balance_reaction()</span></code></a>
+method was implemented in the first place. We can, of course, get gpinv or ppinv data without intification:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
 
 <span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
@@ -485,11 +486,11 @@ arguments for reaction object creation.</p>
 <div class="section" id="target">
 <h2>Target<a class="headerlink" href="#target" title="Permalink to this headline">¶</a></h2>
 <p>The target is the target chemical synthesis substance (i.e., whose mass is known in advance).
-The target choise is implemented as integer pointer to formula index in products (right side of equation).
+The target choice is implemented as an integer pointer to formula index in products (right side of equation).
 There are, of course, other ways to do this (like explicitly input target as formula string),
 but integer index target was chose as method less prone to errors. Most of the time the target
-of the synthesis is the first product anyway (which equals to 0 by default).
-We can set target with initialization (target is 1 which is FeO):</p>
+of the synthesis is the first product anyway (which is equal to 0 by default).
+We can set a target with initialization (the target is 1 which is FeO):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
 
 <span class="n">reaction_string</span> <span class="o">=</span> <span class="s2">&quot;Fe2O3+C=Fe3O4+FeO+Fe+Fe3C+CO+CO2&quot;</span>
@@ -512,7 +513,7 @@ We can set target with initialization (target is 1 which is FeO):</p>
 </div>
 <div class="section" id="target-mass">
 <h2>Target mass<a class="headerlink" href="#target-mass" title="Permalink to this headline">¶</a></h2>
-<p>Mass of target compound - the only mass that we know in advance before synthesis (in grams).
+<p>The mass of target compound, the only mass that we know in advance before synthesis (in grams).
 1 gram by default. We can change the target mass during the ChemicalReaction object
 initialization:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">chemsynthcalc</span> <span class="kn">import</span> <span class="n">ChemicalReaction</span>
@@ -530,13 +531,13 @@ initialization:</p>
 <div class="section" id="other-arguments">
 <h2>Other arguments<a class="headerlink" href="#other-arguments" title="Permalink to this headline">¶</a></h2>
 <p>There are two more arguments of ChemicalReaction object.</p>
-<p><em>try_comb</em> bool flag determines whether there should be an attempt to calculate the coefficients
+<p>The <em>try_comb</em> bool flag determines whether there should be an attempt to calculate the coefficients
 using the combinatorial method in automatic balance mode if all other methods have failed.</p>
 <p><em>rounding_order</em> (int) parameter for rounding precision.</p>
 </div>
 <div class="section" id="chemicalreaction-properties">
 <h2>ChemicalReaction properties<a class="headerlink" href="#chemicalreaction-properties" title="Permalink to this headline">¶</a></h2>
-<p>After the object initialization, we can access ChemicalFormula properties:</p>
+<p>After the object initialization, we can access the ChemicalReaction properties:</p>
 <ul class="simple">
 <li><dl class="simple">
 <dt>reaction</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.reaction" title="chemsynthcalc.chemical_reaction.ChemicalReaction.reaction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.reaction</span></code></a></p>
@@ -675,12 +676,12 @@ using the combinatorial method in automatic balance mode if all other methods ha
 </dl>
 </li>
 <li><dl class="simple">
-<dt>as_json: serialization of output into JSON object</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.as_json" title="chemsynthcalc.chemical_reaction.ChemicalReaction.as_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.as_json()</span></code></a></p>
+<dt>as_json: serialization of output into an JSON object</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.as_json" title="chemsynthcalc.chemical_reaction.ChemicalReaction.as_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.as_json()</span></code></a></p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>export_to_json: save as JSON file</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json" title="chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json()</span></code></a></p>
+<dt>export_to_json: save as an JSON file</dt><dd><p><a class="reference internal" href="chemsynthcalc.html#chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json" title="chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">chemsynthcalc.chemical_reaction.ChemicalReaction.export_to_json()</span></code></a></p>
 </dd>
 </dl>
 </li>

@@ -9,7 +9,7 @@
 project = 'chemsynthcalc'
 copyright = '2022, Egor Syrov'
 author = 'Egor Syrov'
-release = '1.0.4'
+release = '1.0.5'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

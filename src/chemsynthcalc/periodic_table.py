@@ -120,8 +120,8 @@ periodic_table = [
 ]
 """
 Periodic table of elements in the form of (element symbol, atomic weight, electronegativity, oxide formula).
-Abridged standard atomic weights are taken from https://doi.org/10.1515/pac-2019-0603. Weights 
-of radioactive elements are taken from https://iupac.qmul.ac.uk/AtWt/. Pauling 
+The abridged standard atomic weights are taken from https://doi.org/10.1515/pac-2019-0603. The weights 
+of the radioactive elements are taken from https://iupac.qmul.ac.uk/AtWt/. Pauling 
 electronegativities are taken from https://www.webelements.com/periodicity/eneg_pauling/. Pauling
-electronegativities for elements with unknown electronegativities (Bk-Og) is set to 1.3.
+electronegativities for elements with unknown electronegativities (Bk-Og) are set to 1.3.
 """

@@ -11,9 +11,9 @@ chemical synthesis directly from the reaction string.
 It includes solutions for all intermidiate steps:
 
 * Chemical formula strings parsing
-* Molar mass calculation
+* Calculation of molar mass
 * Reaction string parsing and decomposition
-* Reaction matrix creation
+* Creation of reaction matrix
 * Manual reaction balance
 * Automatic reaction balance
 * Masses calculations
@@ -29,24 +29,24 @@ Background
 ChemSynthCalc was created to address the issue of inorganic synthesis calculations.
 There are three main aspects to this problem. 
 
-First of all, a case of single student, scientist, postdoc, etc. sitting in their lab 
-and trying to synthesize a new material. The sample size of potential reactions is 
-quite small in this case, and our fellow scientist can use an the old-fashioned way 
-of pen and paper. But why one should not try to automate this boring task?
+First of all, a single student, scientist, postdoc, etc., sitting in their lab 
+trying to synthesize a new material. The sample size of potential reactions is quite small in this case, 
+and our fellow scientist can use the old-fashioned pen and paper method. 
+But why should one not try to automate this boring task?
 
 Secondly, while we are not quite there yet, one can imagine a robotic inorganic synthesis
 station, like `Dr. Cronin <https://pubs.rsc.org/en/content/articlelanding/2012/LC/c2lc40761b>`_
-devices. In this case, we need to calculate a large number of reactions fast and precise, and
-we really should not hardcore all the masses beforehand.
+devices. In this case, we need to calculate a large number of reactions fast and precisely, 
+and we really should not hard-core all the masses beforehand.
 
 Finally, there are datasets of `text-mined inorganic reactions <https://www.nature.com/articles/s41597-019-0224-1>`_.
-They surely will expand and grow in size. With sample size of ten of thousands we need our reaction balancing
-software to be extremely fast, robust yet flexible enough to balance as many reactions as it can. In this case,
-we surely need a free, open-source solution that can be embedded in the data processing system.
+They will surely expand and grow in size. With a sample size of tens of thousands, we need our reaction balancing software 
+to be extremely fast, robust, and flexible enough to balance as many reactions as it can. 
+In this case, we surely need a free open-source solution that can be embedded in the data processing system.
 
-ChemSynthCalc addresses all three of those cases. It is simple enough to use for a single
-scientist who are familiar with using Python packages, and fast and robust enough to precisely
-calculate hundreds and thousands reactions.
+ChemSynthCalc addresses all three of those cases. It is simple enough to use for a single scientist who 
+is familiar with using Python packages and fast and robust enough to precisely 
+calculate hundreds and thousands of reactions.
 
 Competitive analysis
 ======================
@@ -54,10 +54,10 @@ There are already a large number of reaction balancing software, why do you need
 chemsynthcalc and why is it better than competitors?
 
 * chemsynthcalc is completely free and open-source (under MIT license)
-* chemsynthcalc provides rich and simple API for its functions
+* chemsynthcalc provides a rich and simple API for its functions
 * chemsynthcalc can balance a huge variety of reactions
 * chemsynthcalc can deal with formulas with float atom count (like RbLa0.99Eu0.01Nb2O7), both for molar mass and reaction balancing
-* chemsynthcalc supports infinite amount of nested parentheses in formulas
+* chemsynthcalc supports an infinite amount of nested parentheses in formulas
 * chemsynthcalc supports adduct notaion (like CuSO4*5H2O)
 * chemsynthcalc is fast thanks to NumPy matrix operations
 * finally, chemsynthcalc is one of the few programs that can directly output precursor masses from a reaction string (in three lines of code!)
