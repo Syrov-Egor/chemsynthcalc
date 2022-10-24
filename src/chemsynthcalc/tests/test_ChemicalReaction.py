@@ -80,7 +80,7 @@ class TestChemicalReaction(unittest.TestCase):
                 "formulas": ["CaSO4*2H2O", "CaSO4*0.5H2O", "H2O"],
                 "coefficients": [2, 2, 3],
                 "normalized coefficients": [1, 1, 1.5],
-                "algorithm": "general pseudoinverse",
+                "algorithm": "inverse",
                 "is balanced": True,
                 "final reaction": "2CaSO4*2H2O⇄2CaSO4*0.5H2O+3H2O",
                 "final reaction normalized": "CaSO4*2H2O⇄CaSO4*0.5H2O+1.5H2O",

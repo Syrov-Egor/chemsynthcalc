@@ -411,16 +411,19 @@ class Balancer:
             [4.0, 2.5, 4.0, 1.0, 1.5]
         """
         reaction_matrix = self.reaction_matrix
-
+        
         if reaction_matrix.shape[0] > reaction_matrix.shape[1]:
+            zeros_added = reaction_matrix.shape[0] - reaction_matrix.shape[1]
             zero_columns = np.zeros(
                 (
                     reaction_matrix.shape[0],
-                    reaction_matrix.shape[0] - reaction_matrix.shape[1],
+                    zeros_added,
                 )
             )
             reaction_matrix = np.hstack((reaction_matrix, zero_columns))
-
+        else:
+            zeros_added = 0
+        
         if reaction_matrix.shape[0] == reaction_matrix.shape[1]:
             p, l, reaction_matrix = np.linalg.svd(reaction_matrix)
 
@@ -434,7 +437,7 @@ class Balancer:
                 ~np.all(augumented_matrix == 0, axis=1)
             ]
         inversed_matrix = np.linalg.inv(augumented_matrix)
-        vector = inversed_matrix[:, -1].T
+        vector = inversed_matrix[:, -zeros_added-1].T
         vector = np.absolute(np.squeeze(np.asarray(vector)))
         vector = vector[vector != 0]
         coefficients = np.divide(vector, vector.min())
