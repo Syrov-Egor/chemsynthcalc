@@ -2,7 +2,7 @@ import numpy as np
 import scipy.linalg
 import gc
 
-# import cupy as cp # in case of CuPy combinatorial function
+#import cupy as cp # in case of CuPy combinatorial function
 from .chemutils import find_gcd, find_lcm
 from fractions import Fraction
 
@@ -703,7 +703,7 @@ class Balancer:
             permuted = cp.array(cp.meshgrid(*cart_array), dtype='ubyte').T.reshape(-1,number_of_compounds)
             filter = cp.asarray([i-1], dtype='ubyte')
             permuted = permuted[np.any(permuted==filter, axis=1)]
-            print("calculating max coef %s of %s" % (i-1, number_of_iterations), end='\r', flush=True)
+            #print("calculating max coef %s of %s" % (i-1, number_of_iterations), end='\r', flush=True)
             reactants_vectors = cp.asarray(permuted[:, :lenght])
             products_vectors = cp.asarray(permuted[:, lenght:])
             del permuted
@@ -718,10 +718,8 @@ class Balancer:
                     idx = where
                 else:
                     idx = where[0]
-                print("")
+                #print("")
                 return cp.array(cp.concatenate((reactants_vectors[idx].flatten(), products_vectors[idx].flatten()))).tolist()
             gc.collect()
-        print("")
-        print("No solution found")
         return None
-    '''
+        '''
