@@ -7,9 +7,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'chemsynthcalc'
-copyright = '2022, Egor Syrov'
+copyright = '2023, Egor Syrov'
 author = 'Egor Syrov'
-release = '1.0.8'
+release = '1.0.9'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -34,7 +34,7 @@ import sphinx_rtd_theme
 import os
 import sys
 dirname=os.path.dirname
-path = dirname(dirname(dirname(os.path.realpath(__file__))))+"\src"
+path = dirname(dirname(dirname(os.path.realpath(__file__))))+"\\src"
 sys.path.append(path)
 
 extensions = ['sphinx.ext.autodoc', 
