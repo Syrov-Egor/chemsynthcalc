@@ -5,7 +5,7 @@ Module that contains custom errors for use in `ChemSynthCalc`
 
 class NoSuchAtom(Exception):
     """
-    Found atom(s) that are not in the periodic table!.
+    Found atom(s) that are not in the periodic table.
     """
 
     pass
