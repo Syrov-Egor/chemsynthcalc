@@ -115,7 +115,7 @@ True
 * Export of results of both `ChemicalFormula` and `ChemicalReaction` into .txt file (with `.export_to_txt()`), into JSON object (with `.as_json()`) or JSON file (with `.export_to_json()`).
 
 """
-__version__ = "1.0.8"
+__version__ = "1.0.9"
 from .chemical_formula import ChemicalFormula
 from .chemical_reaction import ChemicalReaction
 
