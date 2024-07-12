@@ -43,7 +43,7 @@ class ChemicalFormulaParser(ChemicalFormula):
         return fused_dict
 
     def _parse(self, formula: str) -> tuple[dict[str, float], int]:
-        # TODO if token in self.adduct_symbol
+        # TODO if token in self.adduct_symbol - transfer coef to end, add () and dive!
 
         token_list: list[str] = []
         mol: dict[str, float] = {}
@@ -52,11 +52,28 @@ class ChemicalFormulaParser(ChemicalFormula):
         while i < len(formula):
             token: str = formula[i]
 
-            if token in self.closer_brackets:
+            if token in self.adduct_symbols:
                 coefficient_match: re.Match[str] | None = re.match(
                     self.coefficient_regex, formula[i + 1 :]
                 )
-                if coefficient_match != None:
+                if coefficient_match and coefficient_match.group(0) != "":
+                    weight: float = float(coefficient_match.group(0))
+                    i += len(coefficient_match.group(0))
+                else:
+                    weight = 1.0
+                recursive_dive: tuple[dict[str, float], int] = self._parse(
+                    f"({formula[i + 1 :]}){weight}"
+                )
+                submol = recursive_dive[0]
+                lenght: int = recursive_dive[1]
+                mol = self._fuse(mol, submol)
+                i += lenght + 1
+
+            elif token in self.closer_brackets:
+                coefficient_match: re.Match[str] | None = re.match(
+                    self.coefficient_regex, formula[i + 1 :]
+                )
+                if coefficient_match and coefficient_match.group(0) != "":
                     weight: float = float(coefficient_match.group(0))
                     i += len(coefficient_match.group(0))
                 else:
