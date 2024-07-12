@@ -1,4 +1,4 @@
-class ChemicalFormula():
+class ChemicalFormula:
 
     def __init__(self, formula: str) -> None:
         self.atom_regex: str = r"([A-Z][a-z]*)"

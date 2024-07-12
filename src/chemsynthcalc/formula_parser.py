@@ -1,18 +1,8 @@
 import re
-from .periodic_table import PeriodicTable
+from .formula import ChemicalFormula
 
-class ChemicalFormulaParser:
-    def __init__(self, formula: str) -> None:
-        self.atom_regex: str = r"([A-Z][a-z]*)"
-        self.coefficient_regex: str = r"((\d+(\.\d+)?)*)"
-        self.allowed_symbols: str = r"[^A-Za-z0-9.({[)}\]*·•]"
-        self.atom_and_coefficient_regex: str = self.atom_regex + self.coefficient_regex
-        self.opener_brackets: str = "({["
-        self.closer_brackets: str = ")}]"
-        self.adduct_symbols: str = "*·•"
 
-        self.formula: str = formula
-        self.atoms: set[str] = PeriodicTable().atoms
+class ChemicalFormulaParser(ChemicalFormula):
 
     def _dictify(self, tuples: list[tuple[str, ...]]) -> dict[str, float]:
         """Transform list of tuples to a dict of atoms.
@@ -99,5 +89,4 @@ class ChemicalFormulaParser:
         return fused_dict, i
 
     def parse_formula(self) -> dict[str, float]:
-        output: dict[str, float] = self._parse(self.formula)[0]
-        return output
+        return self._parse(self.formula)[0]
