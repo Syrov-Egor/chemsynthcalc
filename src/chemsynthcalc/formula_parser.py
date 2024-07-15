@@ -43,8 +43,6 @@ class ChemicalFormulaParser(Formula):
         return fused_dict
 
     def _parse(self, formula: str) -> tuple[dict[str, float], int]:
-        # TODO if token in self.adduct_symbol - transfer coef to end, add () and dive!
-
         token_list: list[str] = []
         mol: dict[str, float] = {}
         i: int = 0
@@ -104,6 +102,16 @@ class ChemicalFormulaParser(Formula):
             mol, self._dictify(extract_from_tokens)
         )
         return fused_dict, i
+    
+    def _order_output_dict(self, parsed: dict[str, float]) -> dict[str, float]:
+        atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
+        weights: list[float] = []
+        for atom in atoms_list:
+            res: float | None = parsed.get(atom)
+            if res is not None:
+                weights.append(res)
+        return dict(zip(atoms_list, weights))
 
     def parse_formula(self) -> dict[str, float]:
-        return self._parse(self.formula)[0]
+        parsed = self._parse(self.formula)[0]
+        return self._order_output_dict(parsed)
