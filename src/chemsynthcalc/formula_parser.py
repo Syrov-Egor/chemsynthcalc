@@ -1,7 +1,6 @@
 import re
 from .formula import Formula
 
-
 class ChemicalFormulaParser(Formula):
 
     def _dictify(self, tuples: list[tuple[str, ...]]) -> dict[str, float]:
