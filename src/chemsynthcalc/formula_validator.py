@@ -13,10 +13,6 @@ from .chem_errors import (
 
 class FormulaValidator(Formula):
 
-    def __init__(self, formula: str) -> None:
-        super().__init__(formula)
-        self.atoms: set[str] = PeriodicTable().atoms
-
     def _check_empty_formula(self) -> bool:
         return self.formula == ""
 
@@ -25,7 +21,7 @@ class FormulaValidator(Formula):
 
     def _invalid_atoms(self) -> list[str]:
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
-        return [atom for atom in atoms_list if atom not in self.atoms]
+        return [atom for atom in atoms_list if atom not in PeriodicTable().atoms]
 
     def _bracket_balance(self) -> bool:
         c: Counter[str] = Counter(self.formula)
