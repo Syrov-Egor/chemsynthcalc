@@ -1,8 +1,8 @@
 import re
-from .formula import ChemicalFormula
+from .formula import Formula
 
 
-class ChemicalFormulaParser(ChemicalFormula):
+class ChemicalFormulaParser(Formula):
 
     def _dictify(self, tuples: list[tuple[str, ...]]) -> dict[str, float]:
         """Transform list of tuples to a dict of atoms.

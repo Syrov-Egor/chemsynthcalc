@@ -1,7 +1,7 @@
 import re
 from collections import Counter
 from .periodic_table import PeriodicTable
-from .formula import ChemicalFormula
+from .formula import Formula
 from .chem_errors import (
     InvalidCharacter,
     NoSuchAtom,
@@ -10,7 +10,7 @@ from .chem_errors import (
 )
 
 
-class FormulaValidator(ChemicalFormula):
+class FormulaValidator(Formula):
 
     def __init__(self, formula: str) -> None:
         super().__init__(formula)
