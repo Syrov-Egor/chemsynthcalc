@@ -3,6 +3,7 @@ from collections import Counter
 from .periodic_table import PeriodicTable
 from .formula import Formula
 from .chem_errors import (
+    EmptyFormula,
     InvalidCharacter,
     NoSuchAtom,
     MoreThanOneAdduct,
@@ -15,6 +16,9 @@ class FormulaValidator(Formula):
     def __init__(self, formula: str) -> None:
         super().__init__(formula)
         self.atoms: set[str] = PeriodicTable().atoms
+
+    def _check_empty_formula(self) -> bool:
+        return self.formula == ""
 
     def _invalid_charachers(self) -> list[str]:
         return re.compile(self.allowed_symbols).findall(self.formula)
@@ -38,7 +42,9 @@ class FormulaValidator(Formula):
         return i
 
     def validate_formula(self) -> bool:
-        if self._invalid_charachers():
+        if self._check_empty_formula():
+            raise EmptyFormula
+        elif self._invalid_charachers():
             raise InvalidCharacter(
                 f"Invalid character(s) {self._invalid_charachers()} in the formula {self.formula}"
             )
