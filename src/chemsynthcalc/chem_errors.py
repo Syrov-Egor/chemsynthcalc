@@ -2,12 +2,14 @@
 Module that contains custom errors for use in `ChemSynthCalc`
 """
 
+
 class EmptyFormula(Exception):
     """
     The formula string is empty
     """
 
     pass
+
 
 class NoSuchAtom(Exception):
     """

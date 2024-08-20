@@ -1,6 +1,7 @@
 import re
 from .formula import Formula
 
+
 class ChemicalFormulaParser(Formula):
 
     def _dictify(self, tuples: list[tuple[str, ...]]) -> dict[str, float]:
@@ -101,7 +102,7 @@ class ChemicalFormulaParser(Formula):
             mol, self._dictify(extract_from_tokens)
         )
         return fused_dict, i
-    
+
     def _order_output_dict(self, parsed: dict[str, float]) -> dict[str, float]:
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
         weights: list[float] = []
