@@ -1,7 +1,7 @@
 import pytest
 from chemsynthcalc.formula_parser import ChemicalFormulaParser
 
-parser_results: list[tuple[str, dict[str, float]]] = [
+parser_test_data: list[tuple[str, dict[str, float]]] = [
     ("(H2O)", {"H": 2.0, "O": 1.0}),
     ("(K0.6Na0.4)2[S]O4", {"K": 1.2, "Na": 0.8, "S": 1.0, "O": 4.0}),
     ("(NH 4)2 SO4*H2O", {"N": 2.0, "H": 10.0, "S": 1.0, "O": 5.0}),
@@ -9,6 +9,6 @@ parser_results: list[tuple[str, dict[str, float]]] = [
 ]
 
 
-@pytest.mark.parametrize("formula,parsed_formula", parser_results)
+@pytest.mark.parametrize("formula,parsed_formula", parser_test_data)
 def test_parser(formula: str, parsed_formula: dict[str, float]):
     assert ChemicalFormulaParser(formula).parse_formula() == parsed_formula
