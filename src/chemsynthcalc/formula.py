@@ -9,4 +9,4 @@ class Formula:
         self.closer_brackets: str = ")}]"
         self.adduct_symbols: str = "*·•"
 
-        self.formula: str = formula
+        self.formula: str = formula.replace(" ", "")
