@@ -3,55 +3,57 @@ from functools import lru_cache
 from .formula_parser import ChemicalFormulaParser
 from .molar_mass import MolarMassCalculation
 from .formula_validator import FormulaValidator
+from .utils import round_dict_content
+
 
 class ChemicalFormula:
     def __init__(self, formula: str = "", precision: int = 8) -> None:
         if FormulaValidator(formula).validate_formula() == True:
             self.formula: str = formula
-        
+
         if precision > 0:
             self.precision: int = precision
         else:
             raise ValueError("precision <= 0")
-        
+
     def __repr__(self) -> str:
         return "chemsynthcalc ChemicalFormula object with formula: " + self.formula
-    
+
     def __str__(self) -> str:
         return self.formula
-    
+
     @property
     @lru_cache
     def parsed_formula(self) -> dict[str, float]:
         parsed: dict[str, float] = ChemicalFormulaParser(self.formula).parse_formula()
-        return {atom: round(weight, self.precision + 3) for atom, weight in parsed.items()}
-    
+        return round_dict_content(parsed, self.precision, plus=3)
+
     @property
     @lru_cache
     def molar_mass(self) -> float:
         return round(
             MolarMassCalculation(self.parsed_formula).calculate_molar_mass(),
-            self.precision
+            self.precision,
         )
-    
+
     @property
     @lru_cache
     def mass_percent(self) -> dict[str, float]:
         output = MolarMassCalculation(self.parsed_formula).calculate_mass_percent()
-        return {atom: round(percent, self.precision) for atom, percent in output.items()}
-    
+        return round_dict_content(output, self.precision)
+
     @property
     @lru_cache
     def atomic_percent(self) -> dict[str, float]:
         output = MolarMassCalculation(self.parsed_formula).calculate_atomic_percent()
-        return {atom: round(percent, self.precision) for atom, percent in output.items()}
-    
+        return round_dict_content(output, self.precision)
+
     @property
     @lru_cache
     def oxide_percent(self) -> dict[str, float]:
         output = MolarMassCalculation(self.parsed_formula).calculate_oxide_percent()
-        return {oxide: round(percent, self.precision) for oxide, percent in output.items()}
-    
+        return round_dict_content(output, self.precision)
+
     @property
     @lru_cache
     def output_results(self) -> dict[str, object]:
