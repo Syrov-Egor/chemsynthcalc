@@ -11,16 +11,8 @@ class ReactionValidator(Reaction):
     def _invalid_charachers(self) -> list[str]:
         return re.compile(self.allowed_symbols).findall(self.reaction)
     
-    @staticmethod
-    def extract_separator(reaction: str, possible_reaction_separators: list[str]) -> str:
-        for separator in possible_reaction_separators:
-            if reaction.find(separator) != -1:
-                if reaction.split(separator)[1] != "" and reaction.split(separator)[0] != "":
-                    return separator
-        return ""
-    
     def _no_reaction_separator(self) -> bool:
-        return self.extract_separator(self.reaction, self.possible_reaction_separators) == ""
+        return self.extract_separator() == ""
     
     def _no_reactant_separator(self) -> bool:
         return self.reaction.find(self.reactant_separator) == -1
