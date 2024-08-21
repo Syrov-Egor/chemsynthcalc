@@ -43,6 +43,12 @@ class BracketsNotPaired(Exception):
 
     pass
 
+class EmptyReaction(Exception):
+    """
+    The reaction string is empty
+    """
+
+    pass
 
 class NoSuchMode(Exception):
     """
