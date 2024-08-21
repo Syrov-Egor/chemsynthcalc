@@ -1,4 +1,5 @@
 import pytest
+
 from chemsynthcalc.formula_validator import FormulaValidator
 from chemsynthcalc.chem_errors import (
     EmptyFormula,

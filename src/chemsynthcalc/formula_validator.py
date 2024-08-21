@@ -1,5 +1,6 @@
 import re
 from collections import Counter
+
 from .periodic_table import PeriodicTable
 from .formula import Formula
 from .chem_errors import (

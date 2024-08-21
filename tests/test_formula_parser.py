@@ -1,4 +1,5 @@
 import pytest
+
 from chemsynthcalc.formula_parser import ChemicalFormulaParser
 
 parser_test_data: list[tuple[str, dict[str, float]]] = [
