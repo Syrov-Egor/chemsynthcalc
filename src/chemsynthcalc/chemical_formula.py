@@ -3,6 +3,7 @@ from functools import lru_cache
 from .formula_parser import ChemicalFormulaParser
 from .molar_mass import MolarMassCalculation
 from .formula_validator import FormulaValidator
+from .chem_output import ChemicalOutput
 from .utils import round_dict_content
 
 
@@ -66,3 +67,23 @@ class ChemicalFormula:
             "oxide percent": self.oxide_percent,
         }
         return output
+
+    def print_results(self, print_precision: int = 4) -> None:
+        ChemicalOutput(
+            self.output_results, print_precision, obj="formula"
+        ).print_results()
+
+    def to_txt(self, filename: str = "default", print_precision: int = 4) -> None:
+        ChemicalOutput(
+            self.output_results, print_precision, obj="formula"
+        ).write_to_txt(filename)
+
+    def to_json(self, print_precision: int = 4) -> str:
+        return ChemicalOutput(
+            self.output_results, print_precision, obj="formula"
+        ).dump_to_json()
+
+    def to_json_file(self, filename: str = "default", print_precision: int = 4) -> None:
+        ChemicalOutput(
+            self.output_results, print_precision, obj="formula"
+        ).write_to_json_file(filename)
