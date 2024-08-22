@@ -102,3 +102,11 @@ class BadCoeffiecients(Exception):
     """
 
     pass
+
+
+class BalancingError(Exception):
+    """
+    Can't balance reaction by this method
+    """
+
+    pass

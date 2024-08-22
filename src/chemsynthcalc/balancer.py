@@ -4,45 +4,115 @@ import numpy as np
 import numpy.typing as npt
 
 from .balancing_algos import BalancingAlgorithms
-#from .utils import find_gcd, find_lcm
+from .chem_errors import BalancingError
+
+# from .utils import find_gcd, find_lcm
+
 
 class Balancer(BalancingAlgorithms):
-    def __init__(self, matrix: npt.NDArray[np.float64], separator_pos: int, round_precision: int, intify: bool = True) -> None:
+    def __init__(
+        self,
+        matrix: npt.NDArray[np.float64],
+        separator_pos: int,
+        round_precision: int,
+        intify: bool = True,
+    ) -> None:
         super().__init__(matrix, separator_pos)
 
         if round_precision > 0:
             self.round_precision: int = round_precision
         else:
             raise ValueError("precision <= 0")
-        
+
         self.intify: bool = intify
 
-    def intify_coefficients(self, coefficients: list[float], max_denom: int = 1000) -> list[int]:
-        ratios = np.array([Fraction(val).limit_denominator(max_denom).as_integer_ratio() for val in coefficients])
-        factor = np.lcm.reduce(ratios[:,1])
+    def intify_coefficients(
+        self, coefficients: list[float], max_denom: int = 100
+    ) -> list[int]:
+        ratios = np.array(
+            [
+                Fraction(val).limit_denominator(max_denom).as_integer_ratio()
+                for val in coefficients
+            ]
+        )
+        factor = np.lcm.reduce(ratios[:, 1])
         result = [round(v * factor) for v in coefficients]
         return result
-    
+
+    @staticmethod
+    def is_reaction_balanced(
+        reactant_matrix: npt.NDArray[np.float64],
+        product_matrix: npt.NDArray[np.float64],
+        coefficients: list[float] | list[int],
+        tolerance: float = 1e-8,
+    ) -> bool:
+        try:
+            reactants = np.multiply(
+                reactant_matrix.T,
+                np.array(coefficients)[: reactant_matrix.shape[1], None],
+            )
+            products = np.multiply(
+                product_matrix.T,
+                np.array(coefficients)[reactant_matrix.shape[1] :, None],
+            )
+            if np.allclose(reactants.sum(axis=0), products.sum(axis=0), rtol=tolerance):
+                return True
+            else:
+                return False
+        except Exception:
+            return False
+
     def inv(self) -> list[float] | list[int]:
-        coefficients: list[float] = np.round(self._inv_algorithm(), decimals=self.round_precision).tolist()
-        if self.intify:
-            return self.intify_coefficients(coefficients)
+        coefficients: list[float] = np.round(
+            self._inv_algorithm(), decimals=self.round_precision
+        ).tolist()
+        if Balancer.is_reaction_balanced(
+            self.reactant_matrix, self.product_matrix, coefficients
+        ) and not any(x <= 0 for x in coefficients):
+            if self.intify:
+                return self.intify_coefficients(coefficients)
+            else:
+                return coefficients
         else:
-            return coefficients
-        
+            raise BalancingError("Can't balance reaction by inv method")
+
     def gpinv(self) -> list[float] | list[int]:
         coefficients: list[float] = self._gpinv_algorithm().tolist()
-        if self.intify:
-            return self.intify_coefficients(coefficients)
+        if Balancer.is_reaction_balanced(
+            self.reactant_matrix, self.product_matrix, coefficients
+        ) and not any(x <= 0 for x in coefficients):
+            if self.intify:
+                return self.intify_coefficients(coefficients)
+            else:
+                return coefficients
         else:
-            return coefficients
-        
+            raise BalancingError("Can't balance reaction by gpinv method")
+
     def ppinv(self) -> list[float] | list[int]:
         coefficients: list[float] = self._ppinv_algorithm().tolist()
-        if self.intify:
-            return self.intify_coefficients(coefficients)
+        if Balancer.is_reaction_balanced(
+            self.reactant_matrix, self.product_matrix, coefficients
+        ) and not any(x <= 0 for x in coefficients):
+            if self.intify:
+                return self.intify_coefficients(coefficients)
+            else:
+                return coefficients
         else:
-            return coefficients
+            raise BalancingError("Can't balance reaction by ppinv method")
+        
+    def auto(self) -> tuple[list[float] | list[int], str]:
+        try:
+            return (self.inv(), "inv")
+        except Exception:
+            pass
+        try:
+            return (self.gpinv(), "gpinv")
+        except Exception:
+            pass
+        try:
+            return (self.gpinv(), "ppinv")
+        except Exception:
+            raise BalancingError("Can't balance this reaction by any method")
 
     '''
     def old_intify_coefficients(self, coefficients: list, limit: int) -> list:

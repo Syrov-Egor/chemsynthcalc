@@ -9,6 +9,7 @@ from .chemical_formula import ChemicalFormula
 from .reaction_matrix import ChemicalReactionMatrix
 from .balancer import Balancer
 
+
 class ChemicalReaction:
     def __init__(self, reaction: str = "", precision: int = 8) -> None:
         if ReactionValidator(reaction).validate_reaction():
@@ -34,8 +35,13 @@ class ChemicalReaction:
     @lru_cache
     def matrix(self) -> npt.NDArray[np.float64]:
         return ChemicalReactionMatrix(self.parsed_formulas).matrix
-    
+
     @property
     @lru_cache
     def balancer(self) -> Balancer:
-        return Balancer(self.matrix, len(self.decomposed_reaction.reactants), self.precision, intify=True)
+        return Balancer(
+            self.matrix,
+            len(self.decomposed_reaction.reactants),
+            self.precision,
+            intify=False,
+        )

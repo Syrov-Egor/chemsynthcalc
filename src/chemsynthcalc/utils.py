@@ -1,10 +1,12 @@
 from math import gcd
 from functools import reduce
 
+
 def round_dict_content(
     input: dict[str, float], precision: int, plus: int = 0
 ) -> dict[str, float]:
     return {k: round(v, precision + plus) for k, v in input.items()}
+
 
 def find_lcm(int_list: list) -> int:
     """Finds least common multiple of the list of integers.
@@ -30,10 +32,10 @@ def find_gcd(int_list: list) -> int:
 
     Arguments:
         int_list (list): list of integers
-    
+
     Returns:
         int: greatest common divider
-    
+
     Example:
         >>> chemsynthcalc.chemutils.find_gcd([10,20,30]
         10

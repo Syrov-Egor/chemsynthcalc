@@ -2,14 +2,18 @@ import gc
 
 import numpy as np
 import numpy.typing as npt
-import scipy #type: ignore
+import scipy  # type: ignore
 
 
 class BalancingAlgorithms:
     def __init__(self, matrix: npt.NDArray[np.float64], separator_pos: int) -> None:
         self.reaction_matrix: npt.NDArray[np.float64] = matrix
-        self.reactant_matrix: npt.NDArray[np.float64] = self.reaction_matrix[:, : separator_pos]
-        self.product_matrix: npt.NDArray[np.float64] = self.reaction_matrix[:, separator_pos :]
+        self.reactant_matrix: npt.NDArray[np.float64] = self.reaction_matrix[
+            :, :separator_pos
+        ]
+        self.product_matrix: npt.NDArray[np.float64] = self.reaction_matrix[
+            :, separator_pos:
+        ]
 
     def _inv_algorithm(self) -> npt.NDArray[np.float64]:
         reaction_matrix = self.reaction_matrix
@@ -25,10 +29,10 @@ class BalancingAlgorithms:
             reaction_matrix = np.hstack((reaction_matrix, zero_columns))
         else:
             zeros_added = 0
-        
+
         if reaction_matrix.shape[0] == reaction_matrix.shape[1]:
             _, _, reaction_matrix = np.linalg.svd(reaction_matrix)
-        
+
         number_of_cols = reaction_matrix.shape[1]
         rank = np.linalg.matrix_rank(reaction_matrix, tol=1e-100)
         nullity = number_of_cols - rank
@@ -39,12 +43,12 @@ class BalancingAlgorithms:
                 ~np.all(augumented_matrix == 0, axis=1)
             ]
         inversed_matrix = np.linalg.inv(augumented_matrix)
-        vector = inversed_matrix[:, -zeros_added-1].T
+        vector = inversed_matrix[:, -zeros_added - 1].T
         vector = np.absolute(np.squeeze(np.asarray(vector)))
         vector = vector[vector != 0]
         coefs = np.divide(vector, vector.min())
         return coefs
-    
+
     def _gpinv_algorithm(self) -> npt.NDArray[np.float64]:
         matrix = np.hstack((self.reactant_matrix, -self.product_matrix))
         inverse = scipy.linalg.pinv(matrix)
@@ -52,7 +56,7 @@ class BalancingAlgorithms:
         i = np.identity(matrix.shape[1])
         coefs = (i - inverse @ matrix) @ a
         return coefs.flat[:]
-    
+
     def _ppinv_algorithm(self) -> npt.NDArray[np.float64]:
         MP_inverse = scipy.linalg.pinv(self.reactant_matrix)
         g_matrix = (
@@ -71,9 +75,11 @@ class BalancingAlgorithms:
         x_vector = x_multiply[0].T
         coefs = np.squeeze(np.asarray(np.hstack((x_vector, y_vector))))
         return coefs
-    
+
     #!TODO rewrite
-    def comb_algorithm(self, max_number_of_iterations: float = 1e8) -> npt.NDArray[np.int32] | None:
+    def _comb_algorithm(
+        self, max_number_of_iterations: float = 1e8
+    ) -> npt.NDArray[np.int32] | None:
         byte = 127
         number_of_compounds = self.reaction_matrix.shape[1]
         if number_of_compounds > 10:
