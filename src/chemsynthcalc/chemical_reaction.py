@@ -1,5 +1,8 @@
 from functools import lru_cache
 
+import numpy as np
+import numpy.typing as npt
+
 from .reaction_validator import ReactionValidator
 from .reaction_decomposer import ReactionDecomposer
 from .chemical_formula import ChemicalFormula
@@ -29,5 +32,5 @@ class ChemicalReaction:
 
     @property
     @lru_cache
-    def matrix(self) -> object:
+    def matrix(self) -> npt.NDArray[np.float64]:
         return ChemicalReactionMatrix(self.parsed_formulas).matrix
