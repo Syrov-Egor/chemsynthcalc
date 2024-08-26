@@ -2,7 +2,7 @@ import re
 
 from .formula import Formula
 
-
+#!TODO rewrite so formulas like "Li2acK7" or "Li(a)" are not allowed
 class ChemicalFormulaParser(Formula):
 
     def _dictify(self, tuples: list[tuple[str, ...]]) -> dict[str, float]:
