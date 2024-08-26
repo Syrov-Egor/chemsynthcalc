@@ -28,6 +28,24 @@ def test_invalid_atoms():
         FormulaValidator(formula).validate_formula()
 
 
+def test_leftovers_1():
+    formula = "Li(ac)*2H2O"
+    with pytest.raises(NoSuchAtom):
+        FormulaValidator(formula).validate_formula()
+
+
+def test_leftovers_2():
+    formula = "aLi*2H2O"
+    with pytest.raises(NoSuchAtom):
+        FormulaValidator(formula).validate_formula()
+
+
+def test_invalid_atoms_and_leftovers():
+    formula = "aLk*2H2O"
+    with pytest.raises(NoSuchAtom):
+        FormulaValidator(formula).validate_formula()
+
+
 def test_unbalanced_brackets():
     formula = "K2Mg2(SO4)3)"
     with pytest.raises(BracketsNotPaired):

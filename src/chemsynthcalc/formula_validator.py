@@ -22,7 +22,15 @@ class FormulaValidator(Formula):
 
     def _invalid_atoms(self) -> list[str]:
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
-        return [atom for atom in atoms_list if atom not in PeriodicTable().atoms]
+        invalid: list[str] = []
+        new_string: str = self.formula
+        for atom in set(atoms_list):
+            if atom not in PeriodicTable().atoms:
+                invalid.append(atom)
+            new_string = new_string.replace(atom, "")
+        found_leftovers: list[str] = re.findall(r"[a-z]", new_string)
+        invalid.extend(found_leftovers)
+        return invalid
 
     def _bracket_balance(self) -> bool:
         c: Counter[str] = Counter(self.formula)

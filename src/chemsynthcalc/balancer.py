@@ -99,7 +99,7 @@ class Balancer(BalancingAlgorithms):
                 return coefficients
         else:
             raise BalancingError("Can't balance reaction by ppinv method")
-        
+
     def auto(self) -> tuple[list[float] | list[int], str]:
         try:
             return (self.inv(), "inv")
