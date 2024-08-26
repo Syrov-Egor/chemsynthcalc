@@ -6,7 +6,7 @@ class PeriodicTable:
     electronegativities are taken from https://www.webelements.com/periodicity/eneg_pauling/. Pauling
     electronegativities for elements with unknown electronegativities (Bk-Og) are set to 1.3.
     """
-
+    #!TODO desirialize from json with orjson and check the speed diff
     def __init__(self) -> None:
         self.p_table: dict[str, tuple[float, float, str]] = {
             "H": (1.008, 2.2, "H2O"),

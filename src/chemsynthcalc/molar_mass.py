@@ -31,7 +31,8 @@ class MolarMassCalculation:
         values: list[float] = list(self.parsed_formula.values())
         atomic: list[float] = [value / sum(values) * 100 for value in values]
         return dict(zip(self.parsed_formula.keys(), atomic))
-
+    
+    #!TODO pass optionial oxides as dict argument
     def calculate_oxide_percent(self) -> dict[str, float]:
         mass_percents: list[float] = list(self.calculate_mass_percent().values())
         oxides: list[tuple[str, str, float]] = []
