@@ -45,6 +45,13 @@ def test_invalid_atoms_and_leftovers():
     with pytest.raises(NoSuchAtom):
         FormulaValidator(formula).validate_formula()
 
+def test_overlapping_atoms_1():
+    formula = "OsPoPO3"
+    assert FormulaValidator(formula).validate_formula() == True
+
+def test_overlapping_atoms_2():
+    formula = "[Ru(C10H8N2)3]Cl2*6H2O"
+    assert FormulaValidator(formula).validate_formula() == True
 
 def test_unbalanced_brackets():
     formula = "K2Mg2(SO4)3)"

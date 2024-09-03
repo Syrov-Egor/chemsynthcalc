@@ -24,7 +24,9 @@ class FormulaValidator(Formula):
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
         invalid: list[str] = []
         new_string: str = self.formula
-        for atom in set(atoms_list):
+        #a trick to get Cl first of C in cases like CCl4
+        atoms_list = sorted(list(set(atoms_list)), key=len, reverse=True)
+        for atom in atoms_list:
             if atom not in PeriodicTable().atoms:
                 invalid.append(atom)
             new_string = new_string.replace(atom, "")
@@ -55,14 +57,14 @@ class FormulaValidator(Formula):
             )
         elif self._invalid_atoms():
             raise NoSuchAtom(
-                f"No atom(s) {self._invalid_atoms()} in the periodic table!"
+                f"The formula {self.formula} contains atom {self._invalid_atoms()} which is not in the periodic table"
             )
         elif not self._bracket_balance():
             raise BracketsNotPaired(
-                f"The brackets {self.opener_brackets} {self.closer_brackets} are not balanced!"
+                f"The brackets {self.opener_brackets} {self.closer_brackets} are not balanced the formula {self.formula}!"
             )
         elif self._num_of_adducts() > 1:
             raise MoreThanOneAdduct(
-                f"More than one adduct {self.adduct_symbols} in the formula"
+                f"More than one adduct {self.adduct_symbols} in the formula {self.formula}"
             )
         return True
