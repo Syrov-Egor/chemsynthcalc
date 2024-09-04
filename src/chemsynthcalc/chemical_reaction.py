@@ -43,5 +43,10 @@ class ChemicalReaction:
             self.matrix,
             len(self.decomposed_reaction.reactants),
             self.precision,
-            intify=False,
+            intify=True, #!TODO move intify
         )
+
+    @property
+    @lru_cache
+    def molar_masses(self) -> list[float]:
+        return [compound.molar_mass for compound in self.chemformula_objs]

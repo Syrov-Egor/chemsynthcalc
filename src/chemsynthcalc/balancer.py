@@ -6,9 +6,6 @@ import numpy.typing as npt
 from .balancing_algos import BalancingAlgorithms
 from .chem_errors import BalancingError
 
-# from .utils import find_gcd, find_lcm
-
-
 class Balancer(BalancingAlgorithms):
     def __init__(
         self,
@@ -25,6 +22,7 @@ class Balancer(BalancingAlgorithms):
             raise ValueError("precision <= 0")
 
         self.intify: bool = intify
+        self.coef_limit: int = 100000
 
     def intify_coefficients(
         self, coefficients: list[float], max_denom: int = 100
@@ -61,44 +59,56 @@ class Balancer(BalancingAlgorithms):
                 return False
         except Exception:
             return False
+        
+    def _calculate_by_method(self, method: str) -> list[float] | list[int]:
+        match method:
+
+            case "inv":
+                coefficients: list[float] = np.round(
+                    self._inv_algorithm(), decimals=self.round_precision
+                    ).tolist()
+            
+            case "gpinv":
+                coefficients: list[float] = self._gpinv_algorithm().tolist()
+            
+            case "ppinv":
+                coefficients: list[float] = self._ppinv_algorithm().tolist()
+
+            case "comb":
+                res: npt.NDArray[np.int32] | None  = self._comb_algorithm()
+                if res is not None:
+                    return res.tolist()
+                else:
+                    raise BalancingError(f"Can't balance reaction by {method} method")
+            
+            case _:
+                raise ValueError(f"No method {method}")
+            
+        if Balancer.is_reaction_balanced(
+            self.reactant_matrix, self.product_matrix, coefficients
+        ) and all(x >= 0 for x in coefficients):
+            if self.intify:
+                intified = self.intify_coefficients(coefficients)
+                if all(x < self.coef_limit for x in intified):
+                    return intified
+                else:
+                    return coefficients
+            else:
+                return coefficients
+        else:
+            raise BalancingError(f"Can't balance reaction by {method} method")
 
     def inv(self) -> list[float] | list[int]:
-        coefficients: list[float] = np.round(
-            self._inv_algorithm(), decimals=self.round_precision
-        ).tolist()
-        if Balancer.is_reaction_balanced(
-            self.reactant_matrix, self.product_matrix, coefficients
-        ) and not any(x <= 0 for x in coefficients):
-            if self.intify:
-                return self.intify_coefficients(coefficients)
-            else:
-                return coefficients
-        else:
-            raise BalancingError("Can't balance reaction by inv method")
+        return self._calculate_by_method("inv")
 
     def gpinv(self) -> list[float] | list[int]:
-        coefficients: list[float] = self._gpinv_algorithm().tolist()
-        if Balancer.is_reaction_balanced(
-            self.reactant_matrix, self.product_matrix, coefficients
-        ) and not any(x <= 0 for x in coefficients):
-            if self.intify:
-                return self.intify_coefficients(coefficients)
-            else:
-                return coefficients
-        else:
-            raise BalancingError("Can't balance reaction by gpinv method")
+        return self._calculate_by_method("gpinv")
 
     def ppinv(self) -> list[float] | list[int]:
-        coefficients: list[float] = self._ppinv_algorithm().tolist()
-        if Balancer.is_reaction_balanced(
-            self.reactant_matrix, self.product_matrix, coefficients
-        ) and not any(x <= 0 for x in coefficients):
-            if self.intify:
-                return self.intify_coefficients(coefficients)
-            else:
-                return coefficients
-        else:
-            raise BalancingError("Can't balance reaction by ppinv method")
+        return self._calculate_by_method("ppinv")
+    
+    def comb(self) -> list[float] | list[int]:
+        return self._calculate_by_method("comb")
 
     def auto(self) -> tuple[list[float] | list[int], str]:
         try:

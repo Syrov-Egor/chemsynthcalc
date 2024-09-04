@@ -3,6 +3,7 @@ import timeit
 
 from chemsynthcalc import ChemicalFormula
 from chemsynthcalc.reaction_decomposer import ReactionDecomposer
+from chemsynthcalc.chem_errors import NoSuchAtom
 
 def setup(in_fname: str) -> list[str]:
     with open(in_fname, encoding='utf-8') as reactions:
@@ -16,11 +17,15 @@ def setup(in_fname: str) -> list[str]:
 
     return list(set(all_fomulas))
 
+exes: list[str] = []
 def bench(input_list: list[str]):
     for formula in input_list:
-        obj = ChemicalFormula(formula)
-        result = obj.output_results
-        print(result)
+        try:
+            obj = ChemicalFormula(formula)
+            result = obj.output_results
+            print(result)
+        except NoSuchAtom:
+            exes.append(formula)
         
 
 input_list = setup("data/text_mined_reactions.csv")
@@ -36,3 +41,4 @@ time_per_formula = time_per_cycle / len(input_list)
 print(f"number of formulas: {len(input_list)}")
 print(f"time per cycle: {time_per_cycle} s")
 print(f"time per formula: {time_per_formula * 1000} ms")
+print(exes)
