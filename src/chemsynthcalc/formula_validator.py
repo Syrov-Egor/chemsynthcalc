@@ -24,7 +24,7 @@ class FormulaValidator(Formula):
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
         invalid: list[str] = []
         new_string: str = self.formula
-        #a trick to get Cl first of C in cases like CCl4
+        # a trick to get Cl first of C in cases like CCl4
         atoms_list = sorted(list(set(atoms_list)), key=len, reverse=True)
         for atom in atoms_list:
             if atom not in PeriodicTable().atoms:

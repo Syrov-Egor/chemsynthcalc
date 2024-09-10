@@ -43,7 +43,7 @@ class ChemicalReaction:
             self.matrix,
             len(self.decomposed_reaction.reactants),
             self.precision,
-            intify=True, #!TODO move intify
+            intify=True,  #!TODO move intify
         )
 
     @property

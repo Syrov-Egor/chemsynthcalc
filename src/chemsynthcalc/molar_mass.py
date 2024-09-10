@@ -10,11 +10,8 @@ class MolarMassCalculation:
     def _calculate_atomic_masses(self) -> list[float]:
         masses: list[float] = []
         for atom, weight in self.parsed_formula.items():
-            p_table_row: tuple[float, float, str] | None = self.p_table.get(atom)
-            if p_table_row is not None:
-                atom_mass: float = p_table_row[0]
-            else:
-                raise ValueError
+            p_table_row: tuple[float, float, str] | None = self.p_table[atom]
+            atom_mass: float = p_table_row[0]
             masses.append(atom_mass * weight)
         return masses
 
@@ -38,10 +35,9 @@ class MolarMassCalculation:
         oxides: list[tuple[str, str, float]] = []
         for i, atom in enumerate(self.parsed_formula.keys()):
             if atom != "O":
-                p_table_row: tuple[float, float, str] | None = self.p_table.get(atom)
-                if p_table_row is not None:
-                    oxide_label: str = p_table_row[2]
-                    oxides.append((atom, oxide_label, mass_percents[i]))
+                p_table_row: tuple[float, float, str] = self.p_table[atom]
+                oxide_label: str = p_table_row[2]
+                oxides.append((atom, oxide_label, mass_percents[i]))
 
         oxide_percents: list[float] = []
 
@@ -49,15 +45,14 @@ class MolarMassCalculation:
             parsed_oxide: dict[str, float] = ChemicalFormulaParser(
                 oxide[1]
             ).parse_formula()
-            p_table_row: tuple[float, float, str] | None = self.p_table.get(oxide[0])
+            p_table_row: tuple[float, float, str] = self.p_table[oxide[0]]
             oxide_mass: float = MolarMassCalculation(
                 parsed_oxide
             ).calculate_molar_mass()
-            atomic_oxide_coef: float | None = parsed_oxide.get(oxide[0])
-            if p_table_row is not None and atomic_oxide_coef is not None:
-                atomic_mass: float = p_table_row[0]
-                conversion_factor: float = oxide_mass / atomic_mass / atomic_oxide_coef
-                oxide_percents.append(oxide[2] * conversion_factor)
+            atomic_oxide_coef: float = parsed_oxide[oxide[0]]
+            atomic_mass: float = p_table_row[0]
+            conversion_factor: float = oxide_mass / atomic_mass / atomic_oxide_coef
+            oxide_percents.append(oxide[2] * conversion_factor)
 
         normalized_oxide_percents: list[float] = [
             x / sum(oxide_percents) * 100 for x in oxide_percents

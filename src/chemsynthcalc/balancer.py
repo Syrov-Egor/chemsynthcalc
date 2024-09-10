@@ -6,6 +6,7 @@ import numpy.typing as npt
 from .balancing_algos import BalancingAlgorithms
 from .chem_errors import BalancingError
 
+
 class Balancer(BalancingAlgorithms):
     def __init__(
         self,
@@ -24,7 +25,7 @@ class Balancer(BalancingAlgorithms):
         self.intify: bool = intify
         self.coef_limit: int = 100000
 
-    def intify_coefficients(
+    def _intify_coefficients(
         self, coefficients: list[float], max_denom: int = 100
     ) -> list[int]:
         ratios = np.array(
@@ -59,36 +60,40 @@ class Balancer(BalancingAlgorithms):
                 return False
         except Exception:
             return False
-        
+
     def _calculate_by_method(self, method: str) -> list[float] | list[int]:
         match method:
 
             case "inv":
                 coefficients: list[float] = np.round(
                     self._inv_algorithm(), decimals=self.round_precision
-                    ).tolist()
-            
+                ).tolist()
+
             case "gpinv":
                 coefficients: list[float] = self._gpinv_algorithm().tolist()
-            
+
             case "ppinv":
                 coefficients: list[float] = self._ppinv_algorithm().tolist()
 
             case "comb":
-                res: npt.NDArray[np.int32] | None  = self._comb_algorithm()
+                res: npt.NDArray[np.int32] | None = self._comb_algorithm()
                 if res is not None:
                     return res.tolist()
                 else:
                     raise BalancingError(f"Can't balance reaction by {method} method")
-            
+
             case _:
                 raise ValueError(f"No method {method}")
-            
-        if Balancer.is_reaction_balanced(
-            self.reactant_matrix, self.product_matrix, coefficients
-        ) and all(x >= 0 for x in coefficients):
+
+        if (
+            Balancer.is_reaction_balanced(
+                self.reactant_matrix, self.product_matrix, coefficients
+            )
+            and all(x > 0 for x in coefficients)
+            and len(coefficients) == self.reaction_matrix.shape[1]
+        ):
             if self.intify:
-                intified = self.intify_coefficients(coefficients)
+                intified = self._intify_coefficients(coefficients)
                 if all(x < self.coef_limit for x in intified):
                     return intified
                 else:
@@ -106,7 +111,7 @@ class Balancer(BalancingAlgorithms):
 
     def ppinv(self) -> list[float] | list[int]:
         return self._calculate_by_method("ppinv")
-    
+
     def comb(self) -> list[float] | list[int]:
         return self._calculate_by_method("comb")
 

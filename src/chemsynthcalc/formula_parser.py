@@ -108,9 +108,7 @@ class ChemicalFormulaParser(Formula):
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
         weights: list[float] = []
         for atom in atoms_list:
-            res: float | None = parsed.get(atom)
-            if res is not None:
-                weights.append(res)
+            weights.append(parsed[atom])
         return dict(zip(atoms_list, weights))
 
     def parse_formula(self) -> dict[str, float]:

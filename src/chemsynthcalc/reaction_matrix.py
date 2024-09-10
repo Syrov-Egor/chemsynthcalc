@@ -17,9 +17,7 @@ class ChemicalReactionMatrix:
             row: list[float] = []
             for compound in self._parsed_formulas:
                 if element in compound.keys():
-                    weight = compound.get(element)
-                    if weight is not None:
-                        row.append(weight)
+                    row.append(compound[element])
                 else:
                     row.append(0.0)
             matrix.append(row)
