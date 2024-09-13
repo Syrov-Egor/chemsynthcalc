@@ -58,7 +58,7 @@ class ChemicalFormula:
     @property
     @lru_cache
     def output_results(self) -> dict[str, object]:
-        output: dict[str, object] = {
+        return {
             "formula": self.formula,
             "parsed formula": self.parsed_formula,
             "molar mass": self.molar_mass,
@@ -66,7 +66,6 @@ class ChemicalFormula:
             "atomic percent": self.atomic_percent,
             "oxide percent": self.oxide_percent,
         }
-        return output
 
     def print_results(self, print_precision: int = 4) -> None:
         ChemicalOutput(
