@@ -5,6 +5,7 @@ import numpy.typing as npt
 
 from .balancing_algos import BalancingAlgorithms
 from .chem_errors import BalancingError
+from .utils import find_lcm, find_gcd
 
 
 class Balancer(BalancingAlgorithms):
@@ -23,20 +24,25 @@ class Balancer(BalancingAlgorithms):
             raise ValueError("precision <= 0")
 
         self.intify: bool = intify
-        self.coef_limit: int = 100000
+        self.coef_limit: int = 1_000_000
 
     def _intify_coefficients(
-        self, coefficients: list[float], max_denom: int = 100
-    ) -> list[int]:
-        ratios = np.array(
-            [
-                Fraction(val).limit_denominator(max_denom).as_integer_ratio()
-                for val in coefficients
-            ]
-        )
-        factor = np.lcm.reduce(ratios[:, 1])
-        result = [round(v * factor) for v in coefficients]
-        return result
+        self, coefficients: list[float], limit: int
+    ) -> list[float | int] | list[int]:
+        initial_coefficients = coefficients
+        frac = [Fraction(x).limit_denominator() for x in coefficients]
+        vals = [
+            int(
+                fr.numerator
+                * find_lcm([fr.denominator for fr in frac])
+                / fr.denominator
+            )
+            for fr in frac
+        ]
+        coefficients = [int(val / find_gcd(vals)) for val in vals]
+        if any(x > limit for x in coefficients):
+            return initial_coefficients
+        return coefficients
 
     @staticmethod
     def is_reaction_balanced(
@@ -70,10 +76,14 @@ class Balancer(BalancingAlgorithms):
                 ).tolist()
 
             case "gpinv":
-                coefficients: list[float] = self._gpinv_algorithm().tolist()
+                coefficients: list[float] = np.round(
+                    self._gpinv_algorithm(), decimals=self.round_precision + 2
+                ).tolist()
 
             case "ppinv":
-                coefficients: list[float] = self._ppinv_algorithm().tolist()
+                coefficients: list[float] = np.round(
+                    self._ppinv_algorithm(), decimals=self.round_precision + 2
+                ).tolist()
 
             case "comb":
                 res: npt.NDArray[np.int32] | None = self._comb_algorithm()
@@ -89,7 +99,7 @@ class Balancer(BalancingAlgorithms):
             self.reactant_matrix, self.product_matrix, coefficients
         ):
             if self.intify:
-                intified = self._intify_coefficients(coefficients)
+                intified = self._intify_coefficients(coefficients, self.coef_limit)
                 if all(x < self.coef_limit for x in intified):
                     return intified
                 else:
@@ -124,35 +134,3 @@ class Balancer(BalancingAlgorithms):
             return (self.gpinv(), "partial pseudoinverse")
         except Exception:
             raise BalancingError("Can't balance this reaction by any method")
-
-    '''
-    def old_intify_coefficients(self, coefficients: list, limit: int) -> list:
-        """Reduce the coefficients to integers by finding the greatest common divider.
-        
-        Arguments:
-            coefficients (list): List of coefficients to intify
-            limit (int): upper limit (max int coef)
-        
-        Returns:
-            list: list of intified coefficients
-
-        Example:
-            >>> reaction = ChemicalReaction("P2O3+HClO3+H2O=H3PO4+HCl")
-            >>> Balancer(reaction.reactant_matrix, reaction.product_matrix, 8, True, True).intify_coefficients([1.5, 1.0, 4.5, 3.0, 1.0], 100000)
-            [3, 2, 9, 6, 2]
-        """
-        initial_coefficients = coefficients
-        frac = [Fraction(x).limit_denominator() for x in coefficients]
-        vals = [
-            int(
-                fr.numerator
-                * find_lcm([fr.denominator for fr in frac])
-                / fr.denominator
-            )
-            for fr in frac
-        ]
-        coefficients = [int(val / find_gcd(vals)) for val in vals]
-        if any(x > limit for x in coefficients):
-            return initial_coefficients
-        return coefficients
-        '''
