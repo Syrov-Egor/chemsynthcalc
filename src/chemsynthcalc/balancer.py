@@ -61,7 +61,7 @@ class Balancer(BalancingAlgorithms):
         except Exception:
             return False
 
-    def _calculate_by_method(self, method: str) -> list[float] | list[int]:
+    def _calculate_by_method(self, method: str) -> list[float | int] | list[int]:
         match method:
 
             case "inv":
@@ -85,12 +85,8 @@ class Balancer(BalancingAlgorithms):
             case _:
                 raise ValueError(f"No method {method}")
 
-        if (
-            Balancer.is_reaction_balanced(
-                self.reactant_matrix, self.product_matrix, coefficients
-            )
-            and all(x > 0 for x in coefficients)
-            and len(coefficients) == self.reaction_matrix.shape[1]
+        if Balancer.is_reaction_balanced(
+            self.reactant_matrix, self.product_matrix, coefficients
         ):
             if self.intify:
                 intified = self._intify_coefficients(coefficients)
@@ -103,29 +99,29 @@ class Balancer(BalancingAlgorithms):
         else:
             raise BalancingError(f"Can't balance reaction by {method} method")
 
-    def inv(self) -> list[float] | list[int]:
+    def inv(self) -> list[float | int] | list[int]:
         return self._calculate_by_method("inv")
 
-    def gpinv(self) -> list[float] | list[int]:
+    def gpinv(self) -> list[float | int] | list[int]:
         return self._calculate_by_method("gpinv")
 
-    def ppinv(self) -> list[float] | list[int]:
+    def ppinv(self) -> list[float | int] | list[int]:
         return self._calculate_by_method("ppinv")
 
-    def comb(self) -> list[float] | list[int]:
+    def comb(self) -> list[float | int] | list[int]:
         return self._calculate_by_method("comb")
 
-    def auto(self) -> tuple[list[float] | list[int], str]:
+    def auto(self) -> tuple[list[float | int] | list[int], str]:
         try:
-            return (self.inv(), "inv")
+            return (self.inv(), "inverse")
         except Exception:
             pass
         try:
-            return (self.gpinv(), "gpinv")
+            return (self.gpinv(), "general pseudoinverse")
         except Exception:
             pass
         try:
-            return (self.gpinv(), "ppinv")
+            return (self.gpinv(), "partial pseudoinverse")
         except Exception:
             raise BalancingError("Can't balance this reaction by any method")
 
