@@ -139,27 +139,27 @@ class ChemicalReaction:
             self.decomposed_reaction.reactants[-1] + self.decomposed_reaction.separator,
         )
         return final_reaction
-    
+
     @property
     @lru_cache
     def final_reaction(self) -> str:
         return self._generate_final_reaction(self.coefficients)
-    
+
     @property
     @lru_cache
     def final_reaction_normalized(self) -> str:
         return self._generate_final_reaction(self.normalized_coefficients)
-    
+
     @property
     @lru_cache
     def masses(self) -> list[float]:
         nu = self.target_mass / self.molar_masses[self._calculated_target]
         masses = [
-                round(molar * nu * self.normalized_coefficients[i], self.precision)
-                for i, molar in enumerate(self.molar_masses)
-            ]
+            round(molar * nu * self.normalized_coefficients[i], self.precision)
+            for i, molar in enumerate(self.molar_masses)
+        ]
         return masses
-    
+
     @property
     @lru_cache
     def output_results(self) -> dict[str, object]:
@@ -178,8 +178,7 @@ class ChemicalReaction:
             "target": self.decomposed_reaction.compounds[self._calculated_target],
             "masses": self.masses,
         }
-    
-    
+
     def print_results(self, print_precision: int = 4) -> None:
         ChemicalOutput(
             self.output_results, print_precision, obj="reaction"

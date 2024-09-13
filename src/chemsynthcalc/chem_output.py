@@ -35,7 +35,7 @@ class ChemicalOutput:
             else:
                 rounded_value = value
 
-            rounded_dict.update({name: rounded_value}) # type: ignore
+            rounded_dict.update({name: rounded_value})  # type: ignore
 
         return rounded_dict
 
@@ -52,17 +52,17 @@ class ChemicalOutput:
             filename = ""
 
         return filename
-    
+
     def _print_additional_reaction_results(self) -> None:
-        for i, formula in enumerate(self.output["formulas"]): #type: ignore
+        for i, formula in enumerate(self.output["formulas"]):  # type: ignore
             print(
                 "%s: M = %s g/mol, m = %s g"
                 % (
                     formula,
                     "%.{0}f".format(self.print_precision)
-                    % round(self.output["molar masses"][i], self.print_precision), #type: ignore
+                    % round(self.output["molar masses"][i], self.print_precision),  # type: ignore
                     "%.{0}f".format(self.print_precision)
-                    % round(self.output["masses"][i], self.print_precision), #type: ignore
+                    % round(self.output["masses"][i], self.print_precision),  # type: ignore
                 )
             )
 
