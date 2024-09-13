@@ -95,8 +95,12 @@ class Balancer(BalancingAlgorithms):
             case _:
                 raise ValueError(f"No method {method}")
 
-        if Balancer.is_reaction_balanced(
-            self.reactant_matrix, self.product_matrix, coefficients
+        if (
+            Balancer.is_reaction_balanced(
+                self.reactant_matrix, self.product_matrix, coefficients
+            )
+            and all(x > 0 for x in coefficients)
+            and len(coefficients) == self.reaction_matrix.shape[1]
         ):
             if self.intify:
                 intified = self._intify_coefficients(coefficients, self.coef_limit)
