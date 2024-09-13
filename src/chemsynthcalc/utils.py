@@ -8,6 +8,10 @@ def round_dict_content(
     return {k: round(v, precision + plus) for k, v in input.items()}
 
 
+def to_integer(coefficients: list[float | int]) -> list[float | int]:
+    return [int(i) if i.is_integer() else i for i in coefficients]
+
+
 def find_lcm(int_list: list) -> int:
     """Finds least common multiple of the list of integers.
 
