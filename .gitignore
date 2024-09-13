@@ -5,6 +5,8 @@ __pycache__/
 *$py.class
 *.pyc
 
+CSC_reaction_*
+CSC_formula_*
 
 new.py
 solid-state_dataset_2019-06-27_upd.json
