@@ -30,10 +30,12 @@ class ChemicalOutput:
                 rounded_value = round(value, self.print_precision)
             elif isinstance(value, dict):
                 rounded_value = round_dict_content(value, self.print_precision)  # type: ignore
+            elif name == "masses":
+                rounded_value = [round(v, self.print_precision) for v in value]  # type: ignore
             else:
                 rounded_value = value
 
-            rounded_dict.update({name: rounded_value})
+            rounded_dict.update({name: rounded_value}) # type: ignore
 
         return rounded_dict
 
@@ -50,10 +52,28 @@ class ChemicalOutput:
             filename = ""
 
         return filename
+    
+    def _print_additional_reaction_results(self) -> None:
+        for i, formula in enumerate(self.output["formulas"]): #type: ignore
+            print(
+                "%s: M = %s g/mol, m = %s g"
+                % (
+                    formula,
+                    "%.{0}f".format(self.print_precision)
+                    % round(self.output["molar masses"][i], self.print_precision), #type: ignore
+                    "%.{0}f".format(self.print_precision)
+                    % round(self.output["masses"][i], self.print_precision), #type: ignore
+                )
+            )
 
     def _print_stream(self) -> None:
         for name, rounded_value in self.rounded_values.items():
-            print(name + ":", rounded_value)
+            if name == "reaction matrix":
+                print(name + ":\n", rounded_value)
+            else:
+                print(name + ":", rounded_value)
+        if self.obj == "reaction":
+            self._print_additional_reaction_results()
 
     def print_results(self) -> None:
         sys.stdout = self.original_stdout
