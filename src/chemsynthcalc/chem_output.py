@@ -2,6 +2,8 @@ import sys
 import time
 import json
 
+import numpy as np
+
 from .utils import round_dict_content
 
 
@@ -32,6 +34,8 @@ class ChemicalOutput:
                 rounded_value = round_dict_content(value, self.print_precision)  # type: ignore
             elif name == "masses":
                 rounded_value = [round(v, self.print_precision) for v in value]  # type: ignore
+            elif name == "reaction matrix":
+                rounded_value = np.array2string(value) # type: ignore
             else:
                 rounded_value = value
 
