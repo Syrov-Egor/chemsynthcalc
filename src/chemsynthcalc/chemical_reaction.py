@@ -40,6 +40,12 @@ class ChemicalReaction:
         self.algorithm: str = "user"
         self.initial_target: int = target
 
+    def __repr__(self) -> str:
+        return "chemsynthcalc ChemicalReaction object: " + self.reaction
+
+    def __str__(self) -> str:
+        return self.reaction
+
     @property
     @lru_cache
     def decomposed_reaction(self) -> ReactionDecomposer:
