@@ -1,4 +1,6 @@
 import os
+import time
+import glob
 
 import pytest
 
@@ -8,17 +10,14 @@ from chemsynthcalc.chemical_reaction import ChemicalReaction
 
 
 def cleanup_files() -> None:
-    listdir = os.listdir()
-    files_to_delete = [
-        "CSC_formula_test.txt",
-        "CSC_reaction_test.txt",
-        "CSC_formula_test.json",
-        "CSC_reaction_test.json",
+    files_to_delete: list[str] = [
+        "CSC_formula_*",
+        "CSC_reaction_*",
     ]
-    for item in listdir:
-        if item in files_to_delete:
-            os.remove(item)
-    return
+    for file_type in files_to_delete:
+        paths: list[str] = glob.glob(f"./{file_type}")
+        for filename in paths:
+            os.remove(filename)
 
 
 formula: str = "[Ru(C10H8N2)3]Cl2*6H2O"
@@ -46,6 +45,30 @@ def test_formula_output_wrong_obj() -> None:
         ChemicalOutput(formula_output, print_precision=4, obj="firmula")
 
 
+def test_formula_name_generation() -> None:
+    file_type = "txt"
+    assert (
+        ChemicalOutput(formula_output, print_precision=4, obj="formula")._generate_filename(  # type: ignore
+            file_type
+        )[
+            :11
+        ]
+        == f"CSC_formula_{formula}_{time.time_ns()}.{file_type}"[:11]
+    )
+
+
+def test_formula_file_name_txt() -> None:
+    ChemicalOutput(formula_output, print_precision=4, obj="formula").write_to_txt(
+        filename="default"
+    )
+
+
+def test_formula_file_name_json() -> None:
+    ChemicalOutput(formula_output, print_precision=4, obj="formula").write_to_json_file(
+        filename="default"
+    )
+
+
 def test_formula_print() -> None:
     ChemicalFormula(formula).print_results()
 
@@ -56,7 +79,6 @@ def test_formula_txt_export() -> None:
     with open(filename) as f:
         data = f.readlines()
     assert data == formula_content
-    cleanup_files()
 
 
 def test_formula_to_json() -> None:
@@ -69,7 +91,6 @@ def test_formula_json_file_export() -> None:
     with open(filename) as f:
         data = f.read()
     assert data == formula_json_content
-    cleanup_files()
 
 
 reaction: str = "KI+H2SO4=I2+H2S+K2SO4+H2O"
@@ -108,6 +129,18 @@ reaction_json_content: str = (
 )
 
 
+def test_reaction_name_generation() -> None:
+    file_type = "txt"
+    assert (
+        ChemicalOutput(reaction_output, print_precision=4, obj="reaction")._generate_filename(  # type: ignore
+            file_type
+        )[
+            :11
+        ]
+        == f"CSC_reaction_{reaction}_{time.time_ns()}.{file_type}"[:11]
+    )
+
+
 def test_reaction_print() -> None:
     ChemicalReaction(reaction).print_results()
 
@@ -118,7 +151,6 @@ def test_reaction_txt_export() -> None:
     with open(filename) as f:
         data = f.readlines()
     assert data == reaction_content
-    cleanup_files()
 
 
 def test_reaction_to_json() -> None:
@@ -131,4 +163,7 @@ def test_reaction_json_file_export() -> None:
     with open(filename) as f:
         data = f.read()
     assert data == reaction_json_content
+
+
+def test_cleanup() -> None:
     cleanup_files()
