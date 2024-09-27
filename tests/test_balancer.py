@@ -2,6 +2,17 @@ import pytest
 import csv
 import ast
 from chemsynthcalc.chemical_reaction import ChemicalReaction
+from chemsynthcalc.balancer import Balancer
+
+
+def test_balancer_wrong_precision():
+    reaction = "H2+O2=H2O"
+    reaction_obj = ChemicalReaction(reaction)
+    with pytest.raises(ValueError):
+        Balancer(
+            reaction_obj.matrix, len(reaction_obj.decomposed_reaction.reactants), -2
+        )
+
 
 with open("tests/testing_reactions.csv") as csvfile:
     reader = list(csv.reader(csvfile))[1:]
