@@ -60,10 +60,10 @@ class Balancer(BalancingAlgorithms):
                 product_matrix.T,
                 np.array(coefficients)[reactant_matrix.shape[1] :, None],
             )
-            if np.allclose(reactants.sum(axis=0), products.sum(axis=0), rtol=tolerance):
-                return True
-            else:
-                return False
+            return np.allclose(
+                reactants.sum(axis=0), products.sum(axis=0), rtol=tolerance
+            )
+
         except Exception:
             return False
 
