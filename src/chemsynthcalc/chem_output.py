@@ -48,12 +48,10 @@ class ChemicalOutput:
             filename: str = (
                 f"CSC_{self.obj}_{self.output.get("formula")}_{time.time_ns()}.{file_type}"
             )
-        elif self.obj == "reaction":
+        else:
             filename: str = (
                 f"CSC_{self.obj}_{self.output.get("target")}_{time.time_ns()}.{file_type}"
             )
-        else:
-            filename = ""
 
         return filename
 
