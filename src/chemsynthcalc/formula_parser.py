@@ -4,15 +4,21 @@ from .formula import Formula
 
 
 class ChemicalFormulaParser(Formula):
+    """
+    Parser of chemical formulas.
+
+    Methods of this class take string of compound chemical formula
+    and turn it into a dict of atoms as keys and their coefficients as values.
+    """
 
     def _dictify(self, tuples: list[tuple[str, ...]]) -> dict[str, float]:
         """Transform list of tuples to a dict of atoms.
 
         Arguments:
-            tuples (list): list of tuples of atoms
+            tuples: list[tuple[str, ...]]: list of tuples of atoms
 
         Returns:
-            dict: dictionary of atoms
+            dict[str, float]: dictionary of atoms
         """
         result: dict[str, float] = dict()
         for atom, n, _, _ in tuples:
@@ -28,12 +34,12 @@ class ChemicalFormulaParser(Formula):
         """Fuse 2 dicts representing molecules.
 
         Arguments:
-            mol1 (dict): dict of atoms 1
-            mol2 (dict): dict of atoms 2
-            weight (int): weight
+            mol1 (dict[str, float]): Dict of atoms 1
+            mol2 (dict[str, float]): Dict of atoms 2
+            weight (float): Weight
 
         Returns:
-            dict: a new fused dict
+            A new fused dict
         """
 
         fused_set: set[str] = set(mol1) | set(mol2)
@@ -44,6 +50,20 @@ class ChemicalFormulaParser(Formula):
         return fused_dict
 
     def _parse(self, formula: str) -> tuple[dict[str, float], int]:
+        """
+        Parse the formula string
+
+        Recurse on opening brackets to parse the subpart and
+        return on closing ones because it is the end of said subpart.
+        Formula is the argument of this method due to the complications
+        of self. Constructions in recursive functions.
+
+        Arguments:
+            formula (str): Formula string
+
+        Returns:
+            Returns a tuple of the molecule dict and length of parsed part
+        """
         token_list: list[str] = []
         mol: dict[str, float] = {}
         i: int = 0

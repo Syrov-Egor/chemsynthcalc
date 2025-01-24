@@ -21,3 +21,13 @@ theme:
 markdown_extensions:
   - pymdownx.caret
   - pymdownx.tilde
+
+plugins:
+- search
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [src]
+        options:
+          show_submodules: true
+          filters: None

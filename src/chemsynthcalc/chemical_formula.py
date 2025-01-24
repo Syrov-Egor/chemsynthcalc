@@ -8,6 +8,30 @@ from .utils import round_dict_content
 
 
 class ChemicalFormula:
+    """A class for operations on a single chemical formula.
+
+    It constructs with a formula string and calculates properties:
+    parsed formula, molar mass, mass percent, atomic percent,
+    oxide percent from this string using
+    :class:`chemsynthcalc.formula_parser.ChemicalFormulaParser` and
+    :class:`chemsynthcalc.molar_mass.MolarMassCalculation`.
+
+    Arguments:
+        formula (str): string of chemical formula
+        precision (int): value of rounding precision (8 by default)
+
+    Raises:
+        ValueError: if precision <= 0
+
+    Examples:
+        >>> ChemicalFormula("H2O")
+        H2O
+        >>> ChemicalFormula("H2O").molar_mass
+        18.015
+        >>> ChemicalFormula("H2O").mass_percent
+        {'H': 11.19067444, 'O': 88.80932556}
+    """
+
     def __init__(self, formula: str = "", precision: int = 8) -> None:
         if FormulaValidator(formula).validate_formula() == True:
             self.formula: str = formula
@@ -26,6 +50,15 @@ class ChemicalFormula:
     @property
     @lru_cache
     def parsed_formula(self) -> dict[str, float]:
+        """Formula parsed into dict with the initial atom order.
+
+        Returns:
+            dict[str, float]: Parsed dictionary representation of formula string created by :class:`chemsynthcalc.formula_parser.ChemicalFormulaParser`.
+
+        Examples:
+            >>> ChemicalFormula("K2SO4").parsed_formula
+            {'K': 2.0, 'S': 1.0, 'O': 4.0}
+        """
         parsed: dict[str, float] = ChemicalFormulaParser(self.formula).parse_formula()
         return round_dict_content(parsed, self.precision, plus=3)
 
