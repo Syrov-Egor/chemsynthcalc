@@ -12,13 +12,8 @@ class ChemicalFormulaParser(Formula):
     """
 
     def _dictify(self, tuples: list[tuple[str, ...]]) -> dict[str, float]:
-        """Transform list of tuples to a dict of atoms.
-
-        Arguments:
-            tuples: list[tuple[str, ...]]: list of tuples of atoms
-
-        Returns:
-            dict[str, float]: dictionary of atoms
+        """
+        aaa
         """
         result: dict[str, float] = dict()
         for atom, n, _, _ in tuples:
@@ -31,7 +26,7 @@ class ChemicalFormulaParser(Formula):
     def _fuse(
         self, mol1: dict[str, float], mol2: dict[str, float], weight: float = 1.0
     ) -> dict[str, float]:
-        """Fuse 2 dicts representing molecules.
+        """Fuse together 2 dicts representing molecules.
 
         Arguments:
             mol1 (dict[str, float]): Dict of atoms 1
@@ -125,6 +120,9 @@ class ChemicalFormulaParser(Formula):
         return fused_dict, i
 
     def _order_output_dict(self, parsed: dict[str, float]) -> dict[str, float]:
+        """
+        aaaa
+        """
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
         weights: list[float] = []
         for atom in atoms_list:
@@ -132,5 +130,8 @@ class ChemicalFormulaParser(Formula):
         return dict(zip(atoms_list, weights))
 
     def parse_formula(self) -> dict[str, float]:
+        """
+        bbbb
+        """
         parsed = self._parse(self.formula)[0]
         return self._order_output_dict(parsed)

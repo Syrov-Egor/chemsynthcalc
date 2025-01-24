@@ -30,4 +30,5 @@ plugins:
         paths: [src]
         options:
           show_submodules: true
-          filters: None
+          filters: []
+          members_order: source
