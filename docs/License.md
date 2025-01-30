@@ -1,4 +1,4 @@
-#License
+#MIT License
 
 Copyright (c) [2025] [Egor Vladimirovich Syrov]
 
