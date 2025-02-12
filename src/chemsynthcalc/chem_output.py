@@ -35,7 +35,7 @@ class ChemicalOutput:
             elif name == "masses":
                 rounded_value = [round(v, self.print_precision) for v in value]  # type: ignore
             elif name == "reaction matrix":
-                rounded_value = np.array2string(value) # type: ignore
+                rounded_value = np.array2string(value)  # type: ignore
             else:
                 rounded_value = value
 
@@ -85,7 +85,7 @@ class ChemicalOutput:
         if filename == "default":
             filename = self._generate_filename("txt")
 
-        with open(filename, "w") as file:
+        with open(filename, "w", encoding="utf-8") as file:
             sys.stdout = file
             self._print_stream()
 
