@@ -33,8 +33,8 @@ class ChemicalFormula:
     """
 
     def __init__(self, formula: str = "", precision: int = 8) -> None:
-        if FormulaValidator(formula).validate_formula() == True:
-            self.formula: str = formula
+        if FormulaValidator(formula).validate_formula():
+            self.formula: str = formula.replace(" ", "")
 
         if precision > 0:
             self.precision: int = precision

@@ -79,8 +79,7 @@ class Coefficients:
                 for d in self.parsed_formulas[len(self.decomposed_reaction.reactants) :]
                 for k, v in d.items()
             }
-            diff = set(reactants.keys()).symmetric_difference(set(products.keys()))
-            print(diff)
+            diff = set(reactants.keys()) ^ (set(products.keys()))
             if diff:
                 raise ReactantProductDifference(
                     f"Cannot balance this reaction, because element(s) {diff} are only in one part of the reaction"
