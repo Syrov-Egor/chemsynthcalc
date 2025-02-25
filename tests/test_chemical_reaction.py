@@ -2,7 +2,7 @@ import pytest
 
 from chemsynthcalc.chemical_reaction import ChemicalReaction
 
-reaction = "KI+H2SO4=I2+H2S+K2SO4+H2O"
+reaction: str = "KI+H2SO4=I2+H2S+K2SO4+H2O"
 
 
 def test_wrong_precision() -> None:

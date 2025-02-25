@@ -12,7 +12,6 @@ from .coefs import Coefficients
 from .chem_output import ChemicalOutput
 
 
-# TODO Add a products-reagents diff function
 class ChemicalReaction:
     def __init__(
         self,
