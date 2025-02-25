@@ -80,12 +80,14 @@ class Coefficients:
                 for k, v in d.items()
             }
             diff = set(reactants.keys()).symmetric_difference(set(products.keys()))
+            print(diff)
             if diff:
                 raise ReactantProductDifference(
                     f"Cannot balance this reaction, because element(s) {diff} are only in one part of the reaction"
                 )
 
     def get_coefficients(self) -> tuple[list[float | int] | list[int], str]:
-        self._element_count_validation
-        self._coefficients_validation
-        return self._calculate_coefficients()
+        self._element_count_validation()
+        coefs = self._calculate_coefficients()
+        self._coefficients_validation(coefs[0])
+        return coefs

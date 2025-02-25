@@ -125,14 +125,22 @@ def test_bad_coefs_len():
         )
 
 
-def test_element_count_validation():
-    reaction = "Cr2(SO4)3+NaOH=NaBr+Na2CrO4+Na2SO4+H2O"
+def test_element_count_validation_left():
+    reaction = "Rb2CO3+La2O3+Nb2O5=RbLaNb2O7"
     reaction_obj = ChemicalReaction(reaction, mode="balance")
     with pytest.raises(ReactantProductDifference):
-        Coefficients(
-            reaction_obj.mode,
-            reaction_obj.parsed_formulas,
-            reaction_obj.matrix,
-            reaction_obj.balancer,
-            reaction_obj.decomposed_reaction,
-        )._element_count_validation()  # type: ignore
+        reaction_obj.coefficients
+
+
+def test_element_count_validation_right():
+    reaction = "Rb2CO3+La2O3+Nb2O5=RbLaNb2O7+CO2+Nd"
+    reaction_obj = ChemicalReaction(reaction, mode="balance")
+    with pytest.raises(ReactantProductDifference):
+        reaction_obj.coefficients
+
+
+def test_element_count_validation_both():
+    reaction = "Rb2CO3+La2O3+Nb2O5=RbLaNb2O7+Nd"
+    reaction_obj = ChemicalReaction(reaction, mode="balance")
+    with pytest.raises(ReactantProductDifference):
+        reaction_obj.coefficients
