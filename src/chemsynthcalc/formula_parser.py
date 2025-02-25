@@ -7,14 +7,21 @@ class ChemicalFormulaParser(Formula):
     """
     Parser of chemical formulas.
 
-    Methods of this class take string of compound chemical formula
+    Methods of this class take string of compound's chemical formula
     and turn it into a dict of atoms as keys and their coefficients as values.
     """
 
     def _dictify(self, tuples: list[tuple[str, ...]]) -> dict[str, float]:
         """
-        aaa
+        Transform list of tuples to a dict of atoms.
+
+        Arguments:
+            tuples: list[tuple[str, ...]]: list of tuples of atoms
+
+        Returns:
+            dict[str, float]: dictionary of atoms
         """
+
         result: dict[str, float] = dict()
         for atom, n, _, _ in tuples:
             try:
