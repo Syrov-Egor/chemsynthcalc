@@ -13,7 +13,7 @@ def test_wrong_precision() -> None:
 def test_repr() -> None:
     assert (
         ChemicalFormula(formula=formula).__repr__()
-        == "chemsynthcalc ChemicalFormula object with formula: [Ru(C10H8N2)3]Cl2*6H2O"
+        == "ChemicalFormula([Ru(C10H8N2)3]Cl2*6H2O, 8)"
     )
 
 

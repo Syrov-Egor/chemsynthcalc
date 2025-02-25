@@ -42,7 +42,7 @@ class ChemicalFormula:
             raise ValueError("precision <= 0")
 
     def __repr__(self) -> str:
-        return "chemsynthcalc ChemicalFormula object with formula: " + self.formula
+        return f"ChemicalFormula({self.formula}, {self.precision})"
 
     def __str__(self) -> str:
         return self.formula

@@ -41,7 +41,7 @@ class ChemicalReaction:
         self.initial_target: int = target
 
     def __repr__(self) -> str:
-        return "chemsynthcalc ChemicalReaction object: " + self.reaction
+        return f"ChemicalReaction({self.reaction}, {self.mode}, {self.initial_target}, {self.target_mass}, {self.precision}, {self.intify})"
 
     def __str__(self) -> str:
         return self.reaction

@@ -18,7 +18,7 @@ def test_wrong_target_mass() -> None:
 def test_repr() -> None:
     assert (
         ChemicalReaction(reaction).__repr__()
-        == "chemsynthcalc ChemicalReaction object: KI+H2SO4=I2+H2S+K2SO4+H2O"
+        == "ChemicalReaction(KI+H2SO4=I2+H2S+K2SO4+H2O, balance, 0, 1.0, 8, True)"
     )
 
 
