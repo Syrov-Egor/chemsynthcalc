@@ -34,7 +34,7 @@ class ChemicalFormula:
 
     def __init__(self, formula: str = "", precision: int = 8) -> None:
         if FormulaValidator(formula).validate_formula():
-            self.formula: str = formula.replace(" ", "")
+            self.initial_formula: str = formula.replace(" ", "")
 
         if precision > 0:
             self.precision: int = precision
@@ -48,7 +48,12 @@ class ChemicalFormula:
         return self.formula
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
+    def formula(self) -> str:
+        return self.initial_formula
+
+    @property
+    @lru_cache(maxsize=1)
     def parsed_formula(self) -> dict[str, float]:
         """Formula parsed into dict with the initial atom order.
 
@@ -63,7 +68,7 @@ class ChemicalFormula:
         return round_dict_content(parsed, self.precision, plus=3)
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def molar_mass(self) -> float:
         return round(
             MolarMassCalculation(self.parsed_formula).calculate_molar_mass(),
@@ -71,25 +76,25 @@ class ChemicalFormula:
         )
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def mass_percent(self) -> dict[str, float]:
         output = MolarMassCalculation(self.parsed_formula).calculate_mass_percent()
         return round_dict_content(output, self.precision)
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def atomic_percent(self) -> dict[str, float]:
         output = MolarMassCalculation(self.parsed_formula).calculate_atomic_percent()
         return round_dict_content(output, self.precision)
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def oxide_percent(self) -> dict[str, float]:
         output = MolarMassCalculation(self.parsed_formula).calculate_oxide_percent()
         return round_dict_content(output, self.precision)
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def output_results(self) -> dict[str, object]:
         return {
             "formula": self.formula,

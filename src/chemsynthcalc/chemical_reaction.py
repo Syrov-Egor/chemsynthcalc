@@ -23,7 +23,7 @@ class ChemicalReaction:
         intify: bool = True,
     ) -> None:
         if ReactionValidator(reaction).validate_reaction():
-            self.reaction = reaction.replace(" ", "")
+            self.initial_reaction = reaction.replace(" ", "")
 
         if precision > 0:
             self.precision: int = precision
@@ -47,12 +47,17 @@ class ChemicalReaction:
         return self.reaction
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
+    def reaction(self) -> str:
+        return self.initial_reaction
+
+    @property
+    @lru_cache(maxsize=1)
     def decomposed_reaction(self) -> ReactionDecomposer:
         return ReactionDecomposer(self.reaction)
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def _calculated_target(self) -> int:
         high = len(self.decomposed_reaction.products) - 1
         low = -len(self.decomposed_reaction.reactants)
@@ -64,7 +69,7 @@ class ChemicalReaction:
             )
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def chemformula_objs(self) -> list[ChemicalFormula]:
         return [
             ChemicalFormula(formula, self.precision)
@@ -72,17 +77,17 @@ class ChemicalReaction:
         ]
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def parsed_formulas(self) -> list[dict[str, float]]:
         return [compound.parsed_formula for compound in self.chemformula_objs]
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def matrix(self) -> npt.NDArray[np.float64]:
         return ChemicalReactionMatrix(self.parsed_formulas).matrix
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def balancer(self) -> Balancer:
         return Balancer(
             self.matrix,
@@ -92,7 +97,7 @@ class ChemicalReaction:
         )
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def molar_masses(self) -> list[float]:
         return [compound.molar_mass for compound in self.chemformula_objs]
 
@@ -108,7 +113,7 @@ class ChemicalReaction:
         return coefs
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def normalized_coefficients(self) -> list[float | int] | list[int]:
         target_compound = self.coefficients[self._calculated_target]
         normalized_coefficients: list[float | int] | list[int] = [
@@ -147,17 +152,17 @@ class ChemicalReaction:
         return final_reaction
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def final_reaction(self) -> str:
         return self._generate_final_reaction(self.coefficients)
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def final_reaction_normalized(self) -> str:
         return self._generate_final_reaction(self.normalized_coefficients)
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def masses(self) -> list[float]:
         nu = self.target_mass / self.molar_masses[self._calculated_target]
         masses = [
@@ -167,7 +172,7 @@ class ChemicalReaction:
         return masses
 
     @property
-    @lru_cache
+    @lru_cache(maxsize=1)
     def output_results(self) -> dict[str, object]:
         return {
             "initial reaction": self.reaction,
