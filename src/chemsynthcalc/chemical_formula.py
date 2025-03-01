@@ -190,7 +190,7 @@ class ChemicalFormula:
         Print a final result of calculations in stdout.
 
         Arguments:
-            print_rounding_order (int): print precision (4 digits by default)
+            print_precision (int): print precision (4 digits by default)
         """
         ChemicalOutput(
             self.output_results, print_precision, obj="formula"
@@ -202,7 +202,7 @@ class ChemicalFormula:
 
         Arguments:
             filename (str): filename string (should end with .txt)
-            print_rounding_order (int): print precision (4 digits by default)
+            print_precision (int): print precision (4 digits by default)
         """
         ChemicalOutput(
             self.output_results, print_precision, obj="formula"
@@ -213,7 +213,7 @@ class ChemicalFormula:
         Serialization of output into JSON object.
 
         Arguments:
-            print_rounding_order (int): print precision (4 digits by default)
+            print_precision (int): print precision (4 digits by default)
 
         Returns:
             A JSON-type object
@@ -228,7 +228,7 @@ class ChemicalFormula:
 
         Arguments:
             filename (str): filename string (should end with .json)
-            print_rounding_order (int): print precision (4 digits by default)
+            print_precision (int): print precision (4 digits by default)
         """
         ChemicalOutput(
             self.output_results, print_precision, obj="formula"

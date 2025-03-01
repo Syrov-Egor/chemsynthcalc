@@ -73,22 +73,22 @@ class Balancer(BalancingAlgorithms):
             case "inv":
                 coefficients: list[float] = np.round(
                     self._inv_algorithm(), decimals=self.round_precision
-                ).tolist()
+                ).tolist()  # type: ignore
 
             case "gpinv":
                 coefficients: list[float] = np.round(
                     self._gpinv_algorithm(), decimals=self.round_precision + 2
-                ).tolist()
+                ).tolist()  # type: ignore
 
             case "ppinv":
                 coefficients: list[float] = np.round(
                     self._ppinv_algorithm(), decimals=self.round_precision + 2
-                ).tolist()
+                ).tolist()  # type: ignore
 
             case "comb":
                 res: npt.NDArray[np.int32] | None = self._comb_algorithm()
                 if res is not None:
-                    return res.tolist()
+                    return res.tolist()  # type: ignore
                 else:
                     raise BalancingError(f"Can't balance reaction by {method} method")
 
