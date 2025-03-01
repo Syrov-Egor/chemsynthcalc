@@ -15,11 +15,11 @@ class ChemicalFormulaParser(Formula):
         """
         Transform list of tuples to a dict of atoms.
 
-        Arguments:
-            tuples: list[tuple[str, ...]]: list of tuples of atoms
+        Parameters:
+            tuples (list[tuple[str, ...]]): List of tuples of atoms
 
         Returns:
-            dict[str, float]: dictionary of atoms
+            Dictionary of atoms and they quantities
         """
 
         result: dict[str, float] = dict()
@@ -35,7 +35,7 @@ class ChemicalFormulaParser(Formula):
     ) -> dict[str, float]:
         """Fuse together 2 dicts representing molecules.
 
-        Arguments:
+        Parameters:
             mol1 (dict[str, float]): Dict of atoms 1
             mol2 (dict[str, float]): Dict of atoms 2
             weight (float): Weight
@@ -60,11 +60,11 @@ class ChemicalFormulaParser(Formula):
         Formula is the argument of this method due to the complications
         of self. Constructions in recursive functions.
 
-        Arguments:
+        Parameters:
             formula (str): Formula string
 
         Returns:
-            Returns a tuple of the molecule dict and length of parsed part
+            A tuple of the molecule dict and length of parsed part
         """
         token_list: list[str] = []
         mol: dict[str, float] = {}
@@ -128,7 +128,14 @@ class ChemicalFormulaParser(Formula):
 
     def _order_output_dict(self, parsed: dict[str, float]) -> dict[str, float]:
         """
-        aaaa
+        Arranges the unparsed formula in the order in which the chemical
+        elements appear in it.
+
+        Parameters:
+            parsed (dict[str, float]): A formula parsed by _parse
+
+        Returns:
+            An ordered dictionary
         """
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
         weights: list[float] = []
@@ -138,7 +145,10 @@ class ChemicalFormulaParser(Formula):
 
     def parse_formula(self) -> dict[str, float]:
         """
-        bbbb
+        Parsing and ordering of formula
+
+        Returns:
+            Parsed formula
         """
         parsed = self._parse(self.formula)[0]
         return self._order_output_dict(parsed)
