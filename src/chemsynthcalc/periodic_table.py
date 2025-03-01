@@ -2,17 +2,20 @@ from typing import NamedTuple
 
 
 class Atom(NamedTuple):
+    """
+    Named tuple for representing atomic properties:
+    atomic weight and type of oxide that will be used by default.
+    """
+
     atomic_weight: float
     default_oxide: str
 
 
 class PeriodicTable:
     """
-    Periodic table of elements in the form of (element symbol, atomic weight, electronegativity, oxide formula).
-    The abridged standard atomic weights are taken from https://doi.org/10.1515/pac-2019-0603. The weights
-    of the radioactive elements are taken from https://iupac.qmul.ac.uk/AtWt/. Pauling
-    electronegativities are taken from https://www.webelements.com/periodicity/eneg_pauling/. Pauling
-    electronegativities for elements with unknown electronegativities (Bk-Og) are set to 1.3.
+    Periodic table of elements in the form of "Atom symbol": Atom NamedTuple.
+    The standard atomic weights are taken from https://doi.org/10.1515/pac-2019-0603. The weights
+    of the radioactive elements are taken from https://iupac.qmul.ac.uk/AtWt/.
     """
 
     #!TODO get more precise weights
