@@ -1,4 +1,21 @@
 class Formula:
+    """
+    A base class for
+    [ChemicalFormulaParser][chemsynthcalc.formula_parser.ChemicalFormulaParser] and
+    [FormulaValidator][chemsynthcalc.formula_validator.FormulaValidator]
+    containing regexes and symbols.
+
+    Parameters:
+        formula (str): Formula string
+
+    Attributes:
+        atom_regex (str): Regular expression for finding atoms in formula
+        coefficient_regex (str): Regular expression for atoms amounts in formula
+        atom_and_coefficient_regex (str): atom_regex+coefficient_regex
+        opener_brackets (str): Opener brackets variations
+        closer_brackets (str): Closer brackets variations
+        adduct_symbols (str): Symbols for adduct notation (water of crystallization most often)
+    """
 
     def __init__(self, formula: str) -> None:
         self.atom_regex: str = r"([A-Z][a-z]*)"

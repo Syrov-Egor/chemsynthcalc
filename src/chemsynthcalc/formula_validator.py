@@ -13,14 +13,33 @@ from .chem_errors import (
 
 
 class FormulaValidator(Formula):
+    """
+    Methods of this class validate the initial input formula.
+    """
 
     def _check_empty_formula(self) -> bool:
+        """
+        Checks if formula is an empty string.
+        """
         return self.formula == ""
 
     def _invalid_charachers(self) -> list[str]:
+        """
+        Checks if formula contains invalid characters.
+
+        Returns:
+            List of invalid characters
+        """
         return re.compile(self.allowed_symbols).findall(self.formula)
 
     def _invalid_atoms(self) -> list[str]:
+        """
+        Checks whether the formula contains atoms that
+        are not in the periodic system.
+
+        Returns:
+            List of invalid atoms
+        """
         atoms_list: list[str] = re.findall(self.atom_regex, self.formula)
         invalid: list[str] = []
         new_string: str = self.formula
@@ -35,6 +54,9 @@ class FormulaValidator(Formula):
         return invalid
 
     def _bracket_balance(self) -> bool:
+        """
+        Checks whether all of the brackets come in pairs.
+        """
         c: Counter[str] = Counter(self.formula)
         for i in range(len(self.opener_brackets)):
             if c[self.opener_brackets[i]] != c[self.closer_brackets[i]]:
@@ -42,6 +64,13 @@ class FormulaValidator(Formula):
         return True
 
     def _num_of_adducts(self) -> int:
+        """
+        Counts a number of adduct symbols
+        (listed in [Formula base class][chemsynthcalc.formula.Formula]).
+
+        Returns:
+            A number of adduct symbols
+        """
         c: Counter[str] = Counter(self.formula)
         i: int = 0
         for adduct in self.adduct_symbols:
@@ -49,6 +78,20 @@ class FormulaValidator(Formula):
         return i
 
     def validate_formula(self) -> bool:
+        """
+        Validation of the formula string.
+        Calls the private methods of this class in order.
+
+        Raise:
+            [EmptyFormula][chemsynthcalc.chem_errors.EmptyFormula] if the formula is an empty string.
+            [InvalidCharacter][chemsynthcalc.chem_errors.InvalidCharacter] if there is an invalid character(s) in the string.
+            [NoSuchAtom][chemsynthcalc.chem_errors.NoSuchAtom] if there is an invalid atom(s) in the string.
+            [BracketsNotPaired][chemsynthcalc.chem_errors.BracketsNotPaired] if the brackets are not in pairs.
+            [MoreThanOneAdduct][chemsynthcalc.chem_errors.MoreThanOneAdduct] if there are more than 1 adduct symbols in the string.
+
+        Returns:
+            True if all the checks are OK
+        """
         if self._check_empty_formula():
             raise EmptyFormula
         elif self._invalid_charachers():

@@ -132,7 +132,7 @@ class ChemicalFormulaParser(Formula):
         elements appear in it.
 
         Parameters:
-            parsed (dict[str, float]): A formula parsed by _parse
+            parsed (dict[str, float]): A formula parsed by [_parse][chemsynthcalc.formula_parser.ChemicalFormulaParser._parse]
 
         Returns:
             An ordered dictionary
