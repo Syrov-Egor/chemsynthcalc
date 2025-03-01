@@ -83,11 +83,11 @@ class FormulaValidator(Formula):
         Calls the private methods of this class in order.
 
         Raise:
-            [EmptyFormula][chemsynthcalc.chem_errors.EmptyFormula] if the formula is an empty string.
-            [InvalidCharacter][chemsynthcalc.chem_errors.InvalidCharacter] if there is an invalid character(s) in the string.
-            [NoSuchAtom][chemsynthcalc.chem_errors.NoSuchAtom] if there is an invalid atom(s) in the string.
-            [BracketsNotPaired][chemsynthcalc.chem_errors.BracketsNotPaired] if the brackets are not in pairs.
-            [MoreThanOneAdduct][chemsynthcalc.chem_errors.MoreThanOneAdduct] if there are more than 1 adduct symbols in the string.
+            [EmptyFormula][chemsynthcalc.chem_errors.EmptyFormula] if the formula is an empty string. <br />
+            [InvalidCharacter][chemsynthcalc.chem_errors.InvalidCharacter] if there is an invalid character(s) in the string. <br />
+            [NoSuchAtom][chemsynthcalc.chem_errors.NoSuchAtom] if there is an invalid atom(s) in the string. <br />
+            [BracketsNotPaired][chemsynthcalc.chem_errors.BracketsNotPaired] if the brackets are not in pairs. <br />
+            [MoreThanOneAdduct][chemsynthcalc.chem_errors.MoreThanOneAdduct] if there are more than 1 adduct symbols in the string. <br />
 
         Returns:
             True if all the checks are OK
