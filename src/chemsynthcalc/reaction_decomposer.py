@@ -2,6 +2,8 @@ from .reaction import Reaction
 
 
 class ReactionDecomposer(Reaction):
+    """ """
+
     def __init__(self, reaction: str) -> None:
         super().__init__(reaction)
 

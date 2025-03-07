@@ -5,6 +5,7 @@ from .reaction import Reaction
 
 
 class ReactionValidator(Reaction):
+    """ """
 
     def _check_empty_reaction(self) -> bool:
         return self.reaction == ""

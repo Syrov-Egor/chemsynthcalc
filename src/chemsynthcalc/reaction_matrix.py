@@ -3,6 +3,8 @@ import numpy.typing as npt
 
 
 class ChemicalReactionMatrix:
+    """ """
+
     def __init__(self, parsed_formulas: list[dict[str, float]]) -> None:
         self._parsed_formulas = parsed_formulas
         self._merged_dict: dict[str, float] = {

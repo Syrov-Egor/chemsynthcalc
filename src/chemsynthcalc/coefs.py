@@ -13,6 +13,20 @@ from .utils import to_integer
 
 
 class Coefficients:
+    """
+    A class to calculate and validate reaction coefficients depending on the calculation "mode".
+
+    Arguments:
+        mode (str): Calculation mode ("force", "check", "balance")
+        parsed_formulas (list[dict[str, float]]): List of formulas parsed by [ChemicalFormulaParser][chemsynthcalc.formula_parser.ChemicalFormulaParser]
+        matrix (npt.NDArray[np.float64]): Reaction matrix created by [ChemicalReactionMatrix][chemsynthcalc.reaction_matrix.ChemicalReactionMatrix]
+        balancer (Balancer): A [Balancer][chemsynthcalc.balancer.Balancer] object
+        decomposed_reaction (ReactionDecomposer): A [ReactionDecomposer][chemsynthcalc.reaction_decomposer.ReactionDecomposer] object
+
+    Attributes:
+        initial_coefficients (list[float]): List of initial coefficients from decomposed reaction
+    """
+
     def __init__(
         self,
         mode: str,
@@ -29,6 +43,16 @@ class Coefficients:
         self.parsed_formulas = parsed_formulas
 
     def _calculate_coefficients(self) -> tuple[list[float | int] | list[int], str]:
+        """
+        Match a mode string and get coefficients depending on the mode
+
+        Returns:
+            Tuple of (coefficients, algorithm)
+
+        Raise:
+            [ReactionNotBalanced][chemsynthcalc.chem_erros.ReactionNotBalanced] if reaction is not balanced in the "check" mode <br />
+            [NoSuchMode][chemsynthcalc.chem_erros.NoSuchMode] if there is no mode with that name
+        """
         match self.mode:
 
             case "force":
@@ -60,6 +84,16 @@ class Coefficients:
     def _coefficients_validation(
         self, coefficients: list[float | int] | list[int]
     ) -> None:
+        """
+        Validate a list of coefs.
+
+        Arguments:
+            coefficients (list[float | int] | list[int]): List of coefs
+
+        Raise:
+            [BadCoeffiecients][chemsynthcalc.chem_erros.BadCoeffiecients] if any coef <= 0 or
+            lenght of list is not equal to the number of compounds.
+        """
         if any(x <= 0 for x in coefficients):
             raise BadCoeffiecients("0 or -x in coefficients")
         elif len(coefficients) != self.matrix.shape[1]:
@@ -68,6 +102,14 @@ class Coefficients:
             )
 
     def _element_count_validation(self) -> None:
+        """
+        Calculate a [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
+        of two sets - left and right parts of the reaction. If this set is not empty, than
+        some atoms are only in one part of the reaction (which is impossible).
+
+        Raise:
+            [ReactantProductDifference][chemsynthcalc.chem_erros.ReactantProductDifference] if diff set is not empty.
+        """
         if self.mode != "force":
             reactants = {
                 k: v
@@ -86,6 +128,12 @@ class Coefficients:
                 )
 
     def get_coefficients(self) -> tuple[list[float | int] | list[int], str]:
+        """
+        Validate atom's diff and coefs list and finally get a proper coefficients list.
+
+        Returns:
+            Tuple of (coefficients, algorithm)
+        """
         self._element_count_validation()
         coefs = self._calculate_coefficients()
         self._coefficients_validation(coefs[0])

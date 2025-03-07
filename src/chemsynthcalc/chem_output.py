@@ -49,7 +49,7 @@ class ChemicalOutput:
     def _round_values(self) -> dict[str, object]:
         """
         Round values of output dictionary to the print_precision.
-        Rounding is different depending on the type of value.
+        Rounding is different depending on the type of the value.
 
         Returns:
             Rounded dictionary
