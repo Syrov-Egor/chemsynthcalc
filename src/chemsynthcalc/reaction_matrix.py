@@ -3,7 +3,12 @@ import numpy.typing as npt
 
 
 class ChemicalReactionMatrix:
-    """ """
+    """
+    A class to create a dense float matrix from the parsed formulas.
+
+    Arguments:
+        parsed_formulas (list[dict[str, float]]): A list of formulas parsed by [ChemicalFormulaParser][chemsynthcalc.formula_parser.ChemicalFormulaParser]
+    """
 
     def __init__(self, parsed_formulas: list[dict[str, float]]) -> None:
         self._parsed_formulas = parsed_formulas
@@ -14,6 +19,13 @@ class ChemicalReactionMatrix:
         self.matrix: npt.NDArray[np.float64] = self.create_reaction_matrix()
 
     def create_reaction_matrix(self) -> npt.NDArray[np.float64]:
+        """
+        Creates a 2D NumPy array from nested Python lists.
+        The content of lists are exctracted from parsed dicts.
+
+        Returns:
+            A 2D NumPy array of the reaction matrix
+        """
         matrix: list[list[float]] = []
         for element in self._elements:
             row: list[float] = []
