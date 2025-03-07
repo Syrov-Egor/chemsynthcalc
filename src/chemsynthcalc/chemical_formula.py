@@ -89,7 +89,7 @@ class ChemicalFormula:
         Returns:
             The [molar mass](https://en.wikipedia.org/wiki/Molar_mass) \
             of the formula (in g/mol), calculated from \
-            parsed the formula using [MolarMassCalculation][chemsynthcalc.molar_mass.MolarMassCalculation] \
+            parsed the formula using [MolarMassCalculation][chemsynthcalc.molar_mass.MolarMassCalculation].
 
         Examples:
             >>> ChemicalFormula("K2SO4").molar_mass
@@ -110,7 +110,7 @@ class ChemicalFormula:
             A mass percent or \
             [relative mass fraction](https://en.wikipedia.org/wiki/Mass_fraction_(chemistry)) \
             of atoms in parsed chemical formula. The values of \
-            mass content are in % (with 100% sum), not fraction.
+            mass content are in % (with 100% sum), not fraction. 
 
         Examples:
             >>> ChemicalFormula("K2SO4").mass_percent

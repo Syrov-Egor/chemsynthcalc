@@ -2,7 +2,20 @@ from .reaction import Reaction
 
 
 class ReactionDecomposer(Reaction):
-    """ """
+    """
+    Decomposition of chemical reaction string and extraction of
+    reaction separator, reactants, products and initial coefficients.
+
+    Arguments:
+        reaction (str): A reaction string
+
+    Attributes:
+        separator (str): A reactants - products separator (usually "+")
+        initial_coefficients (list[float]): A list of coefficients striped from the formulas
+        reactants (list[str]): A list of compound from letf part of the reaction equation
+        products (list[str]): A list of compound from right part of the reaction equation
+        compounds (list[str]): reactants + products
+    """
 
     def __init__(self, reaction: str) -> None:
         super().__init__(reaction)
@@ -28,6 +41,15 @@ class ReactionDecomposer(Reaction):
         self.products: list[str] = self.compounds[len(self._initial_reactants) :]
 
     def split_coefficient_from_formula(self, formula: str) -> tuple[float, str]:
+        """
+        Split the coefficient (int or float) from string containing formula and coef.
+
+        Parameters:
+            formula (str): Formula string
+
+        Returns:
+            A tuple of (coefficient, formula)
+        """
         if not formula[0].isdigit():
             return 1.0, formula
         else:
