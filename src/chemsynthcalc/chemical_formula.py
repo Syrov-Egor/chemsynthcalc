@@ -193,7 +193,7 @@ class ChemicalFormula:
             print_precision (int): print precision (4 digits by default)
         """
         ChemicalOutput(
-            self.output_results, print_precision, obj="formula"
+            self.output_results, print_precision, obj=self.__class__.__name__
         ).print_results()
 
     def to_txt(self, filename: str = "default", print_precision: int = 4) -> None:
@@ -205,7 +205,7 @@ class ChemicalFormula:
             print_precision (int): print precision (4 digits by default)
         """
         ChemicalOutput(
-            self.output_results, print_precision, obj="formula"
+            self.output_results, print_precision, obj=self.__class__.__name__
         ).write_to_txt(filename)
 
     def to_json(self, print_precision: int = 4) -> str:
@@ -219,7 +219,7 @@ class ChemicalFormula:
             A JSON-type object
         """
         return ChemicalOutput(
-            self.output_results, print_precision, obj="formula"
+            self.output_results, print_precision, obj=self.__class__.__name__
         ).dump_to_json()
 
     def to_json_file(self, filename: str = "default", print_precision: int = 4) -> None:
@@ -231,5 +231,5 @@ class ChemicalFormula:
             print_precision (int): print precision (4 digits by default)
         """
         ChemicalOutput(
-            self.output_results, print_precision, obj="formula"
+            self.output_results, print_precision, obj=self.__class__.__name__
         ).write_to_json_file(filename)

@@ -11,8 +11,8 @@ from chemsynthcalc.chemical_reaction import ChemicalReaction
 
 def cleanup_files() -> None:
     files_to_delete: list[str] = [
-        "CSC_formula_*",
-        "CSC_reaction_*",
+        "CSC_ChemicalFormula_*",
+        "CSC_ChemicalReaction_*",
     ]
     for file_type in files_to_delete:
         paths: list[str] = glob.glob(f"./{file_type}")
@@ -37,7 +37,7 @@ formula_output = ChemicalFormula(formula).output_results
 
 def test_formula_output_wrong_precision() -> None:
     with pytest.raises(ValueError):
-        ChemicalOutput(formula_output, print_precision=-2, obj="formula")
+        ChemicalOutput(formula_output, print_precision=-2, obj="ChemicalFormula")
 
 
 def test_formula_output_wrong_obj() -> None:
@@ -48,25 +48,25 @@ def test_formula_output_wrong_obj() -> None:
 def test_formula_name_generation() -> None:
     file_type = "txt"
     assert (
-        ChemicalOutput(formula_output, print_precision=4, obj="formula")._generate_filename(  # type: ignore
+        ChemicalOutput(formula_output, print_precision=4, obj="ChemicalFormula")._generate_filename(  # type: ignore
             file_type
         )[
             :11
         ]
-        == f"CSC_formula_{formula}_{time.time_ns()}.{file_type}"[:11]
+        == f"CSC_ChemicalFormula_{formula}_{time.time_ns()}.{file_type}"[:11]
     )
 
 
 def test_formula_file_name_txt() -> None:
-    ChemicalOutput(formula_output, print_precision=4, obj="formula").write_to_txt(
-        filename="default"
-    )
+    ChemicalOutput(
+        formula_output, print_precision=4, obj="ChemicalFormula"
+    ).write_to_txt(filename="default")
 
 
 def test_formula_file_name_json() -> None:
-    ChemicalOutput(formula_output, print_precision=4, obj="formula").write_to_json_file(
-        filename="default"
-    )
+    ChemicalOutput(
+        formula_output, print_precision=4, obj="ChemicalFormula"
+    ).write_to_json_file(filename="default")
 
 
 def test_formula_print() -> None:
@@ -74,7 +74,7 @@ def test_formula_print() -> None:
 
 
 def test_formula_txt_export() -> None:
-    filename = "CSC_formula_test.txt"
+    filename = "CSC_ChemicalFormula_test.txt"
     ChemicalFormula(formula).to_txt(filename, print_precision=4)
     with open(filename) as f:
         data = f.readlines()
@@ -86,7 +86,7 @@ def test_formula_to_json() -> None:
 
 
 def test_formula_json_file_export() -> None:
-    filename = "CSC_formula_test.json"
+    filename = "CSC_ChemicalFormula_test.json"
     ChemicalFormula(formula).to_json_file(filename)
     with open(filename) as f:
         data = f.read()
@@ -132,12 +132,12 @@ reaction_json_content: str = (
 def test_reaction_name_generation() -> None:
     file_type = "txt"
     assert (
-        ChemicalOutput(reaction_output, print_precision=4, obj="reaction")._generate_filename(  # type: ignore
+        ChemicalOutput(reaction_output, print_precision=4, obj="ChemicalReaction")._generate_filename(  # type: ignore
             file_type
         )[
             :11
         ]
-        == f"CSC_reaction_{reaction}_{time.time_ns()}.{file_type}"[:11]
+        == f"CSC_ChemicalReaction_{reaction}_{time.time_ns()}.{file_type}"[:11]
     )
 
 
@@ -146,7 +146,7 @@ def test_reaction_print() -> None:
 
 
 def test_reaction_txt_export() -> None:
-    filename = "CSC_reaction_test.txt"
+    filename = "CSC_ChemicalReaction_test.txt"
     ChemicalReaction(reaction).to_txt(filename, print_precision=4)
     with open(filename) as f:
         data = f.readlines()
@@ -158,7 +158,7 @@ def test_reaction_to_json() -> None:
 
 
 def test_reaction_json_file_export() -> None:
-    filename = "CSC_reaction_test.json"
+    filename = "CSC_ChemicalReaction_test.json"
     ChemicalReaction(reaction).to_json_file(filename)
     with open(filename) as f:
         data = f.read()

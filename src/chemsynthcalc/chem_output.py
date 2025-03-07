@@ -8,6 +8,23 @@ from .utils import round_dict_content
 
 
 class ChemicalOutput:
+    """
+    Methods of this class prepare output from
+    [ChemicalFormula][chemsynthcalc.chemical_formula.ChemicalFormula]
+    and
+    [ChemicalReaction][chemsynthcalc.chemical_reaction.ChemicalReaction]
+    objects and output it in different ways.
+
+    Arguments:
+        output (dict[str, object]): Output dictionary
+        print_precision (int): How many decimal places to print out
+        obj (str): Type of object ("formula" or "reaction")
+
+    Attributes:
+        rounded_values (dict[str, object]): Output dictionary rounded to print_precision
+        original_stdout (TextIO | Any): Default stdout
+    """
+
     def __init__(
         self, output: dict[str, object], print_precision: int, obj: str
     ) -> None:
@@ -16,10 +33,10 @@ class ChemicalOutput:
         else:
             raise ValueError("precision <= 0")
 
-        if obj == "formula" or obj == "reaction":
+        if obj in {"ChemicalFormula", "ChemicalReaction"}:
             self.obj = obj
         else:
-            raise ValueError(f"No such object: {obj}")
+            raise ValueError(f"No object of a class: {obj}")
 
         self.output: dict[str, object] = output
         self.rounded_values: dict[str, object] = self._round_values()
@@ -44,7 +61,7 @@ class ChemicalOutput:
         return rounded_dict
 
     def _generate_filename(self, file_type: str) -> str:
-        if self.obj == "formula":
+        if self.obj == "ChemicalFormula":
             filename: str = (
                 f"CSC_{self.obj}_{self.output.get("formula")}_{time.time_ns()}.{file_type}"
             )
@@ -74,7 +91,7 @@ class ChemicalOutput:
                 print(name + ":\n", rounded_value)
             else:
                 print(name + ":", rounded_value)
-        if self.obj == "reaction":
+        if self.obj == "ChemicalReaction":
             self._print_additional_reaction_results()
 
     def print_results(self) -> None:

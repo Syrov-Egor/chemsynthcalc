@@ -13,6 +13,8 @@ from .chem_output import ChemicalOutput
 
 
 class ChemicalReaction:
+    """ """
+
     def __init__(
         self,
         reaction: str = "",
@@ -192,20 +194,20 @@ class ChemicalReaction:
 
     def print_results(self, print_precision: int = 4) -> None:
         ChemicalOutput(
-            self.output_results, print_precision, obj="reaction"
+            self.output_results, print_precision, obj=self.__class__.__name__
         ).print_results()
 
     def to_txt(self, filename: str = "default", print_precision: int = 4) -> None:
         ChemicalOutput(
-            self.output_results, print_precision, obj="reaction"
+            self.output_results, print_precision, obj=self.__class__.__name__
         ).write_to_txt(filename)
 
     def to_json(self, print_precision: int = 4) -> str:
         return ChemicalOutput(
-            self.output_results, print_precision, obj="reaction"
+            self.output_results, print_precision, obj=self.__class__.__name__
         ).dump_to_json()
 
     def to_json_file(self, filename: str = "default", print_precision: int = 4) -> None:
         ChemicalOutput(
-            self.output_results, print_precision, obj="reaction"
+            self.output_results, print_precision, obj=self.__class__.__name__
         ).write_to_json_file(filename)
