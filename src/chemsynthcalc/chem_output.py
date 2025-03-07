@@ -23,6 +23,10 @@ class ChemicalOutput:
     Attributes:
         rounded_values (dict[str, object]): Output dictionary rounded to print_precision
         original_stdout (TextIO | Any): Default stdout
+
+    Raise:
+        ValueError if print_precision <= 0 <br / >
+        ValueError if obj is not "ChemicalFormula" or "ChemicalReaction"
     """
 
     def __init__(
@@ -43,6 +47,13 @@ class ChemicalOutput:
         self.original_stdout = sys.stdout
 
     def _round_values(self) -> dict[str, object]:
+        """
+        Round values of output dictionary to the print_precision.
+        Rounding is different depending on the type of value.
+
+        Returns:
+            Rounded dictionary
+        """
         rounded_dict: dict[str, object] = {}
         for name, value in self.output.items():
             if isinstance(value, float):
@@ -61,6 +72,13 @@ class ChemicalOutput:
         return rounded_dict
 
     def _generate_filename(self, file_type: str) -> str:
+        """
+        Generates a filename for an output file in the form of:
+        "CSC_object type_formula or target_nanosec since the Epoch.txt or json"
+
+        Returns:
+            String of a filename
+        """
         if self.obj == "ChemicalFormula":
             filename: str = (
                 f"CSC_{self.obj}_{self.output.get("formula")}_{time.time_ns()}.{file_type}"
@@ -73,6 +91,9 @@ class ChemicalOutput:
         return filename
 
     def _print_additional_reaction_results(self) -> None:
+        """
+        Print output masses in a user-friendly human-readable format.
+        """
         for i, formula in enumerate(self.output["formulas"]):  # type: ignore
             print(
                 "%s: M = %s g/mol, m = %s g"
@@ -86,6 +107,9 @@ class ChemicalOutput:
             )
 
     def _print_stream(self) -> None:
+        """
+        Final print stream that can go to different outputs.
+        """
         for name, rounded_value in self.rounded_values.items():
             if name == "reaction matrix":
                 print(name + ":\n", rounded_value)
@@ -95,10 +119,19 @@ class ChemicalOutput:
             self._print_additional_reaction_results()
 
     def print_results(self) -> None:
+        """
+        Print a final result of calculations in stdout.
+        """
         sys.stdout = self.original_stdout
         self._print_stream()
 
     def write_to_txt(self, filename: str) -> None:
+        """
+        Export the final result of the calculations in a txt file.
+
+        Arguments:
+            filename (str): filename string (should end with .txt)
+        """
         if filename == "default":
             filename = self._generate_filename("txt")
 
@@ -109,9 +142,21 @@ class ChemicalOutput:
         sys.stdout = self.original_stdout
 
     def dump_to_json(self) -> str:
+        """
+        Serialization of output into JSON object.
+
+        Returns:
+            A JSON-type object
+        """
         return json.dumps(self.rounded_values, ensure_ascii=False)
 
     def write_to_json_file(self, filename: str) -> None:
+        """
+        Export a final result of calculations in a JSON file.
+
+        Arguments:
+            filename (str): filename string (should end with .json)
+        """
         if filename == "default":
             filename = self._generate_filename("json")
 
