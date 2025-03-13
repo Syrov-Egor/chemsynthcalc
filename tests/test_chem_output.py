@@ -113,19 +113,19 @@ reaction_content: list[str] = [
     "is balanced: True\n",
     "final reaction: 8KI+5H2SO4=4I2+H2S+4K2SO4+4H2O\n",
     "final reaction normalized: 2KI+1.25H2SO4=I2+0.25H2S+K2SO4+H2O\n",
-    "molar masses: [165.998, 98.072, 253.8, 34.076, 174.252, 18.015]\n",
+    "molar masses: [166.00247, 98.072, 253.80894, 34.076, 174.252, 18.015]\n",
     "target: I2\n",
-    "masses: [1.3081, 0.483, 1.0, 0.0336, 0.6866, 0.071]\n",
-    "KI: M = 165.9980 g/mol, m = 1.3081 g\n",
+    "masses: [1.3081, 0.483, 1.0, 0.0336, 0.6865, 0.071]\n",
+    "KI: M = 166.0025 g/mol, m = 1.3081 g\n",
     "H2SO4: M = 98.0720 g/mol, m = 0.4830 g\n",
-    "I2: M = 253.8000 g/mol, m = 1.0000 g\n",
+    "I2: M = 253.8089 g/mol, m = 1.0000 g\n",
     "H2S: M = 34.0760 g/mol, m = 0.0336 g\n",
-    "K2SO4: M = 174.2520 g/mol, m = 0.6866 g\n",
+    "K2SO4: M = 174.2520 g/mol, m = 0.6865 g\n",
     "H2O: M = 18.0150 g/mol, m = 0.0710 g\n",
 ]
 
 reaction_json_content: str = (
-    '{"initial reaction": "KI+H2SO4=I2+H2S+K2SO4+H2O", "reaction matrix": "[[1. 0. 0. 0. 2. 0.]\\n [1. 0. 2. 0. 0. 0.]\\n [0. 2. 0. 2. 0. 2.]\\n [0. 1. 0. 1. 1. 0.]\\n [0. 4. 0. 0. 4. 1.]]", "mode": "balance", "formulas": ["KI", "H2SO4", "I2", "H2S", "K2SO4", "H2O"], "coefficients": [8, 5, 4, 1, 4, 4], "normalized coefficients": [2, 1.25, 1, 0.25, 1, 1], "algorithm": "inverse", "is balanced": true, "final reaction": "8KI+5H2SO4=4I2+H2S+4K2SO4+4H2O", "final reaction normalized": "2KI+1.25H2SO4=I2+0.25H2S+K2SO4+H2O", "molar masses": [165.998, 98.072, 253.8, 34.076, 174.252, 18.015], "target": "I2", "masses": [1.3081, 0.483, 1.0, 0.0336, 0.6866, 0.071]}'
+    '{"initial reaction": "KI+H2SO4=I2+H2S+K2SO4+H2O", "reaction matrix": "[[1. 0. 0. 0. 2. 0.]\\n [1. 0. 2. 0. 0. 0.]\\n [0. 2. 0. 2. 0. 2.]\\n [0. 1. 0. 1. 1. 0.]\\n [0. 4. 0. 0. 4. 1.]]", "mode": "balance", "formulas": ["KI", "H2SO4", "I2", "H2S", "K2SO4", "H2O"], "coefficients": [8, 5, 4, 1, 4, 4], "normalized coefficients": [2, 1.25, 1, 0.25, 1, 1], "algorithm": "inverse", "is balanced": true, "final reaction": "8KI+5H2SO4=4I2+H2S+4K2SO4+4H2O", "final reaction normalized": "2KI+1.25H2SO4=I2+0.25H2S+K2SO4+H2O", "molar masses": [166.00247, 98.072, 253.80894, 34.076, 174.252, 18.015], "target": "I2", "masses": [1.3081, 0.483, 1.0, 0.0336, 0.6865, 0.071]}'
 )
 
 

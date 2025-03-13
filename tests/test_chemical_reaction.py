@@ -42,9 +42,9 @@ def test_wrong_target_low() -> None:
 
 def test_molar_masses() -> None:
     assert ChemicalReaction(reaction).molar_masses == [
-        165.998,
+        166.00247,
         98.072,
-        253.8,
+        253.80894,
         34.076,
         174.252,
         18.015,
@@ -84,10 +84,10 @@ def test_final_reaction_normalized() -> None:
 
 def test_masses() -> None:
     assert ChemicalReaction(reaction).masses == [
-        1.30810087,
-        0.48301812,
+        1.30809001,
+        0.48300111,
         1.0,
-        0.0335658,
-        0.6865721,
-        0.07098109,
+        0.03356462,
+        0.68654792,
+        0.07097859,
     ]
