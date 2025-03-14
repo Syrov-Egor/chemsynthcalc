@@ -40,6 +40,12 @@ class ReactionDecomposer(Reaction):
         self.reactants: list[str] = self.compounds[: len(self._initial_reactants)]
         self.products: list[str] = self.compounds[len(self._initial_reactants) :]
 
+    def __str__(self) -> str:
+        return f"separator: {self.separator}; reactants: {self.reactants}; products: {self.products}"
+
+    def __repr__(self) -> str:
+        return f"ReactionDecomposer({self.reaction})"
+
     def split_coefficient_from_formula(self, formula: str) -> tuple[float, str]:
         """
         Split the coefficient (int or float) from string containing formula and coef.
