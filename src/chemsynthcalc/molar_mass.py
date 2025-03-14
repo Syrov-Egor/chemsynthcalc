@@ -1,5 +1,19 @@
+from typing import NamedTuple
+
 from .periodic_table import PeriodicTable
 from .formula_parser import ChemicalFormulaParser
+
+
+class Oxide(NamedTuple):
+    """
+    A named tuple to represent oxide properties: a first atom
+    (usually metal), full oxide compound string and mass percent
+    of the first atom in the initial formula.
+    """
+
+    atom: str
+    label: str
+    mass_percent: float
 
 
 class MolarMassCalculation:
@@ -85,9 +99,49 @@ class MolarMassCalculation:
         atomic: list[float] = [value / sum(values) * 100 for value in values]
         return dict(zip(self.parsed_formula.keys(), atomic))
 
-    #!TODO pass optionial oxides as dict argument
-    def calculate_oxide_percent(self) -> dict[str, float]:
-        """Calculation of oxide percents in parsed formula.
+    def _custom_oxides_input(self, *args: str) -> list[Oxide]:
+        """
+        Checks if passed non-default oxide formulas can be applied to any
+        atom in parsed formula. If so, replaces it with said non-default oxide.
+        If not, the default oxide is chosen.
+
+        Parameters:
+            *args (str): An arbitrary number of non-default oxide formulas
+
+        Returns:
+            A list of Oxide objects
+
+        Raises:
+            ValueError if compound is not binary or second element is not oxygen
+        """
+        first_atoms: list[str] = []
+        for c_oxide in args:
+            parsed_oxide = list(ChemicalFormulaParser(c_oxide).parse_formula().keys())
+
+            if len(parsed_oxide) > 2:
+                raise ValueError("Only binary compounds can be considered as input")
+
+            elif parsed_oxide[1] != "O":
+                raise ValueError("Only oxides can be considered as input")
+
+            first_atoms.append(parsed_oxide[0])
+
+        custom_oxides = dict(zip(first_atoms, args))
+        mass_percents: list[float] = list(self.calculate_mass_percent().values())
+        oxides: list[Oxide] = []
+        for i, atom in enumerate(self.parsed_formula.keys()):
+            if atom != "O":
+                if atom in custom_oxides.keys():
+                    label = custom_oxides[atom]
+                else:
+                    label = self.p_table[atom].default_oxide
+                oxides.append(Oxide(atom, label, mass_percents[i]))
+
+        return oxides
+
+    def calculate_oxide_percent(self, *args: str) -> dict[str, float]:
+        """
+        Calculation of oxide percents in parsed formula.
 
         Calculation of oxide percents in parsed formula from the types of oxide
         declared in the periodic table file. This type of data
@@ -99,10 +153,13 @@ class MolarMassCalculation:
         should work for other types of binary compound (sulfides, fluorides etc.)
         or even salts, however, modification of this function is required
         (for instance, in case of binary compound, removing X atom
-        from the list of future compounds should have X as an argument of this function)
+        from the list of future compounds should have X as an argument of this function).
+
+        Parameters:
+            *args (str): An arbitrary number of non-default oxide formulas
 
         Returns:
-            Oxide percentages of oxides in the formula
+            Percentages of oxides in the formula
 
         Examples:
             >>> MolarMassCalculation({'C':2, 'H':6, 'O':1}).calculate_oxide_percent()
@@ -110,30 +167,25 @@ class MolarMassCalculation:
             >>> MolarMassCalculation({'Ba':1, 'Ti':1, 'O':3}).calculate_oxide_percent()
             {'BaO': 65.7516917244869, 'TiO2': 34.24830827551309}
         """
-        mass_percents: list[float] = list(self.calculate_mass_percent().values())
-        oxides: list[tuple[str, str, float]] = []
-        for i, atom in enumerate(self.parsed_formula.keys()):
-            if atom != "O":
-                oxide_label: str = self.p_table[atom].default_oxide
-                oxides.append((atom, oxide_label, mass_percents[i]))
+        oxides: list[Oxide] = self._custom_oxides_input(*args)
 
         oxide_percents: list[float] = []
 
         for oxide in oxides:
             parsed_oxide: dict[str, float] = ChemicalFormulaParser(
-                oxide[1]
+                oxide.label
             ).parse_formula()
             oxide_mass: float = MolarMassCalculation(
                 parsed_oxide
             ).calculate_molar_mass()
-            atomic_oxide_coef: float = parsed_oxide[oxide[0]]
-            atomic_mass: float = self.p_table[oxide[0]].atomic_weight
+            atomic_oxide_coef: float = parsed_oxide[oxide.atom]
+            atomic_mass: float = self.p_table[oxide.atom].atomic_weight
             conversion_factor: float = oxide_mass / atomic_mass / atomic_oxide_coef
-            oxide_percents.append(oxide[2] * conversion_factor)
+            oxide_percents.append(oxide.mass_percent * conversion_factor)
 
         normalized_oxide_percents: list[float] = [
             x / sum(oxide_percents) * 100 for x in oxide_percents
         ]
-        oxide_labels: list[str] = [oxide[1] for oxide in oxides]
+        oxide_labels: list[str] = [oxide.label for oxide in oxides]
 
         return dict(zip(oxide_labels, normalized_oxide_percents))

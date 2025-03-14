@@ -18,6 +18,7 @@ class ChemicalFormula:
 
     Parameters:
         formula (str): String of chemical formula
+        *custom_oxides (str): An arbitrary number of non-default oxide formulas
         precision (int): Value of rounding precision (8 by default)
 
     Raise:
@@ -32,7 +33,9 @@ class ChemicalFormula:
         {'H': 11.19067444, 'O': 88.80932556}
     """
 
-    def __init__(self, formula: str = "", precision: int = 8) -> None:
+    def __init__(
+        self, formula: str = "", *custom_oxides: str, precision: int = 8
+    ) -> None:
         if FormulaValidator(formula).validate_formula():
             self.initial_formula: str = formula.replace(" ", "")
 
@@ -40,6 +43,8 @@ class ChemicalFormula:
             self.precision: int = precision
         else:
             raise ValueError("precision <= 0")
+
+        self.custom_oxides = custom_oxides
 
     def __repr__(self) -> str:
         return f"ChemicalFormula({self.formula}, {self.precision})"
@@ -143,7 +148,8 @@ class ChemicalFormula:
     @lru_cache(maxsize=1)
     def oxide_percent(self) -> dict[str, float]:
         """
-        Oxide percents of metals in formula.
+        Oxide percents of metals in formula. Custom oxide formulas can be provided
+        with object init.
 
         Returns:
             An oxide percent or \
@@ -157,7 +163,9 @@ class ChemicalFormula:
             >>> ChemicalFormula("K2SO4").oxide_percent
             {'K2O': 54.05676836, 'SO3': 45.94323164}
         """
-        output = MolarMassCalculation(self.parsed_formula).calculate_oxide_percent()
+        output = MolarMassCalculation(self.parsed_formula).calculate_oxide_percent(
+            *self.custom_oxides
+        )
         return round_dict_content(output, self.precision)
 
     @property

@@ -1,6 +1,7 @@
 import pytest
 
 from chemsynthcalc.molar_mass import MolarMassCalculation
+from chemsynthcalc.chemical_formula import ChemicalFormula
 
 molar_mass_test_data: list[tuple[dict[str, float], float]] = [
     ({"H": 2.0, "O": 1.0}, 18.015),
@@ -129,3 +130,38 @@ def test_oxide_percent(
     assert (
         MolarMassCalculation(parsed_formula).calculate_oxide_percent() == oxide_percent
     )
+
+
+custom_oxide_percent_test_data: list[tuple[dict[str, float], dict[str, float]]] = [
+    (
+        {"Ba": 1.0, "Fe": 1.0, "O": 4.0},
+        {"BaO": 65.75731389, "Fe2O3": 34.24268611},
+    ),
+    (
+        {"Ba": 1.0, "Fe": 1.0, "O": 4.0},
+        {"BaO": 66.51800627, "Fe3O4": 33.48199373},
+    ),
+]
+
+
+def test_custom_oxide_percent():
+    assert (
+        ChemicalFormula("BaFeO4").oxide_percent == custom_oxide_percent_test_data[0][1]
+    )
+
+
+def test_custom_oxide_percent_2():
+    assert (
+        ChemicalFormula("BaFeO4", "Fe3O4").oxide_percent
+        == custom_oxide_percent_test_data[1][1]
+    )
+
+
+def test_wrong_custom_oxide_percent():
+    with pytest.raises(ValueError):
+        ChemicalFormula("BaFeO4", "Fe3O4I2").oxide_percent
+
+
+def test_wrong_custom_oxide_percent_2():
+    with pytest.raises(ValueError):
+        ChemicalFormula("BaFeO4", "Fe3I4").oxide_percent
