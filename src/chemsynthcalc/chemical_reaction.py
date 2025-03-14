@@ -136,7 +136,7 @@ class ChemicalReaction:
             Every compound as ChemicalFormula object
         """
         return [
-            ChemicalFormula(formula, self.precision)
+            ChemicalFormula(formula, precision=self.precision)
             for formula in self.decomposed_reaction.compounds
         ]
 
