@@ -12,7 +12,6 @@ from .coefs import Coefficients
 from .chem_output import ChemicalOutput
 
 
-# TODO More examples in docs for all classes
 class ChemicalReaction:
     """
     A class that represents a chemical reaction and do operations on it.
@@ -90,6 +89,10 @@ class ChemicalReaction:
 
         Returns:
             The reaction string
+
+        Examples:
+            >>> ChemicalReaction("H2+O2=H2O").reaction
+            H2+O2=H2O
         """
         return self.initial_reaction
 
@@ -102,6 +105,10 @@ class ChemicalReaction:
 
         Returns:
             A ReactionDecomposer object
+
+        Examples:
+            >>> ChemicalReaction("H2+O2=H2O").decomposed_reaction
+            separator: =; reactants: ['H2', 'O2']; products: ['H2O']
         """
         return ReactionDecomposer(self.reaction)
 
@@ -117,6 +124,10 @@ class ChemicalReaction:
 
         Raises:
             IndexError if The target integer is not in the range
+
+        Examples:
+            >>> ChemicalReaction("H2+O2=H2O")._calculated_target
+            2
         """
         high = len(self.decomposed_reaction.products) - 1
         low = -len(self.decomposed_reaction.reactants)
@@ -134,6 +145,10 @@ class ChemicalReaction:
 
         Returns:
             Every compound as ChemicalFormula object
+
+        Examples:
+            >>> ChemicalReaction("H2+O2=H2O").chemformula_objs
+            [ChemicalFormula('H2', 8), ChemicalFormula('O2', 8), ChemicalFormula('H2O', 8)]
         """
         return [
             ChemicalFormula(formula, precision=self.precision)
@@ -145,6 +160,10 @@ class ChemicalReaction:
     def parsed_formulas(self) -> list[dict[str, float]]:
         """
         List of formulas parsed by [ChemicalFormulaParser][chemsynthcalc.formula_parser.ChemicalFormulaParser]
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").parsed_formulas
+            [{'K': 1.0, 'Mn': 1.0, 'O': 4.0}, {'H': 1.0, 'Cl': 1.0}, {'Mn': 1.0, 'Cl': 2.0}, {'Cl': 2.0}, {'H': 2.0, 'O': 1.0}, {'K': 1.0, 'Cl': 1.0}]
         """
         return [compound.parsed_formula for compound in self.chemformula_objs]
 
@@ -161,6 +180,14 @@ class ChemicalReaction:
 
         Returns:
             2D array of each atom amount in each formula
+
+        Exapmles:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").matrix
+            [[1. 0. 0. 0. 0. 1.]  (K)
+            [1. 0. 1. 0. 0. 0.]   (Mn)
+            [4. 0. 0. 0. 1. 0.]   (O)
+            [0. 1. 0. 0. 2. 0.]   (H)
+            [0. 1. 2. 2. 0. 1.]]  (Cl)
         """
         return ChemicalReactionMatrix(self.parsed_formulas).matrix
 
@@ -172,6 +199,15 @@ class ChemicalReaction:
 
         Returns:
             A Balancer object
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").balancer
+            Balancer object for matrix
+            [[1. 0. 0. 0. 0. 1.]
+            [1. 0. 1. 0. 0. 0.]
+            [4. 0. 0. 0. 1. 0.]
+            [0. 1. 0. 0. 2. 0.]
+            [0. 1. 2. 2. 0. 1.]]
         """
         return Balancer(
             self.matrix,
@@ -188,17 +224,31 @@ class ChemicalReaction:
 
         Returns:
             List of molar masses of each compound in [chemformula_objs][chemsynthcalc.chemical_reaction.ChemicalReaction.chemformula_objs]"
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").molar_masse
+            [158.032043, 36.458, 125.838043, 70.9, 18.015, 74.548]
         """
         return [compound.molar_mass for compound in self.chemformula_objs]
 
     @cached_property
     def coefficients(self) -> list[float | int] | list[int]:
         """
-        Coefficients of the chemical reaction. Can be calculated,
-        striped off the initial reaction string or set directly.
+        Coefficients of the chemical reaction. Can be calculated (balance mode),
+        striped off the initial reaction string (force or check modes) or set directly.
 
         Returns:
             A list of coefficients
+
+        Examples:
+             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl", mode="balance").coefficients
+            [2, 16, 2, 5, 8, 2]
+            >>> reaction = ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl", mode="check")
+            >>> reaction.coefficients = [2, 16, 2, 5, 8, 2]
+            >>> reaction.coefficients
+            [2, 16, 2, 5, 8, 2]
+            >>> ChemicalReaction("2H2+2O2=H2O", mode="force").coefficients
+            [2, 2, 1]
         """
         coefs, self.algorithm = Coefficients(
             self.mode,
@@ -218,7 +268,11 @@ class ChemicalReaction:
         Target coefficient = 1.0
 
         Returns:
-            Normalized coefficients
+            Normalized coefficients\
+        
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").normalized_coefficients
+            [1, 8, 1, 2.5, 4, 1]
         """
         target_compound = self.coefficients[self._calculated_target]
         normalized_coefficients: list[float | int] | list[int] = [
@@ -236,6 +290,10 @@ class ChemicalReaction:
 
         Returns:
             True if the reaction is balanced
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").is_balanced
+            True
         """
         return Balancer.is_reaction_balanced(
             self.balancer.reactant_matrix,
@@ -244,6 +302,19 @@ class ChemicalReaction:
         )
 
     def _generate_final_reaction(self, coefs: list[float | int] | list[int]) -> str:
+        """
+        Final reaction string with connotated formulas and calculated coefficients.
+
+        Parameters:
+            coefs ( list[float | int] | list[int]): list of coefficients
+
+        Returns:
+            String of the final reaction
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl")._generate_final_reaction([2, 16, 2, 5, 8, 2])
+            2KMnO4+16HCl=2MnCl2+5Cl2+8H2O+2KCl
+        """
         final_reaction = [
             (
                 str(coefs[i]) + str(compound)
@@ -270,6 +341,10 @@ class ChemicalReaction:
 
         Returns:
             A string of the final reaction
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").final_reaction
+            2KMnO4+16HCl=2MnCl2+5Cl2+8H2O+2KCl
         """
         return self._generate_final_reaction(self.coefficients)
 
@@ -281,6 +356,10 @@ class ChemicalReaction:
 
         Returns:
             A string of the normalized final reaction
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").final_reaction_normalized
+            KMnO4+8HCl=MnCl2+2.5Cl2+4H2O+KCl
         """
         return self._generate_final_reaction(self.normalized_coefficients)
 
@@ -298,6 +377,10 @@ class ChemicalReaction:
 
         Returns:
             A list of masses of compounds
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").masses
+            [1.25583678, 2.31777285, 1.0, 1.40855655, 0.57264082, 0.59241226]
         """
         nu = self.target_mass / self.molar_masses[self._calculated_target]
         masses = [
@@ -314,6 +397,26 @@ class ChemicalReaction:
 
         Returns:
             All outputs collected in one dictionary.
+
+        Examples:
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").output_results
+            {'initial reaction': 'KMnO4+HCl=MnCl2+Cl2+H2O+KCl', \
+            'reaction matrix': array([[1., 0., 0., 0., 0., 1.], \
+            [1., 0., 1., 0., 0., 0.], \
+            [4., 0., 0., 0., 1., 0.], \
+            [0., 1., 0., 0., 2., 0.], \
+            [0., 1., 2., 2., 0., 1.]]), \
+            'mode': 'balance', \
+            'formulas': ['KMnO4', 'HCl', 'MnCl2', 'Cl2', 'H2O', 'KCl'], \
+            'coefficients': [2, 16, 2, 5, 8, 2], \
+            'normalized coefficients': [1, 8, 1, 2.5, 4, 1], \
+            'algorithm': 'inverse', \
+            'is balanced': True, \
+            'final reaction': '2KMnO4+16HCl=2MnCl2+5Cl2+8H2O+2KCl', \
+            'final reaction normalized': 'KMnO4+8HCl=MnCl2+2.5Cl2+4H2O+KCl', \
+            'molar masses': [158.032043, 36.458, 125.838043, 70.9, 18.015, 74.548], \
+            'target': 'MnCl2', \
+            'masses': [1.25583678, 2.31777285, 1.0, 1.40855655, 0.57264082, 0.59241226]}
         """
         return {
             "initial reaction": self.reaction,
