@@ -46,11 +46,11 @@ class ChemicalFormula:
 
         self.custom_oxides = custom_oxides
 
-    def __repr__(self) -> str:
-        return f"ChemicalFormula({self.formula}, {self.precision})"
-
     def __str__(self) -> str:
         return self.formula
+
+    def __repr__(self) -> str:
+        return f"ChemicalFormula('{self.formula}', {self.precision})"
 
     @property
     @lru_cache(maxsize=1)
@@ -162,6 +162,8 @@ class ChemicalFormula:
         Examples:
             >>> ChemicalFormula("K2SO4").oxide_percent
             {'K2O': 54.05676836, 'SO3': 45.94323164}
+            >>> ChemicalFormula("K2FeO4", "FeO3").oxide_percent
+            {'K2O': 47.56434404, 'FeO3': 52.43565596}
         """
         output = MolarMassCalculation(self.parsed_formula).calculate_oxide_percent(
             *self.custom_oxides
