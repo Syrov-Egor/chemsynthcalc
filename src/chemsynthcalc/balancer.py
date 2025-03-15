@@ -40,6 +40,12 @@ class Balancer(BalancingAlgorithms):
         self.intify: bool = intify
         self.coef_limit: int = 1_000_000
 
+    def __str__(self) -> str:
+        return f"Balancer object for matrix \n {self.reaction_matrix}"
+
+    def __repr__(self) -> str:
+        return f"Balancer({self.reaction_matrix}, {self.separator_pos}, {self.round_precision}, {self.intify})"
+
     def _intify_coefficients(
         self, coefficients: list[float], limit: int
     ) -> list[float | int] | list[int]:
