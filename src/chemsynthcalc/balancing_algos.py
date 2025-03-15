@@ -44,12 +44,13 @@ class BalancingAlgorithms:
     """
 
     def __init__(self, matrix: npt.NDArray[np.float64], separator_pos: int) -> None:
+        self.separator_pos = separator_pos
         self.reaction_matrix: npt.NDArray[np.float64] = matrix
         self.reactant_matrix: npt.NDArray[np.float64] = self.reaction_matrix[
-            :, :separator_pos
+            :, : self.separator_pos
         ]
         self.product_matrix: npt.NDArray[np.float64] = self.reaction_matrix[
-            :, separator_pos:
+            :, self.separator_pos :
         ]
 
     def _inv_algorithm(self) -> npt.NDArray[np.float64]:
