@@ -87,4 +87,4 @@ One can output ChemicalFormula results using one of the 4 methods:
 * [print_results][chemsynthcalc.chemical_formula.ChemicalFormula.print_results]: print to stdout
 * [to_txt][chemsynthcalc.chemical_formula.ChemicalFormula.to_txt]: save as plain txt file
 * [to_json][chemsynthcalc.chemical_formula.ChemicalFormula.to_json]: serialization of output into an JSON object
-* [to_json_file][chemsynthcalc.chemical_formula.ChemicalFormula.to_json_file]: save as an JSON file
+* [to_json_file][chemsynthcalc.chemical_formula.ChemicalFormula.to_json_file]: save as JSON file

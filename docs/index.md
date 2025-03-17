@@ -1,4 +1,4 @@
-#chemsynthcalc
+#About
 
 **ChemSynthCalc** stands for **Chem**ical **Synth**esis **Calc**ulator - 
 a Python 3 package for calculating the masses of substances required for 

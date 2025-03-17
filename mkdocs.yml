@@ -2,6 +2,8 @@ site_name: chemsynthcalc
 
 site_url: https://mydomain.org/mysite
 
+repo_url: https://github.com/Syrov-Egor/chemsynthcalc
+
 theme:
   name: material
   palette: 
@@ -17,8 +19,12 @@ theme:
       toggle:
         icon: material/lightbulb-outline
         name: Switch to light mode
+    
 
 markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
   - pymdownx.caret
   - pymdownx.tilde
 
@@ -32,3 +38,13 @@ plugins:
           show_submodules: true
           filters: []
           members_order: source
+
+nav:
+  - 'index.md'
+  - 'installation.md'
+  - 'usage.md'
+  - 'ChemicalFormula.md'
+  - 'ChemicalReaction.md'
+  - 'API.md'
+  - 'contacts.md'
+  - 'License.md'

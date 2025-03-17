@@ -1,6 +1,5 @@
-#Installing
 
-##Python 3.10 or later
+##Python
 
 chemsynthacalc requires [Python 3.10](https://www.python.org/downloads/) or later.
 
@@ -11,7 +10,6 @@ Install from [pypi](https://pypi.org/):
 ``` bash
 pip install chemsynthcalc
 ```
-
 
 ##NumPy and SciPy
 
