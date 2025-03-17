@@ -224,7 +224,6 @@ class BalancingAlgorithms:
         coefs = np.squeeze(np.asarray(np.hstack((x_vector, y_vector))))
         return coefs
 
-    #!TODO rewrite
     def _comb_algorithm(
         self, max_number_of_iterations: float = 1e8
     ) -> npt.NDArray[np.int32] | None:
