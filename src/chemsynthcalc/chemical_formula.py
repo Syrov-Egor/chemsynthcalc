@@ -18,7 +18,7 @@ class ChemicalFormula:
 
     Parameters:
         formula (str): String of chemical formula
-        *custom_oxides (str): An arbitrary number of non-default oxide formulas
+        *custom_oxides (tuple[str, ...]): An arbitrary number of non-default oxide formulas
         precision (int): Value of rounding precision (8 by default)
 
     Raise:
@@ -181,9 +181,9 @@ class ChemicalFormula:
 
         Examples:
             >>> ChemicalFormula("K2SO4").output_results
-            {'formula': 'K2SO4', 'parsed formula': {'K': 2.0, 'S': 1.0, 'O': 4.0}, \
-            'molar mass': 174.252, 'mass percent': {'K': 44.87523816, 'S': 18.39864105, 'O': 36.72612079}, \
-            'atomic percent': {'K': 28.57142857, 'S': 14.28571429, 'O': 57.14285714}, \
+            {'formula': 'K2SO4', 'parsed formula': {'K': 2.0, 'S': 1.0, 'O': 4.0},
+            'molar mass': 174.252, 'mass percent': {'K': 44.87523816, 'S': 18.39864105, 'O': 36.72612079},
+            'atomic percent': {'K': 28.57142857, 'S': 14.28571429, 'O': 57.14285714},
             'oxide percent': {'K2O': 54.05676836, 'SO3': 45.94323164}}
         """
         return {

@@ -50,8 +50,8 @@ class Coefficients:
             Tuple of (coefficients, algorithm)
 
         Raise:
-            [ReactionNotBalanced][chemsynthcalc.chem_erros.ReactionNotBalanced] if reaction is not balanced in the "check" mode <br />
-            [NoSuchMode][chemsynthcalc.chem_erros.NoSuchMode] if there is no mode with that name
+            [ReactionNotBalanced][chemsynthcalc.chem_errors.ReactionNotBalanced] if reaction is not balanced in the "check" mode <br />
+            [NoSuchMode][chemsynthcalc.chem_errors.NoSuchMode] if there is no mode with that name
         """
         match self.mode:
 
@@ -91,7 +91,7 @@ class Coefficients:
             coefficients (list[float | int] | list[int]): List of coefs
 
         Raise:
-            [BadCoeffiecients][chemsynthcalc.chem_erros.BadCoeffiecients] if any coef <= 0 or
+            [BadCoeffiecients][chemsynthcalc.chem_errors.BadCoeffiecients] if any coef <= 0 or
             lenght of list is not equal to the number of compounds.
         """
         if any(x <= 0 for x in coefficients):
@@ -108,7 +108,7 @@ class Coefficients:
         some atoms are only in one part of the reaction (which is impossible).
 
         Raise:
-            [ReactantProductDifference][chemsynthcalc.chem_erros.ReactantProductDifference] if diff set is not empty.
+            [ReactantProductDifference][chemsynthcalc.chem_errors.ReactantProductDifference] if diff set is not empty.
         """
         if self.mode != "force":
             reactants = {

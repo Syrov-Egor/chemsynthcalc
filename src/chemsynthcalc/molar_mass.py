@@ -106,12 +106,12 @@ class MolarMassCalculation:
         If not, the default oxide is chosen.
 
         Parameters:
-            *args (str): An arbitrary number of non-default oxide formulas
+            *args (tuple[str, ...]): An arbitrary number of non-default oxide formulas
 
         Returns:
             A list of Oxide objects
 
-        Raises:
+        Raise:
             ValueError if compound is not binary or second element is not oxygen
         """
         first_atoms: list[str] = []
@@ -149,14 +149,14 @@ class MolarMassCalculation:
         percents are calculated by finding the [convertion factor between element
         and its respective oxide](https://www.geol.umd.edu/~piccoli/probe/molweight.html)
         and normalizing the total sum to 100%. One can change the oxide type
-        for certain elements in the :mod:`chemsynthcalc.periodic_table` file. Theoretically, this function
+        for certain elements in the [periodic_table.py][chemsynthcalc.periodic_table] file. Theoretically, this function
         should work for other types of binary compound (sulfides, fluorides etc.)
         or even salts, however, modification of this function is required
         (for instance, in case of binary compound, removing X atom
         from the list of future compounds should have X as an argument of this function).
 
         Parameters:
-            *args (str): An arbitrary number of non-default oxide formulas
+            *args (tuple[str, ...]): An arbitrary number of non-default oxide formulas
 
         Returns:
             Percentages of oxides in the formula

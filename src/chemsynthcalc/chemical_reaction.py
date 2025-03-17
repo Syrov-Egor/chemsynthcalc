@@ -43,7 +43,7 @@ class ChemicalReaction:
     Attributes:
         algorithm (str): Currently used calculation algorithm
 
-    Raises:
+    Raise:
         ValueError if precision or target mass <= 0
     """
 
@@ -122,7 +122,7 @@ class ChemicalReaction:
         Returns:
             Final target
 
-        Raises:
+        Raise:
             IndexError if The target integer is not in the range
 
         Examples:
@@ -181,7 +181,7 @@ class ChemicalReaction:
         Returns:
             2D array of each atom amount in each formula
 
-        Exapmles:
+        Examples:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").matrix
             [[1. 0. 0. 0. 0. 1.]  (K)
             [1. 0. 1. 0. 0. 0.]   (Mn)
@@ -226,7 +226,7 @@ class ChemicalReaction:
             List of molar masses of each compound in [chemformula_objs][chemsynthcalc.chemical_reaction.ChemicalReaction.chemformula_objs]"
 
         Examples:
-            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").molar_masse
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").molar_masses
             [158.032043, 36.458, 125.838043, 70.9, 18.015, 74.548]
         """
         return [compound.molar_mass for compound in self.chemformula_objs]
@@ -241,7 +241,7 @@ class ChemicalReaction:
             A list of coefficients
 
         Examples:
-             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl", mode="balance").coefficients
+            >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl", mode="balance").coefficients
             [2, 16, 2, 5, 8, 2]
             >>> reaction = ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl", mode="check")
             >>> reaction.coefficients = [2, 16, 2, 5, 8, 2]
@@ -268,8 +268,8 @@ class ChemicalReaction:
         Target coefficient = 1.0
 
         Returns:
-            Normalized coefficients\
-        
+            Normalized coefficients
+
         Examples:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").normalized_coefficients
             [1, 8, 1, 2.5, 4, 1]
@@ -400,22 +400,22 @@ class ChemicalReaction:
 
         Examples:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").output_results
-            {'initial reaction': 'KMnO4+HCl=MnCl2+Cl2+H2O+KCl', \
-            'reaction matrix': array([[1., 0., 0., 0., 0., 1.], \
-            [1., 0., 1., 0., 0., 0.], \
-            [4., 0., 0., 0., 1., 0.], \
-            [0., 1., 0., 0., 2., 0.], \
-            [0., 1., 2., 2., 0., 1.]]), \
-            'mode': 'balance', \
-            'formulas': ['KMnO4', 'HCl', 'MnCl2', 'Cl2', 'H2O', 'KCl'], \
-            'coefficients': [2, 16, 2, 5, 8, 2], \
-            'normalized coefficients': [1, 8, 1, 2.5, 4, 1], \
-            'algorithm': 'inverse', \
-            'is balanced': True, \
-            'final reaction': '2KMnO4+16HCl=2MnCl2+5Cl2+8H2O+2KCl', \
-            'final reaction normalized': 'KMnO4+8HCl=MnCl2+2.5Cl2+4H2O+KCl', \
-            'molar masses': [158.032043, 36.458, 125.838043, 70.9, 18.015, 74.548], \
-            'target': 'MnCl2', \
+            {'initial reaction': 'KMnO4+HCl=MnCl2+Cl2+H2O+KCl',
+            'reaction matrix': array([[1., 0., 0., 0., 0., 1.],
+            [1., 0., 1., 0., 0., 0.],
+            [4., 0., 0., 0., 1., 0.],
+            [0., 1., 0., 0., 2., 0.],
+            [0., 1., 2., 2., 0., 1.]]),
+            'mode': 'balance',
+            'formulas': ['KMnO4', 'HCl', 'MnCl2', 'Cl2', 'H2O', 'KCl'],
+            'coefficients': [2, 16, 2, 5, 8, 2],
+            'normalized coefficients': [1, 8, 1, 2.5, 4, 1],
+            'algorithm': 'inverse',
+            'is balanced': True,
+            'final reaction': '2KMnO4+16HCl=2MnCl2+5Cl2+8H2O+2KCl',
+            'final reaction normalized': 'KMnO4+8HCl=MnCl2+2.5Cl2+4H2O+KCl',
+            'molar masses': [158.032043, 36.458, 125.838043, 70.9, 18.015, 74.548],
+            'target': 'MnCl2',
             'masses': [1.25583678, 2.31777285, 1.0, 1.40855655, 0.57264082, 0.59241226]}
         """
         return {
