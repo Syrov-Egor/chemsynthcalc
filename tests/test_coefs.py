@@ -90,7 +90,7 @@ def test_bad_coefs_0():
             reaction_obj.matrix,
             reaction_obj.balancer,
             reaction_obj.decomposed_reaction,
-        )._coefficients_validation(  # type: ignore
+        ).coefficients_validation(  # type: ignore
             [
                 1,
                 3,
@@ -113,7 +113,7 @@ def test_bad_coefs_len():
             reaction_obj.matrix,
             reaction_obj.balancer,
             reaction_obj.decomposed_reaction,
-        )._coefficients_validation(  # type: ignore
+        ).coefficients_validation(  # type: ignore
             [
                 1,
                 3,

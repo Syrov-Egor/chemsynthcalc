@@ -81,7 +81,7 @@ class Coefficients:
             case _:
                 raise NoSuchMode(f"No mode {self.mode}")
 
-    def _coefficients_validation(
+    def coefficients_validation(
         self, coefficients: list[float | int] | list[int]
     ) -> None:
         """
@@ -136,5 +136,5 @@ class Coefficients:
         """
         self._element_count_validation()
         coefs = self._calculate_coefficients()
-        self._coefficients_validation(coefs[0])
+        self.coefficients_validation(coefs[0])
         return coefs

@@ -274,6 +274,14 @@ class ChemicalReaction:
             >>> ChemicalReaction("KMnO4+HCl=MnCl2+Cl2+H2O+KCl").normalized_coefficients
             [1, 8, 1, 2.5, 4, 1]
         """
+        Coefficients(
+            self.mode,
+            self.parsed_formulas,
+            self.matrix,
+            self.balancer,
+            self.decomposed_reaction,
+        ).coefficients_validation(self.coefficients)
+
         target_compound = self.coefficients[self._calculated_target]
         normalized_coefficients: list[float | int] | list[int] = [
             coef / target_compound for coef in self.coefficients
