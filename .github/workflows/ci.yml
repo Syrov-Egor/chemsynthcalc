@@ -36,14 +36,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-            ref: gh-pages
-
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Pull
+        run: |
+          git pull
 
       - name: Install dependencies
         run: |
