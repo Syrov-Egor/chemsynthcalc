@@ -19,14 +19,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'  # Adjust to your preferred version
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          pip install .
+          pip install pytest hatch
+          hatch env create  # Creates the default Hatch environment
+          hatch run pip install .  # Installs your package and dependencies
 
       - name: Run pytest
-        run: pytest --verbose
+        run: hatch run pytest --verbose
