@@ -65,3 +65,5 @@ chemsynthcalc and why is it better than competitors?
 |[ChemicalAid](https://en.intl.chemicalaid.com/tools/equationbalancer.php)|<span style="color:red">x</span>|<span style="color:green">✓</span>|<span style="color:red">x</span>|
 |[CHEMIX School](https://www.chemix-chemistry-software.com/chemistry-software.html)|<span style="color:red">x</span>|<span style="color:green">✓</span>|<span style="color:red">x</span>|
 |[ChemPy](https://github.com/bjodah/chempy)|<span style="color:red">x</span>|<span style="color:red">x</span>|<span style="color:green">✓</span>|
+
+There are two main classes to acesses the functionality: ChemicalFormula and ChemicalReaction. You can check them in the menu.

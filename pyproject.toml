@@ -6,5 +6,5 @@ build-backend = "hatchling.build"
 name = "chemsynthcalc"
 version = "2.0.0"
 authors = [
-  { name="Egor Syrov", email="syrov@unn.ru" },
+  { name="Egor Syrov", email="syrov_ev@mail.ru" },
 ]
