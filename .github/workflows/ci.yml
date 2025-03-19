@@ -49,4 +49,4 @@ jobs:
           pip install .
 
       - name: Deploy docs
-        run: mkdocs gh-deploy --force
+        run: mkdocs gh-deploy
