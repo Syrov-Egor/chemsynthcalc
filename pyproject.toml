@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods."
 readme = "README.md"
-license = "LICENSE"
+license = {file = "LICENSE"}
 dependencies = ["scipy>1.15"]
 
 requires-python = ">=3.10"
@@ -20,16 +20,6 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-
-[tool.hatch.build.targets.sdist]
-include = [
-    "src"
-]
-
-[tool.hatch.build.targets.wheel]
-packages = [
-    "src/chemsynthcalc"
-]
-
 [tool.hatch.version]
 path = "src/chemsynthcalc/version.py"
+
