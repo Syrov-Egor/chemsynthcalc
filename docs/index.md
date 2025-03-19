@@ -15,6 +15,7 @@ It includes solutions for all intermidiate steps:
 * Output to terminal, as plain txt or JSON (object or file)
 * ... and more
 
+.
 ##Main project page
 
 [https://github.com/Syrov-Egor/chemsynthcalc](https://github.com/Syrov-Egor/chemsynthcalc)
