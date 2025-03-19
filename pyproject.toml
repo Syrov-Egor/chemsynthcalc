@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "chemsynthcalc"
-version = ["version"]
+dynamic = ["version"]
 authors = [
   { name="Egor Syrov", email="syrov_ev@mail.ru" },
 ]
