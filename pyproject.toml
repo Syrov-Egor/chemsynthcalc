@@ -4,7 +4,18 @@ build-backend = "hatchling.build"
 
 [project]
 name = "chemsynthcalc"
-version = "2.0.0"
+version = ["version"]
 authors = [
   { name="Egor Syrov", email="syrov_ev@mail.ru" },
+]
+description = "Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods."
+readme = "README.md"
+license = "MIT"
+dependencies = ["scipy>1.15"]
+
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]

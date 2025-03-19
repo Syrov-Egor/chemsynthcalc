@@ -25,7 +25,7 @@ reaction_string = "BaCO3 + Y2(CO3)3 + CuCO3 + O2 → YBa2Cu3O7 + CO2"
 ```
 
 Now, we can create a chemical reaction object of the `ChemicalReaction` class, which will be used in the calculation. We need to specify the arguments for our particular case:
-```Python
+``` Python
 >>> reaction = ChemicalReaction(
     reaction = reaction_string, # our reaction string
     target = 0, # index of target compound in the product list
@@ -35,7 +35,7 @@ Now, we can create a chemical reaction object of the `ChemicalReaction` class, w
 ```
 
 Now, to perform the automatic calculation, all we need to do is to put:
-```Python
+``` Python
 >>> reaction.print_results(print_rounding_order=4) 
 # assuming that we use analytical balances with 4 digit presicion
 ```
