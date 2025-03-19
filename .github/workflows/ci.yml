@@ -36,8 +36,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with: 
-            repository: 'Syrov-Egor/chemsynthcalc'
+        with:
+            ref: gh-pages
 
 
       - name: Set up Python
