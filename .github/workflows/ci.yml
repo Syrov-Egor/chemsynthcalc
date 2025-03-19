@@ -31,7 +31,7 @@ jobs:
         run: pytest --verbose
 
   build-docs:
-    name: Deploy Documentation
+    name: Deploying Documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
