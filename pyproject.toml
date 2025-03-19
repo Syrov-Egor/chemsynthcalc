@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods."
 readme = "README.md"
-license = "MIT"
+license = "LICENSE"
 dependencies = ["scipy>1.15"]
 
 requires-python = ">=3.10"
