@@ -54,3 +54,34 @@ jobs:
 
       - name: Deploy docs
         run: mkdocs gh-deploy
+  
+  deploy-PyPI:
+    name: build and deploy to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Hatch
+        run: |
+          python -m pip install --upgrade pip
+          pip install hatch
+  
+      - name: Build package
+        run: |
+          hatch build
+  
+      - name: Publish to PyPI
+        env:
+          HATCH_INDEX_USER: '__token__'  
+          HATCH_INDEX_AUTH: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          hatch publish
+  
+      - name: Check PyPI upload
+        run: |
+          echo "Package published to PyPI successfully!"
