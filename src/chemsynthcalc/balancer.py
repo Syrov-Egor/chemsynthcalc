@@ -5,7 +5,7 @@ import numpy.typing as npt
 
 from .balancing_algos import BalancingAlgorithms
 from .chem_errors import BalancingError
-from .utils import find_lcm, find_gcd
+from .utils import find_gcd, find_lcm
 
 
 class Balancer(BalancingAlgorithms):
@@ -134,7 +134,6 @@ class Balancer(BalancingAlgorithms):
             [BalancingError][chemsynthcalc.chem_errors.BalancingError] if can't balance reaction by specified method.
         """
         match method:
-
             case "inv":
                 coefficients: list[float] = np.round(
                     self._inv_algorithm(), decimals=self.round_precision
@@ -237,6 +236,6 @@ class Balancer(BalancingAlgorithms):
         except Exception:
             pass
         try:
-            return (self.gpinv(), "partial pseudoinverse")
+            return (self.ppinv(), "partial pseudoinverse")
         except Exception:
             raise BalancingError("Can't balance this reaction by any method")
