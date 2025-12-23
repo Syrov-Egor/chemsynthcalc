@@ -31,7 +31,7 @@ jobs:
           uv sync --dev
 
       - name: Run pytest
-        run: pytest --verbose
+        run: uv run pytest --verbose
 
   build-docs:
     name: Deploying Documentation
