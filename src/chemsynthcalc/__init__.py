@@ -58,6 +58,10 @@ CO2: M = 44.0090 g/mol, m = 1.2882 g
 ```
 """
 
-from .chemical_formula import ChemicalFormula  # type: ignore
-from .chemical_reaction import ChemicalReaction  # type: ignore
-from .version import __version__
+import importlib.metadata
+
+from .chemical_formula import ChemicalFormula
+from .chemical_reaction import ChemicalReaction
+
+__all__ = ["ChemicalFormula", "ChemicalReaction"]
+__version__ = importlib.metadata.version("chemsynthcalc")

@@ -26,4 +26,4 @@ time_per_reaction = time_per_cycle / len(input_list)
 
 print(f"number of reactions: {len(input_list)}")
 print(f"time per cycle: {time_per_cycle} s")
-print(f"time per formula: {time_per_reaction * 1000} ms")
+print(f"time per reaction: {time_per_reaction * 1000} ms")
