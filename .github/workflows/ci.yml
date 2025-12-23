@@ -51,7 +51,9 @@ jobs:
           uv sync
 
       - name: Deploy docs
-        run: uv run mkdocs gh-deploy
+        run: |
+          git fetch origin gh-pages
+          uv run mkdocs gh-deploy --force
 
   deploy-PyPI:
     name: build and deploy to PyPI
