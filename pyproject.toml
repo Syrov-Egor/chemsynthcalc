@@ -1,25 +1,23 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "chemsynthcalc"
-dynamic = ["version"]
-authors = [
-  { name="Egor Syrov", email="syrov_ev@mail.ru" },
-]
-description = "Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods."
+version = "2.0.2"
+description =  "Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods."
 readme = "README.md"
+authors = [
+    { name = "Syrov-Egor", email = "syrov_ev@mail.ru" }
+]
 license = {file = "LICENSE"}
-dependencies = ["scipy>1.15"]
-
 requires-python = ">=3.10"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+dependencies = [
+    "scipy>=1.15.3",
 ]
 
-[tool.hatch.version]
-path = "src/chemsynthcalc/version.py"
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
 
+[dependency-groups]
+dev = [
+    "mkdocs>=1.6.1",
+    "pytest>=9.0.2",
+]
