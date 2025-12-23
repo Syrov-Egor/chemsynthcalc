@@ -2,7 +2,6 @@ import gc
 
 import numpy as np
 import numpy.typing as npt
-import scipy  # type: ignore
 
 
 class BalancingAlgorithms:
@@ -25,22 +24,6 @@ class BalancingAlgorithms:
     Attributes:
         reactant_matrix (npt.NDArray[np.float64]): A matrix of the left part of the equation
         product_matrix (npt.NDArray[np.float64]): A matrix of the right part of the equation
-
-    Note:
-        Why use
-        [scipy.linalg.pinv](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.pinv.html),
-        when
-        [numpy.linalg.pinv](https://numpy.org/doc/stable/reference/generated/numpy.linalg.pinv.html)
-        is doing the same thing and does not require the whole SciPy import?
-
-        There are some peculiar reaction cases where
-        (especially for [_ppinv_algorithm][chemsynthcalc.balancing_algos.BalancingAlgorithms._ppinv_algorithm] method)
-        the results for [numpy.linalg.pinv](https://numpy.org/doc/stable/reference/generated/numpy.linalg.pinv.html)
-        differs from system to system (np version, OS, python version etc.). My understanding is that the cause of
-        this behaviour lies in small differences for pinv algorithm in numpy C-libraries and BLAS-libraries,
-        hence the difference.
-        To avoid this, a more consistent method
-        [scipy.linalg.pinv](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.pinv.html) was used.
     """
 
     def __init__(self, matrix: npt.NDArray[np.float64], separator_pos: int) -> None:
@@ -52,6 +35,10 @@ class BalancingAlgorithms:
         self.product_matrix: npt.NDArray[np.float64] = self.reaction_matrix[
             :, self.separator_pos :
         ]
+
+    def _calculate_rtol(self, matrix: npt.NDArray[np.float64]) -> float:
+        minimum: int = min(matrix.shape[0], matrix.shape[1])
+        return minimum * np.finfo(np.float64).eps
 
     def _inv_algorithm(self) -> npt.NDArray[np.float64]:
         """Matrix inverse algorithm for reaction balancing.
@@ -166,7 +153,7 @@ class BalancingAlgorithms:
             A 1D NumPy array of calculated coefficients
         """
         matrix = np.hstack((self.reactant_matrix, -self.product_matrix))
-        inverse = scipy.linalg.pinv(matrix)
+        inverse = np.linalg.pinv(matrix, rtol=self._calculate_rtol(matrix))
         a = np.ones((matrix.shape[1], 1))
         i = np.identity(matrix.shape[1])
         coefs = (i - inverse @ matrix) @ a
@@ -206,13 +193,17 @@ class BalancingAlgorithms:
         Returns:
             A 1D NumPy array of calculated coefficients
         """
-        MP_inverse = scipy.linalg.pinv(self.reactant_matrix)
+        MP_inverse = np.linalg.pinv(
+            self.reactant_matrix, rtol=self._calculate_rtol(self.reactant_matrix)
+        )
         g_matrix = (
             np.identity(self.reaction_matrix.shape[0])
             - self.reactant_matrix @ MP_inverse
         )
         g_matrix = g_matrix @ self.product_matrix
-        y_multiply = scipy.linalg.pinv(g_matrix) @ g_matrix
+        y_multiply = (
+            np.linalg.pinv(g_matrix, rtol=self._calculate_rtol(g_matrix)) @ g_matrix
+        )
         y_vector = (np.identity(y_multiply.shape[1]) - y_multiply).dot(
             np.ones(y_multiply.shape[1])
         )

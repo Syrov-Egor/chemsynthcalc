@@ -1,6 +1,6 @@
 [project]
 name = "chemsynthcalc"
-version = "2.0.2"
+version = "2.1.0"
 description =  "Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermidiate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods."
 readme = "README.md"
 authors = [
@@ -9,7 +9,7 @@ authors = [
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
 dependencies = [
-    "scipy>=1.15.3",
+    "numpy>=2.2.6",
 ]
 
 [build-system]

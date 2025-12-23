@@ -11,10 +11,6 @@ Install from [pypi](https://pypi.org/):
 pip install chemsynthcalc
 ```
 
-##NumPy and SciPy
+##NumPy
 
-NumPy and SciPy are requirements for fast matrix operations for reaction balancing. They will be installed automatically by pip if they are not already installed.
-
-##But why chemsynthcalc is using SciPy?
-
-In short: to ensure consistent results across all platforms. See [Note on SciPy][chemsynthcalc.balancing_algos.BalancingAlgorithms].
+NumPy is a requirement for fast matrix operations for reaction balancing. They will be installed automatically by pip if they are not already installed.
