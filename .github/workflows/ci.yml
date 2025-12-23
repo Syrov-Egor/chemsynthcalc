@@ -4,11 +4,6 @@ on:
   push:
     tags:
       - '*'
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   test:
@@ -53,7 +48,7 @@ jobs:
           uv sync
 
       - name: Deploy docs
-        run: mkdocs gh-deploy
+        run: uv run mkdocs gh-deploy
 
   deploy-PyPI:
     name: build and deploy to PyPI
