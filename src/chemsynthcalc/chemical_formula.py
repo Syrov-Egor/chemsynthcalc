@@ -1,9 +1,9 @@
 from functools import lru_cache
 
-from .formula_parser import ChemicalFormulaParser
-from .molar_mass import MolarMassCalculation
-from .formula_validator import FormulaValidator
 from .chem_output import ChemicalOutput
+from .formula_parser import ChemicalFormulaParser
+from .formula_validator import FormulaValidator
+from .molar_mass import MolarMassCalculation
 from .utils import round_dict_content
 
 
@@ -44,7 +44,12 @@ class ChemicalFormula:
         else:
             raise ValueError("precision <= 0")
 
-        self.custom_oxides = custom_oxides
+        self.custom_oxides = []
+        for oxide in custom_oxides:
+            if FormulaValidator(oxide).validate_formula():
+                self.custom_oxides.append(oxide)
+            else:
+                raise ValueError(f"Wrong oxide: {oxide}")
 
     def __str__(self) -> str:
         return self.formula
