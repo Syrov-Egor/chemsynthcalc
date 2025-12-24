@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
-from .periodic_table import PeriodicTable
 from .formula_parser import ChemicalFormulaParser
+from .periodic_table import PERIODIC_TABLE
 
 
 class Oxide(NamedTuple):
@@ -32,7 +32,7 @@ class MolarMassCalculation:
 
     def __init__(self, parsed_formula: dict[str, float]) -> None:
         self.parsed_formula: dict[str, float] = parsed_formula
-        self.p_table = PeriodicTable().p_table
+        self.p_table = PERIODIC_TABLE
 
     def _calculate_atomic_masses(self) -> list[float]:
         """

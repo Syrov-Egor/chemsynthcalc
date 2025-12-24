@@ -3,13 +3,13 @@ from functools import cached_property, lru_cache
 import numpy as np
 import numpy.typing as npt
 
-from .reaction_validator import ReactionValidator
-from .reaction_decomposer import ReactionDecomposer
-from .chemical_formula import ChemicalFormula
-from .reaction_matrix import ChemicalReactionMatrix
 from .balancer import Balancer
-from .coefs import Coefficients
 from .chem_output import ChemicalOutput
+from .chemical_formula import ChemicalFormula
+from .coefs import Coefficients
+from .reaction_decomposer import ReactionDecomposer
+from .reaction_matrix import ChemicalReactionMatrix
+from .reaction_validator import ReactionValidator
 
 
 class ChemicalReaction:
@@ -326,7 +326,7 @@ class ChemicalReaction:
         final_reaction = [
             (
                 str(coefs[i]) + str(compound)
-                if coefs[i] != 1 or coefs[i] != 1.0
+                if coefs[i] != 1 and coefs[i] != 1.0
                 else str(compound)
             )
             for i, compound in enumerate(self.decomposed_reaction.compounds)

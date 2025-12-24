@@ -1,15 +1,15 @@
 import re
 from collections import Counter
 
-from .periodic_table import PeriodicTable
-from .formula import Formula
 from .chem_errors import (
+    BracketsNotPaired,
     EmptyFormula,
     InvalidCharacter,
-    NoSuchAtom,
     MoreThanOneAdduct,
-    BracketsNotPaired,
+    NoSuchAtom,
 )
+from .formula import Formula
+from .periodic_table import ATOMS
 
 
 class FormulaValidator(Formula):
@@ -46,7 +46,7 @@ class FormulaValidator(Formula):
         # a trick to get Cl first of C in cases like CCl4
         atoms_list = sorted(list(set(atoms_list)), key=len, reverse=True)
         for atom in atoms_list:
-            if atom not in PeriodicTable().atoms:
+            if atom not in ATOMS:
                 invalid.append(atom)
             new_string = new_string.replace(atom, "")
         found_leftovers: list[str] = re.findall(r"[a-z]", new_string)
