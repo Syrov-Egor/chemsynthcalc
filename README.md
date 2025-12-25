@@ -1,15 +1,23 @@
 # Chemical synthesis calculator
 Python package for calculating the masses of substances required for chemical synthesis directly from the reaction string. It includes solutions for all intermediate steps, including chemical formula parsing, molar mass calculation and reaction balancing with different matrix methods.
 
+## GUI
+If you want to use a GUI version, please refer to https://github.com/Syrov-Egor/chemsynthcalc-GUI
+
 ## Prerequisites
 * [Python](https://www.python.org/downloads/) 3.10+
 * [NumPy](https://numpy.org/)
 
 ## Installation
-Install from [pypi](https://pypi.org/project/chemsynthcalc/):
+Install from [pypi](https://pypi.org/project/chemsynthcalc/) using `pip`:
 
 ``` Bash
 pip install chemsynthcalc
+```
+
+or add with [uv](https://docs.astral.sh/uv/):
+``` Bash
+uv add chemsynthcalc
 ```
 
 ## Documentation
