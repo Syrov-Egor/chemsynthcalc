@@ -10,6 +10,8 @@ CSC_formula_*
 formula_out.txt
 reaction_out.txt
 
+paper.crossref
+paper.pdf
 new.py
 solid-state_dataset_2019-06-27_upd.json
 solid-state_dataset_20200713.json
